@@ -8,23 +8,32 @@ import time
 
 import pybullet as p  # PyBullet simulator
 
-# from .controller import c_walking  # Controller functions
-
-from sys import path, argv
-
+from sys import argv
 
 from isae.myController import *
 from isae.geometry import *
 from isae.trajectory import *
 
-#arguments gui, rtSimu, bodyHeight, trajPoint1, trajPoint2, phaseOff1, phaseOff2, phaseOff3, phaseOff4
-params = list(map(float, argv[3:]))
-assert(len(params) == 7)
 
-period = 0.4
-traj = pointsTrajectory([[params[1],params[2]]])
+fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
+
+params = list(map(float, argv[3:]))
+try:
+    bodyHeight = params[0]
+    period = params[1]
+    fractorTraj = [argv[2], 1]
+    offsets = [params[3],params[4],params[5],params[6]]
+    pointsTraj = [[params[7],params[8]]]
+    for i in range(9, len(params), 2):
+        pointsTraj += [[params[i], params[i+1]]]
+except:
+    print(" # Error. Espected parameters are : ")
+    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [[point0_X point0_Y] ...]")
+    quit()
+
+traj = pointsTrajectory(pointsTraj, factor=fractorTraj)
 leg = Leg(1,1)
-controller = myController(params[0], leg, traj, period, [params[3],params[4],params[5],params[6]], 8., 0.2, 3 * np.ones((8, 1)))
+controller = myController(bodyHeight, leg, traj, period, offsets, 8., 0.2, 3 * np.ones((8, 1)))
 
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
@@ -37,8 +46,8 @@ from .initialization_simulation import configure_simulation, getPosVelJoints
 dt = 0.001  # time step of the simulation
 # If True then we will sleep in the main loop to have a 1:1 ratio of (elapsed real time / elapsed time in the
 # simulation))
-realTimeSimulation = (argv[1] == "True")
-enableGUI = (argv[2] == "True")  # enable PyBullet GUI or not
+realTimeSimulation = (argv[2] == "True")
+enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Grading
