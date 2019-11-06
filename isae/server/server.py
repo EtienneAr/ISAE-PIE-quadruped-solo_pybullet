@@ -9,7 +9,7 @@ Usage::
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
-import isae.runOptim as runOptim
+import isae.optim.evaluate as evaluate
 
 index_Path = "isae/server/index.html"
 
@@ -55,7 +55,7 @@ class S(BaseHTTPRequestHandler):
                     dict_args["Kp"],
                     dict_args["Kd"],
                     ]
-            res = runOptim.runSimu(params)
+            res = evaluate.runSimu(params)
         except Exception:
             res = "Wrong arguments !"
 

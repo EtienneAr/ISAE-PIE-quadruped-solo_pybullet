@@ -1,7 +1,7 @@
 from sys import path
 import numpy as np
 import _thread
-from isae.myPD import PD
+from isae.control.myPD import PD
 
 def async_input(controller):
 	while(True):

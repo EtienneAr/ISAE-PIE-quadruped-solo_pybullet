@@ -10,9 +10,9 @@ import pybullet as p  # PyBullet simulator
 
 from sys import argv
 
-from isae.myController import *
-from isae.geometry import *
-from isae.trajectory import *
+from isae.control.myController import *
+from isae.tools.geometry import *
+from isae.tools.trajectory import *
 
 
 fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
