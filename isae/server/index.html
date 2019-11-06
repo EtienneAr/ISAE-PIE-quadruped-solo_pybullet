@@ -1,0 +1,56 @@
+
+<!doctype html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+
+<html>
+  <head>
+    <title>Data in</title>
+  </head>
+  <body>
+  	<form method="post" id="mainForm">
+  	<table id="mainTable" style="border:1px solid black;margin-left:auto;margin-right:auto;">
+  		<tbody>
+		        <tr>
+		        	<td>
+		        		<button type="submit">Submit</button>
+					</td>
+				</tr>
+		</tbody>
+    </table>
+	</form>
+
+   	<script>
+   		function addParameter(name, mini, maxi){
+	   		var cell = document.getElementById("mainTable").insertRow(0).insertCell(0);
+	   		cell.innerHTML = name + " : ";
+			var input = document.createElement("input");
+			input.name = name
+			input.type = "number";
+			input.step = "any";
+			input.min = mini;
+			input.max = maxi;
+			input.required = "required";
+			cell.appendChild(input);
+			cell.innerHTML += " in [" + mini + ";" + maxi + "]";
+		}
+		addParameter("Kd", 0, 40);
+		addParameter("Kp", 0, 50);
+		addParameter("point2_y", 0, 1);
+		addParameter("point2_x", -2, 2);
+		addParameter("point1_y", 0, 1);
+		addParameter("point1_x", -2, 2);
+		addParameter("point0_y", 0, 1);
+		addParameter("point0_x", -2, 2);
+		addParameter("phasesOff_3", 0, 1);
+		addParameter("phasesOff_2", 0, 1);
+		addParameter("phasesOff_1", 0, 1);
+		addParameter("phasesOff_0", 0, 1);
+		addParameter("stepLen", 0, 2);
+		addParameter("stepPeriod", 0, 1000);
+		addParameter("bodyHeight", 0, 2);
+   	</script>
+  </body>
+</html>
+
