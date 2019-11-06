@@ -2,24 +2,29 @@ import subprocess
 from random import random, randrange
 
 parametersRange = [[0,2], #bodyHeight
-					[-1,1], #pointTraj_x
-					[0,1], #pointTraj_y
-					[0,1], [0,1], [0,1], [0,1]] #phasesOff
+					[0,4], #stepPeriod
+					[0,2], #stepLen
+					[0,1], [0,1], [0,1], [0,1], #phasesOff
+					[-1,1], #point0_x
+					[0,1], #point0_y
+					[0,40], #Kp
+					[0,30], #Kd
+					]
 
 def runSimu(args):
-	ret = subprocess.check_output(["python3 -m solo_pybullet False False " + ' '.join(map(str, args))], shell=True, universal_newlines=True)
+	try:
+		ret = subprocess.check_output(["python3 -m solo_pybullet False False " + ' '.join(map(str, args))], shell=True, universal_newlines=True)
+		lines = ret.split('\n')
+		result = -1
+		for i in range(len(lines)):
+			if(lines[i] == "Result :"):
+				result = i+1
+				break
 
-	lines = ret.split('\n')
-	result = -1
-	for i in range(len(lines)):
-		if(lines[i] == "Result :"):
-			result = i+1
-			break
-
-	if result > -1:
-		return float(lines[result])
-
-	return None
+		if result > -1:
+			return float(lines[result])
+	except:
+		return -1000.
 
 
 def randomConfig():
