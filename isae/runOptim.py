@@ -5,8 +5,12 @@ parametersRange = [[0,2], #bodyHeight
 					[0,4], #stepPeriod
 					[0,2], #stepLen
 					[0,1], [0,1], [0,1], [0,1], #phasesOff
-					[-1,1], #point0_x
+					[-2,2], #point0_x
 					[0,1], #point0_y
+					[-2,2], #point1_x
+					[0,1], #point1_y
+					[-2,2], #point2_x
+					[0,1], #point2_y
 					[0,40], #Kp
 					[0,30], #Kd
 					]

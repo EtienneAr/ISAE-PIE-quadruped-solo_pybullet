@@ -23,19 +23,19 @@ try:
     period = params[1]
     fractorTraj = [argv[2], 1]
     offsets = [params[3],params[4],params[5],params[6]]
-    pointsTraj = [[params[7],params[8]]]
-    if(len(params) ==11):
-        Kp = float(params[9])
-        Kd = float(params[10])
+    pointsTraj = [[params[7],params[8]], [params[9],params[10]], [params[11],params[12]]]
+    if(len(params) == 15):
+        Kp = float(params[13])
+        Kd = float(params[14])
     else:
         Kp = 8.0
         Kd = 0.2
-        assert(len(params) == 9)
+        assert(len(params) == 13)
     # for i in range(9, len(params), 2):
     #     pointsTraj += [[params[i], params[i+1]]]
 except:
     print(" # Error. Espected parameters are : ")
-    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y [Kp Kd]")
+    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y [Kp Kd]")
     quit()
 
 traj = pointsTrajectory(pointsTraj, factor=fractorTraj)
