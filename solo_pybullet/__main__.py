@@ -7,12 +7,14 @@
 import time
 
 import pybullet as p  # PyBullet simulator
+import numpy as np  # Numpy library
 
 from sys import argv
 
 from isae.control.myController import *
 from isae.tools.geometry import *
 from isae.tools.trajectory import *
+import isae.optim.grading
 
 
 fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
@@ -41,7 +43,7 @@ except:
 traj = pointsTrajectory(pointsTraj, factor=fractorTraj)
 leg = Leg(1,1)
 controller = myController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
-
+grading = isae.optim.grading.grading_RMS()
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from .initialization_simulation import configure_simulation, getPosVelJoints
@@ -58,7 +60,7 @@ enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Grading
-grade = 0
+finalXpos = 0
 
 ###############
 #  MAIN LOOP ##
@@ -82,9 +84,9 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     # Compute one step of simulation
     p.stepSimulation()
 
-    grade -= (qdot[1][0]**2 + qdot[2][0]**2 + qdot[3][0]**2 + qdot[4][0]**2 + qdot[5][0]**2) * (dt**2)
+    grading.grade(q, qdot, np.vstack([None,] + [0,] * 5), dt)
     if(i == total_len-1):
-        grade += q[0][0] * (-1./10)
+        finalXpos = q[0][0]
 
     # Sleep to get a real time simulation
     if realTimeSimulation:
@@ -92,7 +94,9 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
         if t_sleep > 0:
             time.sleep(t_sleep)
 
+#print grading
 print("Result :")
-print(str(grade))
+print(str(grading.getGrade() + finalXpos * (-1./10)))
+
 # Shut down the PyBullet client
 p.disconnect()
