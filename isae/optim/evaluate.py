@@ -3,7 +3,7 @@ from random import random
 
 parametersRange = [[0,2], #bodyHeight
 					[0,4], #stepPeriod
-					[0,2], #stepLen
+					[-2,2], #stepLen
 					[0,1], [0,1], [0,1], [0,1], #phasesOff
 					[-2,2], #point0_x
 					[0,1], #point0_y
@@ -27,6 +27,8 @@ def runSimu(args):
 
 		if result > -1:
 			return float(lines[result])
+	except KeyboardInterrupt:
+		raise KeyboardInterrupt
 	except:
 		return -1000.
 
