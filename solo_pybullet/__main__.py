@@ -23,7 +23,7 @@ params = list(map(float, argv[3:]))
 try:
     bodyHeight = params[0]
     period = params[1]
-    fractorTraj = [argv[2], 1]
+    fractorTraj = [params[2], 1]
     offsets = [params[3],params[4],params[5],params[6]]
     pointsTraj = [[params[7],params[8]], [params[9],params[10]], [params[11],params[12]]]
     if(len(params) == 15):
@@ -60,12 +60,14 @@ enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Grading
-finalXpos = 0
+goal_factors = np.vstack([2, 10, 10, 1, 1, 1])
+goal_speed = np.vstack([.5, 0, 0, 0, 0, 0])
 
 ###############
 #  MAIN LOOP ##
 ###############
-total_len = 10000
+total_duration = 10. #s
+total_len = int(total_duration / dt)
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
 
     # Time at the start of the loop
@@ -84,9 +86,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     # Compute one step of simulation
     p.stepSimulation()
 
-    grading.grade(q, qdot, np.vstack([None,] + [0,] * 5), dt)
-    if(i == total_len-1):
-        finalXpos = q[0][0]
+    grading.grade(q[:6], qdot[:6], goal_speed, goal_factors, dt)
 
     # Sleep to get a real time simulation
     if realTimeSimulation:
@@ -96,7 +96,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
 
 #print grading
 print("Result :")
-print(str(grading.getGrade() + finalXpos * (-1./10)))
+print(str(grading.getGrade()))
 
 # Shut down the PyBullet client
 p.disconnect()
