@@ -4,13 +4,16 @@ class pointsTrajectory:
 		self.points = [[-1, 0]] + points + [[1, 0]]
 
 	def getPos(self, phase, factor = None):
-		if(factor == None):
-			factor = self.factor
+		factorTotal = self.factor
+		if(factor != None):
+			for i in range(len(factor)):
+				factorTotal *= factor[i]
+		
 		#Contact with the ground
 		phase %= 1
 
 		if(phase < 0.5):
-			x_pos = factor[0] * (0.5 - phase*2.)
+			x_pos = factorTotal[0] * (0.5 - phase*2.)
 			y_pos = 0
 
 			return [x_pos, y_pos]
@@ -27,4 +30,4 @@ class pointsTrajectory:
 		x_pos = prev_point[0] + (next_point[0]-prev_point[0]) * sub_phase_for_point
 		y_pos = prev_point[1] + (next_point[1]-prev_point[1]) * sub_phase_for_point
 		
-		return [x_pos * factor[0] /2., y_pos * factor[1]]
+		return [x_pos * factorTotal[0] /2., y_pos * factorTotal[1]]
