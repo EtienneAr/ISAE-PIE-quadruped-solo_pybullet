@@ -60,8 +60,8 @@ enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Grading
-goal_factors = np.vstack([1, 0, 0, 0, 0, 0]) #np.vstack([0.1, 1, 1, 1, 1, 1])
-goal_speed = np.vstack([5, 0, 0, 0, 0, 0])
+goal_factors = np.vstack([2, 10, 10, 1, 1, 1])
+goal_speed = np.vstack([.5, 0, 0, 0, 0, 0])
 
 ###############
 #  MAIN LOOP ##

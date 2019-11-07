@@ -5,7 +5,7 @@ class grading_RMS:
 		self.grade_total = 0
 
 	def grade(self, q, qdot, qdot_ref, factors, dt):
-		self.grade_total -= np.sum(factors * (qdot - qdot_ref) ** 2) * (dt ** 2)
+		self.grade_total -= np.sum(factors * (qdot - qdot_ref) ** 2) * dt
 
 	def getGrade(self):
 		return self.grade_total
