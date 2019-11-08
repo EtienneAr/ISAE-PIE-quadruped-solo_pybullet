@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 class pointsTrajectory:
 	def __init__(self, points, factor = [1,1]):
 		self.factor = factor
@@ -28,3 +30,9 @@ class pointsTrajectory:
 		y_pos = prev_point[1] + (next_point[1]-prev_point[1]) * sub_phase_for_point
 		
 		return [x_pos * factor[0] /2., y_pos * factor[1]]
+
+	def plotTrajectory(self):
+		fig = plt.figure()
+		x = [p[0] for p in self.points]
+		y = [p[1] - 2.0 for p in self.points]
+		plt.plot(x,y)
