@@ -1,6 +1,12 @@
 from random import random, randrange
 from sys import argv
 
+BLUE = "\033[34m"
+CYAN = "\033[36m"
+YELLOW = "\033[33m"
+GREEN = "\033[32m"
+DEFAULT = "\033[39m"
+
 from isae.optim.evaluate import parametersRange, runSimu, randomConfig, randomTries
 
 
@@ -27,29 +33,31 @@ def mix(newSize, population):
 
 def print_pop(population):
 	for people in population:
-		temp_str = "\033[33m\t" + str(people[0]) + "\033[32m ==> \033[39m"
+		temp_str = YELLOW + str(people[0]) + GREEN + " ==> " + DEFAULT
 		for value in people[1]:
 			temp_str += " " + str(value)
 		print(temp_str)
 
 def geneticSearch(popSize = 15, n_generation = 10):
 	currGen = randomTries(n_tries = popSize)
-	print("1st Generation : ")
+	print(BLUE + " #### \n1st Generation : " + DEFAULT)
 	print_pop(currGen)
 
 	for j in range(1, n_generation):
 		currGen = getBest(popSize//3, currGen)
-		print("Survivors (generation " + str(j+1) + ") : ")
+		print(BLUE + "####")
+		print("Survivors (generation " + str(j) + ") : ")
 		print_pop(currGen)
 		currGen = mix(popSize, currGen)
 		for k in range(popSize):
 			currGen[k][0] = runSimu(currGen[k][1])
+		print(CYAN + "####")
 		print("New generation " + str(j+1) + " : ")
 		print_pop(currGen)
 
 
 if __name__ == "__main__":
     if(len(argv) != 3):
-    	print("# Arguments must be :\n# # populationSize n_generation")
+    	print(YELLOW + "# Arguments must be : " + CYAN + "populationSize   n_generation" + DEFAULT)
     	quit()
     geneticSearch(int(argv[1]), int(argv[2]))
