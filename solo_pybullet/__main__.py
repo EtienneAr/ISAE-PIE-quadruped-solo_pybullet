@@ -7,18 +7,20 @@
 import time
 
 import pybullet as p  # PyBullet simulator
+import numpy as np  # Numpy library
 
-# from .controller import c_walking  # Controller functions
+from sys import argv
 
-from sys import path, argv
+from isae.control.myController import *
+from isae.tools.geometry import *
+from isae.tools.trajectory import *
+import isae.optim.grading
 
 
-from isae.myController import *
-from isae.geometry import *
-from isae.trajectory import *
+fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
 
-#arguments gui, rtSimu, bodyHeight, trajPoint1, trajPoint2, phaseOff1, phaseOff2, phaseOff3, phaseOff4
 params = list(map(float, argv[3:]))
+<<<<<<< HEAD
 assert(len(params) == 7)
 
 period = 0.8
@@ -28,6 +30,32 @@ controller = myController(params[0], leg, traj, period, [params[3],params[4],par
 
 # A AJOUTER EN PARAM
 RTF = 1
+=======
+try:
+    bodyHeight = params[0]
+    period = params[1]
+    fractorTraj = [params[2], 1]
+    offsets = [params[3],params[4],params[5],params[6]]
+    pointsTraj = [[params[7],params[8]], [params[9],params[10]], [params[11],params[12]]]
+    if(len(params) == 15):
+        Kp = float(params[13])
+        Kd = float(params[14])
+    else:
+        Kp = 8.0
+        Kd = 0.2
+        assert(len(params) == 13)
+    # for i in range(9, len(params), 2):
+    #     pointsTraj += [[params[i], params[i+1]]]
+except:
+    print(" # Error. Espected parameters are : ")
+    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y [Kp Kd]")
+    quit()
+
+traj = pointsTrajectory(pointsTraj, factor=fractorTraj)
+leg = Leg(1,1)
+controller = myController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
+grading = isae.optim.grading.grading_RMS()
+>>>>>>> Etienne
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from .initialization_simulation import configure_simulation, getPosVelJoints
@@ -39,22 +67,28 @@ from .initialization_simulation import configure_simulation, getPosVelJoints
 dt = 0.001  # time step of the simulation
 # If True then we will sleep in the main loop to have a 1:1 ratio of (elapsed real time / elapsed time in the
 # simulation))
-realTimeSimulation = (argv[1] == "True")
-enableGUI = (argv[2] == "True")  # enable PyBullet GUI or not
+realTimeSimulation = (argv[2] == "True")
+enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Grading
-grade = 0
+goal_factors = np.vstack([75, 10, 10, 1, 1, 1])
+goal_speed = np.vstack([.5, 0, 0, 0, 0, 0])
 
 ###############
 #  MAIN LOOP ##
 ###############
+<<<<<<< HEAD
 total_len = 10000
 leg0_jointsPos = []
 leg1_jointsPos = []
 leg2_jointsPos = []
 leg3_jointsPos = []
 
+=======
+total_duration = 10. #s
+total_len = int(total_duration / dt)
+>>>>>>> Etienne
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
 
     # Time at the start of the loop
@@ -73,9 +107,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     # Compute one step of simulation
     p.stepSimulation()
 
-    grade -= (qdot[1][0]**2 + qdot[2][0]**2 + qdot[3][0]**2 + qdot[4][0]**2 + qdot[5][0]**2) * (dt**2)
-    if(i == total_len-1):
-        grade += q[0][0] * (-1./10)
+    grading.grade(q[:6], qdot[:6], goal_speed, goal_factors, dt)
 
     # Sleep to get a real time simulation
     if realTimeSimulation:
@@ -84,6 +116,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
         if t_sleep > 0:
             time.sleep(t_sleep)
 
+<<<<<<< HEAD
     # Store leg1 joint values
     leg0_jointsPos.append([q[7], q[8]])
     leg1_jointsPos.append([q[9], q[10]])
@@ -95,8 +128,12 @@ leg1_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg1_jointsPo
 leg2_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg2_jointsPos)
 leg3_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg3_jointsPos)
 
+=======
+#print grading
+>>>>>>> Etienne
 print("Result :")
-print(str(grade))
+print(str(grading.getGrade()))
+
 # Shut down the PyBullet client
 p.disconnect()
 
