@@ -1,6 +1,6 @@
 from sys import path
 import numpy as np
-import _thread
+#import _thread
 from isae.control.myPD import PD
 
 def async_input(controller):
@@ -27,7 +27,7 @@ class myController:
 
 	def c(self, q, q_dot, time, dt):
 		self.currentPhase += dt / self.period
-		pos_ref = map(lambda phase : self.FootTraj.getPos(phase + self.currentPhase, self.factor), self.phasesOffset)
+		pos_ref = map(lambda phase : self.FootTraj.getPos(phase + self.currentPhase), self.phasesOffset)
 		pos_ref = map(lambda pos : [pos[0],pos[1]-self.bH], pos_ref)
 		q_ref_temp = map(lambda pos : self.Leg.getJointsPos(pos), pos_ref)
 
