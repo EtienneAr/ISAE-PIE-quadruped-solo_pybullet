@@ -30,7 +30,7 @@ class pointsTrajectory:
 		y_pos = prev_point[1] + (next_point[1]-prev_point[1]) * sub_phase_for_point
 		
 		return [x_pos * factor[0] /2., y_pos * factor[1]]
-
+	
 	def plotTrajectory(self):
 		fig = plt.figure()
 		x = [p[0] for p in self.points]

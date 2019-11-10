@@ -46,9 +46,21 @@ sampledTraj = contTraj.toSampledTraj([i/50.0 for i in range(51)])
 
 traj = sampledTraj
 
+<<<<<<< Updated upstream
 leg = Leg(1,1)
 controller = myController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
 grading = isae.optim.grading.grading_RMS()
+=======
+period = 0.4
+trajPoints = [[-0.5,1],[0.5,0.4]]
+#traj = pointsTrajectory(trajPoints)
+traj = pointsTrajectory([[params[1], params[2]]])
+leg = Leg(1,1)
+controller = myController(params[0], leg, traj, period, [params[3],params[4],params[5],params[6]], 8., 0.2, 3 * np.ones((8, 1)))
+
+# A AJOUTER EN PARAM
+RTF = 0.5
+>>>>>>> Stashed changes
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from .initialization_simulation import configure_simulation, getPosVelJoints
@@ -76,9 +88,14 @@ leg1_jointsPos = []
 leg2_jointsPos = []
 leg3_jointsPos = []
 
+<<<<<<< Updated upstream
 RTF = 1
 total_duration = 10. #s
 total_len = int(total_duration / dt)
+=======
+contact_points = []
+
+>>>>>>> Stashed changes
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
 
     # Time at the start of the loop
@@ -112,6 +129,12 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     leg2_jointsPos.append([q[11], q[12]])
     leg3_jointsPos.append([q[13], q[14]])
 
+    contacts = p.getContactPoints(bodyA = 0)
+    for point in contacts : 
+        contact_points.append([point[5][0], point[5][1]])
+
+
+
 leg0_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg0_jointsPos)
 leg1_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg1_jointsPos)
 leg2_footpos = map(lambda joints_pos : leg.getFootPos(joints_pos), leg2_jointsPos)
@@ -124,13 +147,26 @@ print(str(grading.getGrade()))
 # Shut down the PyBullet client
 p.disconnect()
 
+<<<<<<< Updated upstream
 plt.figure()
+=======
+#traj.plotTrajectory()
+
+fig1 = plt.figure()
+>>>>>>> Stashed changes
 plt.plot([p[0] + 0.5 for p in leg0_footpos], [p[1] - 1 for p in leg0_footpos])
 plt.plot([p[0] + 0.5 for p in leg1_footpos], [p[1] + 1 for p in leg1_footpos])
 plt.plot([p[0] - 0.5 for p in leg2_footpos], [p[1] + 1 for p in leg2_footpos])
 plt.plot([p[0] - 0.5 for p in leg3_footpos], [p[1] - 1 for p in leg3_footpos])
 
+<<<<<<< Updated upstream
 plt.figure()
 traj.plot()
 sampledTraj.plot()
 plt.show()
+=======
+fig2 = plt.figure()
+plt.scatter([p[0] for p in contact_points], [p[1] for p in contact_points])
+
+plt.show()
+>>>>>>> Stashed changes
