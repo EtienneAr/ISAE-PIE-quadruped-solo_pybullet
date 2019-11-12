@@ -41,26 +41,15 @@ except:
     print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y [Kp Kd]")
     quit()
 
+RTF = 1
 contTraj = continuousTrajectory([[-1,0],[0,0.8],[1,0], [-1,0]])
 sampledTraj = contTraj.toSampledTraj([i/50.0 for i in range(51)])
 
 traj = sampledTraj
 
-<<<<<<< Updated upstream
 leg = Leg(1,1)
 controller = myController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
 grading = isae.optim.grading.grading_RMS()
-=======
-period = 0.4
-trajPoints = [[-0.5,1],[0.5,0.4]]
-#traj = pointsTrajectory(trajPoints)
-traj = pointsTrajectory([[params[1], params[2]]])
-leg = Leg(1,1)
-controller = myController(params[0], leg, traj, period, [params[3],params[4],params[5],params[6]], 8., 0.2, 3 * np.ones((8, 1)))
-
-# A AJOUTER EN PARAM
-RTF = 0.5
->>>>>>> Stashed changes
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from .initialization_simulation import configure_simulation, getPosVelJoints
@@ -88,14 +77,11 @@ leg1_jointsPos = []
 leg2_jointsPos = []
 leg3_jointsPos = []
 
-<<<<<<< Updated upstream
-RTF = 1
-total_duration = 10. #s
-total_len = int(total_duration / dt)
-=======
 contact_points = []
 
->>>>>>> Stashed changes
+total_duration = 10.
+total_len = int(total_duration/dt)
+
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
 
     # Time at the start of the loop
@@ -147,26 +133,15 @@ print(str(grading.getGrade()))
 # Shut down the PyBullet client
 p.disconnect()
 
-<<<<<<< Updated upstream
 plt.figure()
-=======
-#traj.plotTrajectory()
-
-fig1 = plt.figure()
->>>>>>> Stashed changes
 plt.plot([p[0] + 0.5 for p in leg0_footpos], [p[1] - 1 for p in leg0_footpos])
 plt.plot([p[0] + 0.5 for p in leg1_footpos], [p[1] + 1 for p in leg1_footpos])
 plt.plot([p[0] - 0.5 for p in leg2_footpos], [p[1] + 1 for p in leg2_footpos])
 plt.plot([p[0] - 0.5 for p in leg3_footpos], [p[1] - 1 for p in leg3_footpos])
+plt.title("Feet trajectories")
 
-<<<<<<< Updated upstream
-plt.figure()
-traj.plot()
-sampledTraj.plot()
-plt.show()
-=======
 fig2 = plt.figure()
 plt.scatter([p[0] for p in contact_points], [p[1] for p in contact_points])
+plt.title("Contact points with ground")
 
 plt.show()
->>>>>>> Stashed changes

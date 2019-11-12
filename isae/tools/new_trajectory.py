@@ -71,7 +71,7 @@ class continuousTrajectory:
 
 
     def plot(self):
-        plt.plot([p[0] for p in self.points], [p[1] for p in self.points])
+        plt.plot([p[0] for p in self.points], [p[1] for p in self.points],'-o')
 
 class sampledTrajectory:
     def __init__(self, points):
@@ -87,4 +87,4 @@ class sampledTrajectory:
         return contTraj.toSampledTraj(cpos_list)
 
     def plot(self):
-        plt.scatter([p[0] for p in self.points], [p[1] for p in self.points])
+        plt.scatter([p[0] for p in self.points], [p[1] for p in self.points],'-o')
