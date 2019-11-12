@@ -22,4 +22,10 @@ To install PyBullet:
 `pip install --user pybullet`
 
 ## How to start the simulation
+If you are on the master branch :\
 launch `gepetto-gui`, then `python -m solo_pybullet`
+
+If you are on the Etienne or Thibault branch :\
+launch `gepetto-gui`, then `python -m solo_pybullet guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y Kp Kd`\
+Ex : `python -m solo_pybullet True False 1.5 0.6 0.8 0 1.57 1.57 0 -0.5 0 0.5 0 0 1 8 0.1`
+`
