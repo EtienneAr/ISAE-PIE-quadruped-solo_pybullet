@@ -12,6 +12,7 @@ import numpy as np  # Numpy library
 from sys import argv
 
 from isae.control.myController import *
+from isae.control.footTrajController import *
 from isae.tools.geometry import *
 from isae.tools.trajectory import *
 from isae.tools.new_trajectory import *
@@ -42,13 +43,12 @@ except:
     quit()
 
 RTF = 1
-contTraj = continuousTrajectory([[-1,0],[0,0.8],[1,0], [-1,0]])
-sampledTraj = contTraj.toSampledTraj([i/50.0 for i in range(51)])
+contTraj = continuousTrajectory([[-0.5,0],[-0,1],[0.5,0], [-0.5,0]])
 
-traj = sampledTraj
+traj = contTraj
 
 leg = Leg(1,1)
-controller = myController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
+controller = footTrajController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
 grading = isae.optim.grading.grading_RMS()
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
@@ -117,7 +117,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
 
     contacts = p.getContactPoints(bodyA = 0)
     for point in contacts : 
-        contact_points.append([point[5][0], point[5][1]])
+        contact_points.append([point[5][0], point[5][1], point[4]])
 
 
 
@@ -140,8 +140,15 @@ plt.plot([p[0] - 0.5 for p in leg2_footpos], [p[1] + 1 for p in leg2_footpos])
 plt.plot([p[0] - 0.5 for p in leg3_footpos], [p[1] - 1 for p in leg3_footpos])
 plt.title("Feet trajectories")
 
+plt.figure()
+traj.plot()
+
+contact_points = np.array(contact_points)
+colors = contact_points[:,2]
+print(colors)
+
 fig2 = plt.figure()
-plt.scatter([p[0] for p in contact_points], [p[1] for p in contact_points])
+plt.scatter([p[0] for p in contact_points], [p[1] for p in contact_points], c=colors, marker='+')
 plt.title("Contact points with ground")
 
 plt.show()

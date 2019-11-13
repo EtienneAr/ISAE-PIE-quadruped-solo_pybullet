@@ -11,12 +11,9 @@ class continuousTrajectory:
         # points : list of size 2 lists
         # ex for a triang. traj.: points = [[-1,0] , [0,1] , [1,0]]
         self.points = np.array(points)
-        #self.length = sqrt((points[-1][0] - points[0][0]**2) + (points[-1][1] - points[0][1]**2)) + sum([sqrt((p[i+1][0] - p[i][0]**2) + (p[i+1][1] - p[i][1]**2)) for i in range(len(self.points)-1)])
 
-    # Returns geometric length of the trajectory
-    def getGeomLength(self):
-        return sqrt((self.points[-1][0] - self.points[0][0])**2 + (self.points[-1][1] - self.points[0][1])**2) + sum([sqrt((self.points[i+1][0] - self.points[i][0])**2 + (self.points[i+1][1] - self.points[i][1])**2) for i in range(len(self.points)-1)])
-
+    # replaced by more generic getPos
+    """
     def getPos(self, phase):
         #Contact with the ground
         phase %= 1
@@ -40,7 +37,28 @@ class continuousTrajectory:
         y_pos = prev_point[1] + (next_point[1]-prev_point[1]) * sub_phase_for_point
 
         return [x_pos/2., y_pos]
+    """
 
+    def getPos(self, phase, cumulLength): # phase in [0,1] over the path
+        contPoints = np.array(self.points)
+        phase %= 1
+        phase *= cumulLength.max()
+        segIndex = np.argwhere(cumulLength < phase)
+        if len(segIndex > 1):
+            segIndex = segIndex[-1]
+        else:
+            segIndex = segIndex[0]
+
+        prevPoint = contPoints[segIndex]
+        prevPhase = cumulLength[segIndex]
+
+        direction = (contPoints[segIndex + 1] - contPoints[segIndex])/(np.linalg.norm(contPoints[segIndex + 1] - contPoints[segIndex]))
+        mag = phase - prevPhase
+
+        return prevPoint + mag*direction
+    
+    # deprecated
+    """
     def toSampledTraj(self, cpos_list = [i/9.0 for i in range(10)]):
         contPoints = np.array(self.points)
         segLengths = (np.diff(contPoints[:,0])**2 + np.diff(contPoints[:,1])**2)**.5 # segment lengths, size n
@@ -68,7 +86,7 @@ class continuousTrajectory:
             sampledTraj.append(curr_point)
         
         return continuousTrajectory(sampledTraj)
-
+    """
 
     def plot(self):
         plt.plot([p[0] for p in self.points], [p[1] for p in self.points],'-o')
