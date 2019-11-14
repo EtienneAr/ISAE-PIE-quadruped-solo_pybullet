@@ -18,7 +18,6 @@ from isae.tools.trajectory import *
 from isae.tools.new_trajectory import *
 import isae.optim.grading
 
-
 fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
 
 params = list(map(float, argv[3:]))
@@ -43,12 +42,18 @@ except:
     quit()
 
 RTF = 1
-contTraj = continuousTrajectory([[-0.5,0],[-0,1],[0.5,0], [-0.5,0]])
+contTraj1 = continuousTrajectory([[-0.7,0],[-0.0,1], [0.7,0], [-0.7,0]], phaseOffset = 0.0)
+contTraj2 = continuousTrajectory(contTraj1.points, phaseOffset = 1.5707)
 
-traj = contTraj
+contTraj3 = continuousTrajectory([[-0.7,0],[-0.0,0.6], [0.7,0], [-0.7,0]], phaseOffset = 1.5707)
+contTraj4 = continuousTrajectory(contTraj3.points, phaseOffset = 0.0)
+
+#contTraj = continuousTrajectory([[-0.5,0],[-0.1,0],[-0.0,1.7], [0.1,0],[0.5,0], [-0.1,0]])
+
+trajs = [contTraj1, contTraj2, contTraj3, contTraj4]
 
 leg = Leg(1,1)
-controller = footTrajController(bodyHeight, leg, traj, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
+controller = footTrajController(bodyHeight, leg, trajs, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
 grading = isae.optim.grading.grading_RMS()
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
@@ -79,7 +84,7 @@ leg3_jointsPos = []
 
 contact_points = []
 
-total_duration = 10.
+total_duration = 2.
 total_len = int(total_duration/dt)
 
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
@@ -140,12 +145,8 @@ plt.plot([p[0] - 0.5 for p in leg2_footpos], [p[1] + 1 for p in leg2_footpos])
 plt.plot([p[0] - 0.5 for p in leg3_footpos], [p[1] - 1 for p in leg3_footpos])
 plt.title("Feet trajectories")
 
-plt.figure()
-traj.plot()
-
 contact_points = np.array(contact_points)
 colors = contact_points[:,2]
-print(colors)
 
 fig2 = plt.figure()
 plt.scatter([p[0] for p in contact_points], [p[1] for p in contact_points], c=colors, marker='+')

@@ -7,10 +7,13 @@ import numpy as np
 #   - sampled trajectory : description of a cycle of duration T sampled at dt, also as a (larger) set of points
 
 class continuousTrajectory:
-    def __init__(self, points):
+    def __init__(self, points, phaseOffset=0):
         # points : list of size 2 lists
         # ex for a triang. traj.: points = [[-1,0] , [0,1] , [1,0]]
         self.points = np.array(points)
+        self.phaseOffset = phaseOffset
+        self.segLengths = (np.diff(self.points[:,0])**2 + np.diff(self.points[:,1])**2)**.5 # segment lengths, size n
+        self.cumulLength = np.concatenate(([0],np.cumsum(self.segLengths))) # cumulated lengths, size n
 
     # replaced by more generic getPos
     """
@@ -39,20 +42,20 @@ class continuousTrajectory:
         return [x_pos/2., y_pos]
     """
 
-    def getPos(self, phase, cumulLength): # phase in [0,1] over the path
-        contPoints = np.array(self.points)
+    def getPos(self, phase): # phase in [0,1] over the path
+        phase += self.phaseOffset
         phase %= 1
-        phase *= cumulLength.max()
-        segIndex = np.argwhere(cumulLength < phase)
+        phase *= self.cumulLength.max()
+        segIndex = np.argwhere(self.cumulLength < phase)
         if len(segIndex > 1):
             segIndex = segIndex[-1]
         else:
             segIndex = segIndex[0]
 
-        prevPoint = contPoints[segIndex]
-        prevPhase = cumulLength[segIndex]
+        prevPoint = self.points[segIndex]
+        prevPhase = self.cumulLength[segIndex]
 
-        direction = (contPoints[segIndex + 1] - contPoints[segIndex])/(np.linalg.norm(contPoints[segIndex + 1] - contPoints[segIndex]))
+        direction = (self.points[segIndex + 1] - self.points[segIndex])/(np.linalg.norm(self.points[segIndex + 1] - self.points[segIndex]))
         mag = phase - prevPhase
 
         return prevPoint + mag*direction
@@ -60,26 +63,26 @@ class continuousTrajectory:
     # deprecated
     """
     def toSampledTraj(self, cpos_list = [i/9.0 for i in range(10)]):
-        contPoints = np.array(self.points)
-        segLengths = (np.diff(contPoints[:,0])**2 + np.diff(contPoints[:,1])**2)**.5 # segment lengths, size n
+        self.points = np.array(self.points)
+        segLengths = (np.diff(self.points[:,0])**2 + np.diff(self.points[:,1])**2)**.5 # segment lengths, size n
         cumulLength = np.cumsum(segLengths) # cumulated lengths, size n
         cpos_list = cumulLength.max()*np.array(cpos_list) # scale cpos_list to match path length
 
-        curr_point = contPoints[0]
+        curr_point = self.points[0]
         curr_seg = 0
 
-        sampledTraj = [contPoints[0]]
+        sampledTraj = [self.points[0]]
 
         for i in range(len(cpos_list) - 2):
             if cpos_list[i + 1] < cumulLength[curr_seg]:
-                direction = (contPoints[curr_seg + 1] - contPoints[curr_seg])/(np.linalg.norm(contPoints[curr_seg + 1] - contPoints[curr_seg]))
+                direction = (self.points[curr_seg + 1] - self.points[curr_seg])/(np.linalg.norm(self.points[curr_seg + 1] - self.points[curr_seg]))
                 mag = (cpos_list[i + 1] - cpos_list[i])
 
             else:
                 curr_seg += 1
-                curr_point = contPoints[curr_seg]
+                curr_point = self.points[curr_seg]
 
-                direction = (contPoints[curr_seg+1] - contPoints[curr_seg])/(np.linalg.norm(contPoints[curr_seg + 1] - contPoints[curr_seg]))
+                direction = (self.points[curr_seg+1] - self.points[curr_seg])/(np.linalg.norm(self.points[curr_seg + 1] - self.points[curr_seg]))
                 mag = (cpos_list[i + 1] - cumulLength[curr_seg - 1])
 
             curr_point = curr_point + mag*direction
@@ -91,6 +94,8 @@ class continuousTrajectory:
     def plot(self):
         plt.plot([p[0] for p in self.points], [p[1] for p in self.points],'-o')
 
+# deprecated
+"""
 class sampledTrajectory:
     def __init__(self, points):
         self.points = points
@@ -106,3 +111,4 @@ class sampledTrajectory:
 
     def plot(self):
         plt.scatter([p[0] for p in self.points], [p[1] for p in self.points],'-o')
+"""
