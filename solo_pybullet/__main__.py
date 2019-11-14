@@ -11,12 +11,11 @@ import numpy as np  # Numpy library
 
 from sys import argv
 
-from isae.control.myController import *
 from isae.control.footTrajController import *
 from isae.tools.geometry import *
-from isae.tools.trajectory import *
-from isae.tools.new_trajectory import *
+from isae.tools.footTrajectory import *
 import isae.optim.grading
+from mpl_toolkits.mplot3d import Axes3D
 
 fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
 
@@ -41,19 +40,6 @@ except:
     print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y [Kp Kd]")
     quit()
 
-RTF = 1
-contTraj1 = continuousTrajectory([[-0.7,0],[-0.0,1], [0.7,0], [-0.7,0]], phaseOffset = 0.0)
-contTraj2 = continuousTrajectory(contTraj1.points, phaseOffset = 1.5707)
-
-contTraj3 = continuousTrajectory([[-0.7,0],[-0.0,0.6], [0.7,0], [-0.7,0]], phaseOffset = 1.5707)
-contTraj4 = continuousTrajectory(contTraj3.points, phaseOffset = 0.0)
-
-#contTraj = continuousTrajectory([[-0.5,0],[-0.1,0],[-0.0,1.7], [0.1,0],[0.5,0], [-0.1,0]])
-
-trajs = [contTraj1, contTraj2, contTraj3, contTraj4]
-
-leg = Leg(1,1)
-controller = footTrajController(bodyHeight, leg, trajs, period, offsets, Kp, Kd, 3 * np.ones((8, 1)))
 grading = isae.optim.grading.grading_RMS()
 
 # Functions to initialize the simulation and retrieve joints positions/velocities
@@ -62,29 +48,43 @@ from .initialization_simulation import configure_simulation, getPosVelJoints
 ####################
 #  INITIALIZATION ##
 ####################
-
+RTF = 1 # Real Time Factor
 dt = 0.001  # time step of the simulation
+
 # If True then we will sleep in the main loop to have a 1:1 ratio of (elapsed real time / elapsed time in the
 # simulation))
 realTimeSimulation = (argv[2] == "True")
 enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
 robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
+# Feet trajectories
+contTraj1 = footTrajectory([[-0.7,0],[-0.2,0.6], [0.3,0], [-0.7,0]], phaseOffset = offsets[0])
+contTraj2 = footTrajectory(contTraj1.points, phaseOffset = offsets[1])
+contTraj3 = footTrajectory([[-0.3,0],[0.2,1], [0.7,0], [-0.3,0]], phaseOffset = offsets[2])
+contTraj4 = footTrajectory(contTraj3.points, phaseOffset = offsets[3])
+
+trajs = [contTraj1, contTraj2, contTraj3, contTraj4]
+
+# Geometry and controller
+leg = Leg(1,1)
+controller = footTrajController(bodyHeight, leg, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+
 # Grading
 goal_factors = np.vstack([75, 10, 10, 1, 1, 1])
 goal_speed = np.vstack([.5, 0, 0, 0, 0, 0])
 
-###############
-#  MAIN LOOP ##
-###############
+# Plotting
 leg0_jointsPos = []
 leg1_jointsPos = []
 leg2_jointsPos = []
 leg3_jointsPos = []
-
 contact_points = []
 
-total_duration = 2.
+###############
+#  MAIN LOOP ##
+###############
+
+total_duration = 10.
 total_len = int(total_duration/dt)
 
 for i in range(total_len):  # run the simulation during dt * i_max seconds (simulation time)
@@ -119,7 +119,8 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     leg1_jointsPos.append([q[9], q[10]])
     leg2_jointsPos.append([q[11], q[12]])
     leg3_jointsPos.append([q[13], q[14]])
-
+    
+    # Store contact points at this time step
     contacts = p.getContactPoints(bodyA = 0)
     for point in contacts : 
         contact_points.append([point[5][0], point[5][1], point[4]])
@@ -138,13 +139,17 @@ print(str(grading.getGrade()))
 # Shut down the PyBullet client
 p.disconnect()
 
-plt.figure()
-plt.plot([p[0] + 0.5 for p in leg0_footpos], [p[1] - 1 for p in leg0_footpos])
-plt.plot([p[0] + 0.5 for p in leg1_footpos], [p[1] + 1 for p in leg1_footpos])
-plt.plot([p[0] - 0.5 for p in leg2_footpos], [p[1] + 1 for p in leg2_footpos])
-plt.plot([p[0] - 0.5 for p in leg3_footpos], [p[1] - 1 for p in leg3_footpos])
+# Plot feet trajectories
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+plt.plot([p[0] + 0.5 for p in leg0_footpos], [0.4]*len(leg0_footpos), [p[1] for p in leg0_footpos])
+plt.plot([p[0] + 0.5 for p in leg1_footpos], [-0.4]*len(leg0_footpos), [p[1] for p in leg1_footpos])
+plt.plot([p[0] - 0.5 for p in leg2_footpos], [0.4]*len(leg0_footpos), [p[1] for p in leg2_footpos])
+plt.plot([p[0] - 0.5 for p in leg3_footpos], [-0.4]*len(leg0_footpos), [p[1] for p in leg3_footpos])
 plt.title("Feet trajectories")
 
+# Plot robot contacts with ground
 contact_points = np.array(contact_points)
 colors = contact_points[:,2]
 
