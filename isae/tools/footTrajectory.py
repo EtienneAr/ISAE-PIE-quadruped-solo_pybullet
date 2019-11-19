@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 from math import sqrt
 import numpy as np
 
-# Defines 2 ways of representing a trajectory.
-#   - continuous trajectory : geometrical description, given by a set of points
-#   - sampled trajectory : description of a cycle of duration T sampled at dt, also as a (larger) set of points
+# Defines a trajectory with a set of points and an optional phase offset
 
 class footTrajectory:
     def __init__(self, points, phaseOffset=0):
