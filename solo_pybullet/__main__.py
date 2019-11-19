@@ -17,6 +17,9 @@ from isae.tools.footTrajectory import *
 import isae.optim.grading
 from mpl_toolkits.mplot3d import Axes3D
 
+# Functions to initialize the simulation and retrieve joints positions/velocities
+from isae.sim_control.initialization_simulation_pybullet import configure_simulation, getPosVelJoints
+
 fractorTraj, pointsTraj, period, bodyHeight, Kp, Kd, offsets = (None,) * 7
 
 params = list(map(float, argv[3:]))
@@ -42,9 +45,6 @@ except:
 
 grading = isae.optim.grading.grading_RMS()
 
-# Functions to initialize the simulation and retrieve joints positions/velocities
-from .initialization_simulation import configure_simulation, getPosVelJoints
-
 ####################
 #  INITIALIZATION ##
 ####################
@@ -55,7 +55,8 @@ dt = 0.001  # time step of the simulation
 # simulation))
 realTimeSimulation = (argv[2] == "True")
 enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
-robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
+#robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
+robotId, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 # Feet trajectories
 contTraj1 = footTrajectory([[-0.7,0],[-0.2,0.6], [0.3,0], [-0.7,0]], phaseOffset = offsets[0])
@@ -67,7 +68,7 @@ trajs = [contTraj1, contTraj2, contTraj3, contTraj4]
 
 # Geometry and controller
 leg = Leg(1,1)
-controller = footTrajController(bodyHeight, leg, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+controller = footTrajController(4*[bodyHeight], leg, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
 # Grading
 goal_factors = np.vstack([75, 10, 10, 1, 1, 1])
