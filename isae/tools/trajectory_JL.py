@@ -3,23 +3,28 @@ import matplotlib.pyplot as plt
 from math import pi,sqrt,cos,sin
 
 l_sol = 1
-height = 0.8
+r_turn = 0.1
+
+height = 0.6
+slope = (height-r_turn)/(0-(-l_sol/2))
+theta_lim3 = np.arctan2(height-r_turn,-l_sol/2)-pi/2
 n_straight = 20
-x_sol = np.linspace(l_sol*1.5, l_sol*0.5,n_straight)
+x_sol = np.linspace(l_sol/2, -l_sol/2,n_straight)
 y_sol = [0 for i in range(len(x_sol))]
 
-r_turn1 = 0.1
-x_c1 = l_sol*0.5
-y_c1 = 0.1
+r_turn1 = r_turn
+x_c1 = x_sol[n_straight-1]
+y_c1 = y_sol[n_straight-1]+r_turn1
 n_turn = 50
-theta_turn1 = np.linspace(-pi/2,-4*pi/3,n_turn)
+theta_lim1 = np.arctan2(height-r_turn,l_sol/2)-2*pi+pi/2
+theta_turn1 = np.linspace(-pi/2,theta_lim1,n_turn)
 x_turn1 = x_c1+ r_turn1*np.cos(theta_turn1)
 y_turn1 = y_c1+ r_turn1*np.sin(theta_turn1)
 
-r_turn2 = 0.1
-x_c2 = l_sol
-y_c2 = 0.5
-theta_turn2 = np.linspace(4*pi/6,2*pi/6,n_turn/2)
+r_turn2 = r_turn
+x_c2 = 0
+y_c2 = height
+theta_turn2 = np.linspace(theta_lim1,theta_lim3-2*pi,n_turn/2)
 x_turn2 = x_c2+ r_turn2*np.cos(theta_turn2)
 y_turn2 = y_c2+ r_turn2*np.sin(theta_turn2)
 
@@ -30,10 +35,10 @@ b_monte = A1[1]-a_monte*A1[0]
 x_monte = np.linspace(x_turn1[n_turn-1],x_turn2[0],n_straight)
 y_monte = a_monte*x_monte+b_monte
 
-r_turn3 = 0.1
-x_c3 = l_sol*1.5
-y_c3 = 0.1
-theta_turn3 = np.linspace(pi/3,-pi/2,n_turn)
+r_turn3 = r_turn
+x_c3 = x_sol[0]
+y_c3 = y_sol[0]+r_turn3
+theta_turn3 = np.linspace(theta_lim3,-pi/2,n_turn)
 x_turn3 = x_c3+ r_turn3*np.cos(theta_turn3)
 y_turn3 = y_c3+ r_turn3*np.sin(theta_turn3)
 
@@ -90,7 +95,7 @@ plt.plot(x_turn3,y_turn3,"r--",label="courbe 3")
 plt.plot(x,y,"bo",label="target")
 
 
-plt.xlim(0, 2*l_sol)
+plt.xlim(-l_sol, l_sol)
 plt.ylim(-0.1,1)
 plt.title("Trajectoire pied")
 plt.legend()
