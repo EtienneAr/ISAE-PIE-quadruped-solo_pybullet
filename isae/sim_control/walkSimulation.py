@@ -29,6 +29,7 @@ class walkSimulation:
     def __init__(self):
 
         # Parameters for the main pybullet loop
+        # Current simulation step
         self.step = 0
         # Timestep of the simulation
         self.dt = 0.001

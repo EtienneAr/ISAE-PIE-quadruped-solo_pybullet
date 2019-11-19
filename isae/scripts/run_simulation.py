@@ -10,7 +10,7 @@ walkSim = walkSimulation()
 
 # Loop parameters 
 pyb_gui = True
-duration = 60.
+duration = 20.
 
 # Trajectory parameters
 period = 3
