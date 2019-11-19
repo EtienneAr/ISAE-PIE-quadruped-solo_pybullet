@@ -1,7 +1,7 @@
 from sys import path
 import numpy as np
 import _thread
-from isae.control.myPD import PD
+import isae.control.myPD
 
 def async_input(controller):
 	while(True):
@@ -23,6 +23,8 @@ class myController:
 		self.currentPhase = 0.
 		self.factor = [1, 1]
 		if(userInput):
+			#create an asynchronous input to allow user to change paramters while the simulation is running
+			# by entering them in the terminal
 			_thread.start_new_thread(async_input, (self,))
 
 	def c(self, q, q_dot, time, dt):
@@ -36,6 +38,6 @@ class myController:
 			q_ref.append([qq[0]])
 			q_ref.append([qq[1]])
 
-		torques = PD(np.array(q_ref), np.zeros((8, 1)), q[7:], q_dot[6:], dt, self.Kp, self.Kd, self.sat)
+		torques = isae.control.myPD.PD(np.array(q_ref), np.zeros((8, 1)), q[7:], q_dot[6:], dt, self.Kp, self.Kd, self.sat)
 
 		return torques

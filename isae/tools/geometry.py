@@ -21,6 +21,7 @@ class Leg:
 		return [theta_mean - d_theta_1 + pi/2., pi + 2*atan(sqrt((r2 - pow(self.l1-self.l2,2)) / (pow(self.l1+self.l2,2)-r2)))]
 
 	def getJointsTorque(self, jointsPos, load):
+		#rGives the torque at each joint of a leg for a force applied at the shoulder
 		kneePos = [self.l1*cos(jointsPos[0]), self.l1*sin(jointsPos[0])]
 		footPos = self.getFootPos(jointsPos) 
 		footForce = [-load[0], -load[1]]
