@@ -50,38 +50,36 @@ x_desc = np.linspace(x_turn2[int(n_turn/2-1)],x_turn3[0],n_straight)
 y_desc = a_desc*x_desc+b_desc
 
 def alpha(x):
-    if x <=0.3:
+    if x <0.3:
         prctg = x/0.3
         x_alpha = x_sol[int(n_straight*prctg)]
         y_alpha = 0
     else :
-        if x <=0.4:
+        if x <0.4:
             prctg = (x-0.3)/0.1
             x_alpha = x_turn1[int(n_turn*prctg)]
             y_alpha = y_turn1[int(n_turn*prctg)]
         else :
-            if x <=0.6:
+            if x <0.6:
                 prctg = (x-0.4)/0.2
                 x_alpha = x_monte[int(n_straight*prctg)]
                 y_alpha = y_monte[int(n_straight*prctg)]
             else :
-                if x <=0.7:
+                if x <0.7:
                     prctg = (x-0.6)/0.1
                     x_alpha = x_turn2[int(n_turn/2*prctg)]
                     y_alpha = y_turn2[int(n_turn/2*prctg)]
                 else :
-                    if x <=0.9:
+                    if x <0.9:
                         prctg = (x-0.7)/0.2
                         x_alpha = x_desc[int(n_straight*prctg)]
                         y_alpha = y_desc[int(n_straight*prctg)]
                     else :
                         prctg = (x-0.9)/0.1
-                        x_alpha = x_turn3[int(n_turn/2*prctg)]
-                        y_alpha = y_turn3[int(n_turn/2*prctg)]
+                        x_alpha = x_turn3[int(n_turn*prctg)]
+                        y_alpha = y_turn3[int(n_turn*prctg)]
     return [x_alpha,y_alpha]
 
-[x,y] = alpha(0.62)
-print(x,y)
 
 plt.plot(x_sol,y_sol,"b--",label="contact")
 plt.plot(x_monte,y_monte,"g--",label="montée")
@@ -92,7 +90,10 @@ plt.plot(x_c2,y_c2,"ro")
 plt.plot(x_turn2,y_turn2,"r--",label="courbe 2")
 plt.plot(x_c3,y_c3,"ro")
 plt.plot(x_turn3,y_turn3,"r--",label="courbe 3")
-plt.plot(x,y,"bo",label="target")
+
+for i in range(1000):
+    [x,y] = alpha(i/1000.)
+    plt.plot(x,y,"bo")
 
 
 plt.xlim(-l_sol, l_sol)
