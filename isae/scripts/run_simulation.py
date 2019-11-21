@@ -14,7 +14,6 @@ duration = 20.
 
 # Trajectory parameters
 period = 3
-
 offsets = [0,0.5,0.5,0]
 
 # Feet trajectories

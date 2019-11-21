@@ -2,10 +2,6 @@
 
 # Wrapper class for pybullet simulation with adapted parameters for Solo and our controllers
 
-import os, sys
-from sys import argv
-sys.path.insert(0, os.getcwd()) # adds current directory to python path
-
 import time
 
 # PyBullet simulator
@@ -46,7 +42,7 @@ class walkSimulation:
         self.period = 1.
         # Array of 4 feet trajectories
         self.legsTraj = [] 
-        # Body heights wrt. the traj. reference frame during the movement, array of size 4 with values in [0,2[ (in leg height)
+        # Body heights wrt. the traj. reference frame during the movement, array of size 4 with values in [0,2[ (unit: leg height)
         self.bodyHeights = [] 
 
         # Geometry of the leg
@@ -145,7 +141,7 @@ class walkSimulation:
         # Main loop
         iterations = int(self.duration/self.dt)
         for k in range(iterations):
-            t0 = time.clock()
+            #t0 = time.clock()
             self.stepSim(robotController, robotId, revoluteJointIndices)
 
         # Shut down the PyBullet client
