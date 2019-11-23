@@ -65,6 +65,11 @@ class walkSimulation:
         self.baseState = []
         self.storeBaseState = True
 
+        # Internal variables
+        self.robotController = None 
+        self.robotId = None
+        self.revoluteJointIndices = None
+
     ###
     # Setting attributes (simulation parameters)
     ###
@@ -88,21 +93,20 @@ class walkSimulation:
     # Running the simulation
     ###
     def initializeSim(self):
-        robotId, revoluteJointIndices = configure_simulation(self.dt, self.enableGUI) # initializes PyBullet client
-        robotController = footTrajController(self.bodyHeights, self.Leg, self.legsTraj, self.period, self.Kp, self.Kd, 3 * np.ones((8, 1)))
-        return robotController, robotId, revoluteJointIndices
+        self.robotId, self.revoluteJointIndices = configure_simulation(self.dt, self.enableGUI) # initializes PyBullet client
+        self.robotController = footTrajController(self.bodyHeights, self.Leg, self.legsTraj, self.period, self.Kp, self.Kd, 3 * np.ones((8, 1)))
 
-    def stepSim(self, robotController, robotId, revoluteJointIndices):
+    def stepSim(self):
         # Time at the start of the loop
         #t0 = time.clock()
         # Get position and velocity of all joints in PyBullet (free flying base + motors)
-        q, qdot = getPosVelJoints(robotId, revoluteJointIndices)
+        q, qdot = getPosVelJoints(self.robotId, self.revoluteJointIndices)
 
         # Call controller to get torques for all joints
-        jointTorques = robotController.c(q, qdot, self.step*self.dt, self.dt) # c_walking(q, qdot, dt, solo, i * dt)
+        jointTorques = self.robotController.c(q, qdot, self.step*self.dt, self.dt) # c_walking(q, qdot, dt, solo, i * dt)
 
         # Set control torques for all joints in PyBullet
-        p.setJointMotorControlArray(robotId, revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
+        p.setJointMotorControlArray(self.robotId, self.revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
 
         # Compute one step of simulation
         p.stepSimulation()
@@ -135,14 +139,11 @@ class walkSimulation:
     def runSim(self):
         init_sim_date = time.clock()
 
-        # Init
-        robotController, robotId, revoluteJointIndices = self.initializeSim()
-
         # Main loop
         iterations = int(self.duration/self.dt)
         for k in range(iterations):
             #t0 = time.clock()
-            self.stepSim(robotController, robotId, revoluteJointIndices)
+            self.stepSim()
 
         # Shut down the PyBullet client
         p.disconnect()

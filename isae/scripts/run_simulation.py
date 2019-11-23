@@ -4,6 +4,7 @@ from sys import argv
 sys.path.insert(0, os.getcwd()) # adds current directory to python path
 
 from isae.sim_control.walkSimulation import *
+from isae.gui.gui_client import *
 
 # Create sim instance
 walkSim = walkSimulation()
@@ -13,7 +14,7 @@ pyb_gui = True
 duration = 20.
 
 # Trajectory parameters
-period = 3
+period = 0.3
 offsets = [0,0.5,0.5,0]
 
 # Feet trajectories
@@ -38,6 +39,12 @@ walkSim.setLoopParams(pyb_gui, duration)
 walkSim.setControllerParams(leg, Kp, Kd)
 walkSim.setTrajectoryParams(period, trajs, bodyHeights)
 
+GUIClient = soloGUIClient(walkSim)
+#GUIClient.run()
+#GUIClient.quit()
+
+time.sleep(2)
+walkSim.initializeSim()
 # Run sim
 walkSim.runSim()
 
