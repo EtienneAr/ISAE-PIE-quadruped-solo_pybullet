@@ -39,12 +39,8 @@ walkSim.setLoopParams(pyb_gui, duration)
 walkSim.setControllerParams(leg, Kp, Kd)
 walkSim.setTrajectoryParams(period, trajs, bodyHeights)
 
-GUIClient = soloGUIClient(walkSim)
-#GUIClient.run()
-#GUIClient.quit()
-
-time.sleep(2)
 walkSim.initializeSim()
+
 # Run sim
 walkSim.runSim()
 
