@@ -4,7 +4,7 @@ from sys import argv
 sys.path.insert(0, os.getcwd()) # adds current directory to python path
 
 from isae.sim_control.walkSimulation import *
-from isae.gui.gui_client import *
+#from isae.gui.gui_client import *
 
 # Create sim instance
 walkSim = walkSimulation()
