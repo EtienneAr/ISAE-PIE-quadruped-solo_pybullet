@@ -7,13 +7,14 @@ def interpol(a, b, phase):
 
 class roundishTriangle:
 
-    def __init__(self, length, height, radius):
+    def __init__(self, length, height, summit_x_pos, radius):
         self.l_sol = length  #1
         self.r_turn = radius #0.1
+        self.summit_x_pos = length*(summit_x_pos-0.5) #0 # different from 0.5 and -0.5
         self.height = height
 
-        self.slope = (self.height-self.r_turn)/(0-(-self.l_sol/2))
-        self.theta_lim3 = np.arctan2(self.height-self.r_turn,-self.l_sol/2)-pi/2
+        self.slope = (self.height-self.r_turn)/(summit_x_pos-(-self.l_sol/2))
+        self.theta_lim3 = np.arctan2(self.height-self.r_turn,summit_x_pos-self.l_sol/2)-pi/2
         print(self.theta_lim3)
 
 
@@ -22,10 +23,10 @@ class roundishTriangle:
         self.x_c1 = xtemp
         self.y_c1 = ytemp + self.r_turn1
         
-        self.theta_lim1 = np.arctan2(self.height - self.r_turn, self.l_sol/2)-2*pi+pi/2
+        self.theta_lim1 = np.arctan2(self.height - self.r_turn, summit_x_pos+self.l_sol/2)-2*pi+pi/2
 
         self.r_turn2 = self.r_turn
-        self.x_c2 = 0
+        self.x_c2 = summit_x_pos
         self.y_c2 = self.height
 
         self.A1 = self.getPos_turn1(1)
@@ -104,7 +105,7 @@ class roundishTriangle:
         return None
 
 
-rd = roundishTriangle(1,1,0.1)
+rd = roundishTriangle(1,1,0.37,0.1)
 for i in range(100):
     [x,y] = rd.getPos(i/100.)
     plt.plot(x,y,"b+")
