@@ -4,14 +4,10 @@ import numpy as np  # Numpy library
 
 import pybullet as p  # PyBullet simulator
 import pybullet_data
-from example_robot_data import loadSolo  # Functions to load the SOLO quadruped
 
 
 def configure_simulation(dt, enableGUI):
     global jointTorques
-    # Load the robot for Pinocchio
-    solo = loadSolo(True)
-    solo.initDisplay(loadModel=True)
 
     # Start the client for PyBullet
     if enableGUI:
@@ -54,7 +50,7 @@ def configure_simulation(dt, enableGUI):
     # Compute one step of simulation for initialization
     p.stepSimulation()
 
-    return robotId, solo, revoluteJointIndices
+    return robotId, revoluteJointIndices
 
 
 # Function to get the position/velocity of the base and the angular position/velocity of all joints

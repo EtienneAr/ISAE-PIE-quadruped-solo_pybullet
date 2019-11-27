@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from math import pi,sqrt,cos,sin
 
 def interpol(a, b, phase):
@@ -77,7 +76,7 @@ class roundishTriangle:
         y_desc = self.a_desc*x_desc+self.b_desc
         return [x_desc, y_desc]
 
-    def getPos(self, phase, factor = None):
+    def getPos_ref(self, phase, factor = None):
         phase = phase%1
         if phase < 0.3:
             prctg = phase/0.3
@@ -105,9 +104,14 @@ class roundishTriangle:
         
         return None
 
+    def getPos(self, phase, factor = None):
+        [x, y] = self.getPos_ref(phase, factor)
+        return [x, y]
+
 
 # # Debug 
-# rd = roundishTriangle(1.1,1.1,0.1, -0.5)
+# import matplotlib.pyplot as plt
+# rd = roundishTriangle(1.1,0.5,1,0, 0)
 # for i in range(100):
 #     [x,y] = rd.getPos(i/100.)
 #     plt.plot(x,y,"b+")

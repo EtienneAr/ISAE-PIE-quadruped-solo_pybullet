@@ -22,23 +22,24 @@ try:
     enableGUI = (argv[1] == "True")  # enable PyBullet GUI or not
     
     bodyHeight = params[0]
-    period = params[1]
-    stepLen = params[2]
-    stepRadius = params[3]
-    stepCenter = params[4]
-    offsets = [params[5],params[6],params[7],params[8]]
-    if(len(params) == 11):
+    stepHeight = params[1]
+    stepWidth = params[2]
+    period = params[3]
+    stepRadius = params[4]
+    stepCenter = params[5]
+    offsets = [params[6],params[7],params[8],params[9]]
+    if(len(params) == 12):
         Kp = float(params[-2])
         Kd = float(params[-1])
     else:
         Kp = 8.0
         Kd = 0.2
-        assert(len(params) == 9)
+        assert(len(params) == 10)
     # for i in range(9, len(params), 2):
     #     pointsTraj += [[params[i], params[i+1]]]
 except:
     print(" # Error. Espected parameters are : ")
-    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen stepRadius stepCenter phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [Kp Kd]")
+    print(" # # guiOn rtSimuOn bodyHeight stepHeight stepwidth stepPeriod stepRadius stepCenter phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [Kp Kd]")
     quit()
 
 ##############################
@@ -52,7 +53,7 @@ import isae.optim.grading
 controller = isae.control.myController.myController(
     bodyHeight, #Goal body height
     isae.tools.geometry.Leg(1,1), #geometry
-    isae.tools.trajectory_JL.roundishTriangle(stepLen, bodyHeight, stepRadius, stepCenter), #trajectoryGenerator
+    isae.tools.trajectory_JL.roundishTriangle(stepWidth, stepHeight, stepRadius, stepCenter), #trajectoryGenerator
     period,     #period
     offsets,    #phase Offsets
     Kp,         #proportionnal gain
@@ -74,7 +75,7 @@ from .initialization_simulation import configure_simulation, getPosVelJoints
 dt = 0.001  # time step of the simulation
 # If True then we will sleep in the main loop to have a 1:1 ratio of (elapsed real time / elapsed time in the
 # simulation))
-robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
+robotId, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 ###############
 #  MAIN LOOP ##
@@ -91,7 +92,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     q, qdot = getPosVelJoints(robotId, revoluteJointIndices)
 
     # Call controller to get torques for all joints
-    jointTorques = controller.c(q, qdot, i*dt, dt) # c_walking(q, qdot, dt, solo, i * dt)
+    jointTorques = controller.c(q, qdot, i*dt, dt)
 
     # Set control torques for all joints in PyBullet
     p.setJointMotorControlArray(robotId, revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
