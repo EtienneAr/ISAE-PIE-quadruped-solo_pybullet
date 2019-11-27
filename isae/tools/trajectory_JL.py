@@ -7,10 +7,11 @@ def interpol(a, b, phase):
 
 class roundishTriangle:
 
-    def __init__(self, length, height, radius):
+    def __init__(self, length, height, radius, center):
         self.l_sol = length  #1
         self.r_turn = radius #0.1
-        self.height = height
+        self.height = height # 1
+        self.center = center # 0
 
         self.slope = (self.height-self.r_turn)/(0-(-self.l_sol/2))
         self.theta_lim3 = np.arctan2(self.height-self.r_turn,-self.l_sol/2)-pi/2
@@ -25,7 +26,7 @@ class roundishTriangle:
         self.theta_lim1 = np.arctan2(self.height - self.r_turn, self.l_sol/2)-2*pi+pi/2
 
         self.r_turn2 = self.r_turn
-        self.x_c2 = 0
+        self.x_c2 = center
         self.y_c2 = self.height
 
         self.A1 = self.getPos_turn1(1)
@@ -77,6 +78,7 @@ class roundishTriangle:
         return [x_desc, y_desc]
 
     def getPos(self, phase, factor = None):
+        phase = phase%1
         if phase < 0.3:
             prctg = phase/0.3
             return self.getPos_sol(prctg)
@@ -104,15 +106,16 @@ class roundishTriangle:
         return None
 
 
-rd = roundishTriangle(1,1,0.1)
-for i in range(100):
-    [x,y] = rd.getPos(i/100.)
-    plt.plot(x,y,"b+")
+# # Debug 
+# rd = roundishTriangle(1.1,1.1,0.1, -0.5)
+# for i in range(100):
+#     [x,y] = rd.getPos(i/100.)
+#     plt.plot(x,y,"b+")
 
 
-plt.title("Trajectoire pied")
-plt.legend()
-plt.xlabel("Position relative du pied")
-plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
+# plt.title("Trajectoire pied")
+# plt.legend()
+# plt.xlabel("Position relative du pied")
+# plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
 
-plt.show() # affiche la figure a l'ecran
+# plt.show() # affiche la figure a l'ecran

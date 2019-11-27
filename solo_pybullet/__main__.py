@@ -23,21 +23,22 @@ try:
     
     bodyHeight = params[0]
     period = params[1]
-    fractorTraj = [params[2], 1]
-    offsets = [params[3],params[4],params[5],params[6]]
-    pointsTraj = [[params[7],params[8]], [params[9],params[10]], [params[11],params[12]]]
-    if(len(params) == 15):
+    stepLen = params[2]
+    stepRadius = params[3]
+    stepCenter = params[4]
+    offsets = [params[5],params[6],params[7],params[8]]
+    if(len(params) == 11):
         Kp = float(params[-2])
         Kd = float(params[-1])
     else:
         Kp = 8.0
         Kd = 0.2
-        assert(len(params) == 13)
+        assert(len(params) == 9)
     # for i in range(9, len(params), 2):
     #     pointsTraj += [[params[i], params[i+1]]]
 except:
     print(" # Error. Espected parameters are : ")
-    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y [Kp Kd]")
+    print(" # # guiOn rtSimuOn bodyHeight stepPeriod stepLen stepRadius stepCenter phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [Kp Kd]")
     quit()
 
 ##############################
@@ -45,13 +46,13 @@ except:
 ##############################
 import isae.control.myController
 import isae.tools.geometry
-import isae.tools.trajectory
+import isae.tools.trajectory_JL
 import isae.optim.grading
 
 controller = isae.control.myController.myController(
     bodyHeight, #Goal body height
     isae.tools.geometry.Leg(1,1), #geometry
-    isae.tools.trajectory.pointsTrajectory(pointsTraj, factor=fractorTraj), #trajectoryGenerator
+    isae.tools.trajectory_JL.roundishTriangle(stepLen, bodyHeight, stepRadius, stepCenter), #trajectoryGenerator
     period,     #period
     offsets,    #phase Offsets
     Kp,         #proportionnal gain
