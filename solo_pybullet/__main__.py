@@ -73,7 +73,7 @@ from .initialization_simulation import configure_simulation, getPosVelJoints
 dt = 0.001  # time step of the simulation
 # If True then we will sleep in the main loop to have a 1:1 ratio of (elapsed real time / elapsed time in the
 # simulation))
-robotId, solo, revoluteJointIndices = configure_simulation(dt, enableGUI)
+robotId, revoluteJointIndices = configure_simulation(dt, enableGUI)
 
 ###############
 #  MAIN LOOP ##
@@ -90,7 +90,7 @@ for i in range(total_len):  # run the simulation during dt * i_max seconds (simu
     q, qdot = getPosVelJoints(robotId, revoluteJointIndices)
 
     # Call controller to get torques for all joints
-    jointTorques = controller.c(q, qdot, i*dt, dt) # c_walking(q, qdot, dt, solo, i * dt)
+    jointTorques = controller.c(q, qdot, i*dt, dt)
 
     # Set control torques for all joints in PyBullet
     p.setJointMotorControlArray(robotId, revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
