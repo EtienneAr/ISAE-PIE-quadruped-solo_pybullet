@@ -1,11 +1,13 @@
 import subprocess
 from random import random
 
-parametersRange = [[0,2], #bodyHeight
+parametersRange = [ [0,2], #bodyHeight
+					[0,2], #stepHeight
 					[0,4], #stepPeriod
 					[-2,2], #stepLen
 					[0,2], #radius
 					[-2,2], #center
+					[0,1], #onGroundPhase
 					[0,1], [0,1], [0,1], [0,1], #phasesOff
 					[0,40], #Kp
 					[0,30], #Kd
@@ -26,7 +28,8 @@ def runSimu(args):
 	except KeyboardInterrupt:
 		raise KeyboardInterrupt
 	except:
-		return -1000.
+		pass
+	return -1000.
 
 
 def randomConfig():
