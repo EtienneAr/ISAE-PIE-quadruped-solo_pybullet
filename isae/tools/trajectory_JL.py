@@ -44,11 +44,11 @@ class roundishTriangle:
         self.b_desc = self.A2[1]-self.a_desc*self.A2[0]
 
         #Normalize speed
-        l_t1 = abs(self.theta_lim1 + pi/2) * self.r_turn1
+        l_t1 = 2 * abs(self.theta_lim1 + pi/2) * self.r_turn1
         l_monte = sqrt((self.A1[0]-self.B1[0])**2 + (self.A1[1]-self.B1[1])**2)
-        l_t2 = abs(self.theta_lim3-2*pi - self.theta_lim1) * self.r_turn2
+        l_t2 = 2 * abs(self.theta_lim3-2*pi - self.theta_lim1) * self.r_turn2
         l_desc = sqrt((self.A2[0]-self.B2[0])**2 + (self.A2[1]-self.B2[1])**2)
-        l_t3 = abs(-pi/2 - self.theta_lim3) * self.r_turn3
+        l_t3 = 2 * abs(-pi/2 - self.theta_lim3) * self.r_turn3
 
         self.phases = [0 for i in range(6)]
         
@@ -59,9 +59,9 @@ class roundishTriangle:
         phase_rest = 1.0 - sum(self.phases)
         l_rest = l_monte + l_t2 + l_desc
 
-        self.phases[1] = phase_rest * l_monte / l_rest #monte - same speed as turn 2 and desc
-        self.phases[1] = phase_rest * l_t2    / l_rest #turn 2 - same speed as monte and desc
-        self.phases[1] = phase_rest * l_desc  / l_rest #desc - same speed as monte and turn2
+        self.phases[2] = phase_rest * l_monte / l_rest #monte - same speed as turn 2 and desc
+        self.phases[3] = phase_rest * l_t2    / l_rest #turn 2 - same speed as monte and desc
+        self.phases[4] = phase_rest * l_desc  / l_rest #desc - same speed as monte and turn2
         
         print(self.phases)
         
@@ -135,17 +135,19 @@ class roundishTriangle:
         return [x, y]
 
 
-# # Debug 
-# import matplotlib.pyplot as plt
-# rd = roundishTriangle(1.1,0.5,0.05,0,)
-# for i in range(100):
-#     [x,y] = rd.getPos(i/100.)
-#     plt.plot(x,y,"b+")
+# Debug 
+import matplotlib.pyplot as plt
+rd = roundishTriangle(1,0.1,0.05,0,)
+
+fig, ax = plt.subplots()
+for i in range(100):
+    [x,y] = rd.getPos(i/100.)
+    plt.plot(x,y,"b+")
 
 
-# plt.title("Trajectoire pied")
-# plt.legend()
-# plt.xlabel("Position relative du pied")
-# plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
-
-# plt.show() # affiche la figure a l'ecran
+plt.title("Trajectoire pied")
+plt.legend()
+plt.xlabel("Position relative du pied")
+plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
+ax.set_aspect('equal')
+plt.show() # affiche la figure a l'ecran
