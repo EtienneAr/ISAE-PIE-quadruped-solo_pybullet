@@ -27,19 +27,20 @@ try:
     period = params[3]
     stepRadius = params[4]
     stepCenter = params[5]
-    offsets = [params[6],params[7],params[8],params[9]]
-    if(len(params) == 12):
+    onGroundPhase = params[6]
+    offsets = [params[7],params[8],params[9],params[10]]
+    if(len(params) == 13):
         Kp = float(params[-2])
         Kd = float(params[-1])
     else:
         Kp = 8.0
         Kd = 0.2
-        assert(len(params) == 10)
+        assert(len(params) == 11)
     # for i in range(9, len(params), 2):
     #     pointsTraj += [[params[i], params[i+1]]]
 except:
     print(" # Error. Espected parameters are : ")
-    print(" # # guiOn rtSimuOn bodyHeight stepHeight stepwidth stepPeriod stepRadius stepCenter phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [Kp Kd]")
+    print(" # # guiOn rtSimuOn bodyHeight stepHeight stepwidth stepPeriod stepRadius stepCenter onGroundPhase phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 [Kp Kd]")
     quit()
 
 ##############################
@@ -53,7 +54,7 @@ import isae.optim.grading
 controller = isae.control.myController.myController(
     bodyHeight, #Goal body height
     isae.tools.geometry.Leg(1,1), #geometry
-    isae.tools.trajectory_JL.roundishTriangle(stepWidth, stepHeight, stepRadius, stepCenter), #trajectoryGenerator
+    isae.tools.trajectory_JL.roundishTriangle(stepWidth, stepHeight, stepRadius, stepCenter, onGroundPhase), #trajectoryGenerator
     period,     #period
     offsets,    #phase Offsets
     Kp,         #proportionnal gain
