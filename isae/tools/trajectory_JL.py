@@ -6,7 +6,7 @@ def interpol(a, b, phase):
 
 class roundishTriangle:
 
-    def __init__(self, length, height, radius, center):
+    def __init__(self, length, height, radius, center, onGroundPhase):
         self.l_gnd = length  #1
         self.r_turn = radius #0.1
         self.height = height # 1
@@ -52,9 +52,9 @@ class roundishTriangle:
 
         self.phases = [0 for i in range(6)]
         
-        self.phases[0] = 0.5 #ground - half the motion
-        self.phases[1] = 0.5 * l_t1 / self.l_gnd #turn 1 - same speed as ground
-        self.phases[-1] = 0.5 * l_t3 / self.l_gnd #turn 3 - same speed as ground
+        self.phases[0] = onGroundPhase #ground - half the motion
+        self.phases[1] = onGroundPhase * l_t1 / self.l_gnd #turn 1 - same speed as ground
+        self.phases[-1] = onGroundPhase * l_t3 / self.l_gnd #turn 3 - same speed as ground
         
         phase_rest = 1.0 - sum(self.phases)
         l_rest = l_monte + l_t2 + l_desc
@@ -135,19 +135,19 @@ class roundishTriangle:
         return [x, y]
 
 
-# Debug 
-import matplotlib.pyplot as plt
-rd = roundishTriangle(1,0.1,0.05,0,)
+# # Debug 
+# import matplotlib.pyplot as plt
+# rd = roundishTriangle(1,0.5,0.1,0,0.2)
 
-fig, ax = plt.subplots()
-for i in range(100):
-    [x,y] = rd.getPos(i/100.)
-    plt.plot(x,y,"b+")
+# fig, ax = plt.subplots()
+# for i in range(100):
+#     [x,y] = rd.getPos(i/100.)
+#     plt.plot(x,y,"b+")
 
 
-plt.title("Trajectoire pied")
-plt.legend()
-plt.xlabel("Position relative du pied")
-plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
-ax.set_aspect('equal')
-plt.show() # affiche la figure a l'ecran
+# plt.title("Trajectoire pied")
+# plt.legend()
+# plt.xlabel("Position relative du pied")
+# plt.ylabel("Hauteur relative du pied par rapport au point d'ancrage")
+# ax.set_aspect('equal')
+# plt.show() # affiche la figure a l'ecran
