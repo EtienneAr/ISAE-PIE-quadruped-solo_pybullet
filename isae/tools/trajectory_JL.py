@@ -7,22 +7,22 @@ def interpol(a, b, phase):
 class roundishTriangle:
 
     def __init__(self, length, height, radius, center):
-        self.l_sol = length  #1
+        self.l_gnd = length  #1
         self.r_turn = radius #0.1
         self.height = height # 1
         self.center = center # 0
 
-        self.slope = (self.height-self.r_turn)/(0-(-self.l_sol/2))
-        self.theta_lim3 = np.arctan2(self.height-self.r_turn,-self.l_sol/2)-pi/2
-        print(self.theta_lim3)
+        #Setl variables necessary for computation
 
+        self.slope = (self.height-self.r_turn)/(0-(-self.l_gnd/2))
+        self.theta_lim3 = np.arctan2(self.height-self.r_turn,-self.l_gnd/2)-pi/2
 
         self.r_turn1 = self.r_turn
-        [xtemp, ytemp] = self.getPos_sol(1)
+        [xtemp, ytemp] = self.getPos_gnd(1)
         self.x_c1 = xtemp
         self.y_c1 = ytemp + self.r_turn1
         
-        self.theta_lim1 = np.arctan2(self.height - self.r_turn, self.l_sol/2)-2*pi+pi/2
+        self.theta_lim1 = np.arctan2(self.height - self.r_turn, self.l_gnd/2)-2*pi+pi/2
 
         self.r_turn2 = self.r_turn
         self.x_c2 = center
@@ -34,7 +34,7 @@ class roundishTriangle:
         self.b_monte = self.A1[1]-self.a_monte*self.A1[0]
 
         self.r_turn3 = self.r_turn
-        [xtemp, ytemp] = self.getPos_sol(0)
+        [xtemp, ytemp] = self.getPos_gnd(0)
         self.x_c3 = xtemp
         self.y_c3 = ytemp + self.r_turn3
         
@@ -43,8 +43,32 @@ class roundishTriangle:
         self.a_desc = (self.B2[1]-self.A2[1])/(self.B2[0]-self.A2[0])
         self.b_desc = self.A2[1]-self.a_desc*self.A2[0]
 
-    def getPos_sol(self, subphase):
-        x_alpha = interpol(self.l_sol/2, -self.l_sol/2, subphase)
+        #Normalize speed
+        l_t1 = abs(self.theta_lim1 + pi/2) * self.r_turn1
+        l_monte = sqrt((self.A1[0]-self.B1[0])**2 + (self.A1[1]-self.B1[1])**2)
+        l_t2 = abs(self.theta_lim3-2*pi - self.theta_lim1) * self.r_turn2
+        l_desc = sqrt((self.A2[0]-self.B2[0])**2 + (self.A2[1]-self.B2[1])**2)
+        l_t3 = abs(-pi/2 - self.theta_lim3) * self.r_turn3
+
+        self.phases = [0 for i in range(6)]
+        
+        self.phases[0] = 0.5 #ground - half the motion
+        self.phases[1] = 0.5 * l_t1 / self.l_gnd #turn 1 - same speed as ground
+        self.phases[-1] = 0.5 * l_t3 / self.l_gnd #turn 3 - same speed as ground
+        
+        phase_rest = 1.0 - sum(self.phases)
+        l_rest = l_monte + l_t2 + l_desc
+
+        self.phases[1] = phase_rest * l_monte / l_rest #monte - same speed as turn 2 and desc
+        self.phases[1] = phase_rest * l_t2    / l_rest #turn 2 - same speed as monte and desc
+        self.phases[1] = phase_rest * l_desc  / l_rest #desc - same speed as monte and turn2
+        
+        print(self.phases)
+        
+
+
+    def getPos_gnd(self, subphase):
+        x_alpha = interpol(self.l_gnd/2, -self.l_gnd/2, subphase)
         y_alpha = 0
         return [x_alpha, y_alpha]
 
@@ -77,30 +101,32 @@ class roundishTriangle:
         return [x_desc, y_desc]
 
     def getPos_ref(self, phase, factor = None):
-        phase = phase%1
-        if phase < 0.3:
-            prctg = phase/0.3
-            return self.getPos_sol(prctg)
+        #i determines to which part of the motion this phase correspond
+        #then subphase is the progression in this particular part of the mouvement. 
+        i=0
+        subphase = phase%1
+        while(subphase > self.phases[i]):
+            subphase -= self.phases[i]
+            i += 1
+        subphase /= self.phases[i]
 
-        if phase < 0.4:
-            prctg = (phase-0.3)/0.1
-            return self.getPos_turn1(prctg)
+        if(i==0):
+            return self.getPos_gnd(subphase)
 
-        if phase < 0.6:
-            prctg = (phase-0.4)/0.2
-            return self.getPos_monte(prctg)
+        if(i==1):
+            return self.getPos_turn1(subphase)
 
-        if phase < 0.7:
-            prctg = (phase-0.6)/0.1
-            return self.getPos_turn2(prctg)
+        if(i==2):
+            return self.getPos_monte(subphase)
 
-        if phase < 0.9:
-            prctg = (phase-0.7)/0.2
-            return self.getPos_desc(prctg)
+        if(i==3):
+            return self.getPos_turn2(subphase)
 
-        if phase <= 1:
-            prctg = (phase-0.9)/0.1
-            return self.getPos_turn3(prctg)
+        if(i==4):
+            return self.getPos_desc(subphase)
+
+        if(i==5):
+            return self.getPos_turn3(subphase)
         
         return None
 
@@ -111,7 +137,7 @@ class roundishTriangle:
 
 # # Debug 
 # import matplotlib.pyplot as plt
-# rd = roundishTriangle(1.1,0.5,1,0, 0)
+# rd = roundishTriangle(1.1,0.5,0.05,0,)
 # for i in range(100):
 #     [x,y] = rd.getPos(i/100.)
 #     plt.plot(x,y,"b+")
