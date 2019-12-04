@@ -7,10 +7,13 @@ YELLOW = "\033[33m"
 GREEN = "\033[32m"
 DEFAULT = "\033[39m"
 
-from isae.optim.evaluate import parametersRange, runSimu, randomConfig, randomTries
+from isae.optim.evaluate_TC import parametersRange, runSimu, randomConfig, randomTries
 
 
 def getBest(toKeep, population):
+	for elt in population:
+		print(elt[0])
+
 	population.sort(key=lambda p: -p[0])
 	return population[:toKeep]
 
