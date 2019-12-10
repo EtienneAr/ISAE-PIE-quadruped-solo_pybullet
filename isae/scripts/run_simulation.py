@@ -40,11 +40,12 @@ best_dist = 0
 walkSim = gradedSimulation()
 
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
+robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
 # Assign parameters to the simulation
 walkSim.setLoopParams(True, 10)
-walkSim.setControllerParams(leg, sols, Kp, Kd)
-walkSim.setTrajectoryParams(period, trajs, bodyHeights)
+walkSim.setController(robotController)
+walkSim.setTrajectoryParams(leg, period, trajs, bodyHeights)
 
 walkSim.initializeSim()
 

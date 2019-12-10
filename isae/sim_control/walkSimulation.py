@@ -50,13 +50,13 @@ class walkSimulation:
         # Geometry of the leg
         self.Leg = None
         # IK solution to be used, array of boolean of size 4 (see the Geometry class)
-        self.sols = []
+        #self.sols = []
         # Kp gain of the controller
-        self.Kp = 0. # 8.
+        #self.Kp = 0. # 8.
         # Kd gain of the controller
-        self.Kd = 0. # 0.2
+        #self.Kd = 0. # 0.2
         # Saturation of the controller
-        self.sat = float('inf')  # 3 
+        #self.sat = float('inf')  # 3 
 
         # Results to be stored
         # Contacts between the robot and the ground
@@ -83,14 +83,18 @@ class walkSimulation:
         self.duration = duration
         self.RTF = RTF
 
-    def setControllerParams(self,Leg, sols = 4*[False], Kp = 0, Kd = 0, sat = float('inf')):
-        self.Leg = Leg
-        self.sols = sols
-        self.Kp = Kp*1. # 8.
-        self.Kd = Kd*1. # 0.2
-        self.sat = float('inf') # 3
+    #def setControllerParams(self,Leg, sols = 4*[False], Kp = 0, Kd = 0, sat = float('inf')):
+    #    self.Leg = Leg
+    #    self.sols = sols
+    #    self.Kp = Kp*1. # 8.
+    #    self.Kd = Kd*1. # 0.2
+    #    self.sat = float('inf') # 3
+
+    def setController(self, robotController):
+        self.robotController = robotController
         
-    def setTrajectoryParams(self, period, legsTraj, bodyHeights):
+    def setTrajectoryParams(self, leg, period, legsTraj, bodyHeights):
+        self.Leg = leg
         self.period = period
         self.legsTraj = legsTraj
         self.bodyHeights = bodyHeights
@@ -100,7 +104,7 @@ class walkSimulation:
     ###
     def initializeSim(self):
         self.robotId, self.revoluteJointIndices = configure_simulation(self.dt, self.enableGUI) # initializes PyBullet client
-        self.robotController = footTrajController(self.bodyHeights, self.Leg, self.sols, self.legsTraj, self.period, self.Kp, self.Kd, 3 * np.ones((8, 1)))
+        #self.robotController = footTrajController(self.bodyHeights, self.Leg, self.sols, self.legsTraj, self.period, self.Kp, self.Kd, 3 * np.ones((8, 1)))
 
     def stepSim(self):
         # Time at the start of the loop
