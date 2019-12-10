@@ -19,13 +19,14 @@ sudo apt update -qqy && sudo apt install -qqy robotpkg-py35-{pinocchio,example-r
 ```
 
 To install PyBullet:
-`pip install --user pybullet`
+`pip install --user pybullet` (Python 2)
+`pip3 install --user pybullet` (Python 3)
+
 
 ## How to start the simulation
-If you are on the master branch :\
-launch `gepetto-gui`, then `python -m solo_pybullet`
+There are currently 2 options to run the simulation.
+- option 1 : run solo_pybullet as python module with command line arguments (see `solo_pybullet/__main__.py` for the arguments sequence), ex : `python -m solo_pybullet True False 1.5 0.6 0.8 0 1.57 1.57 0 -0.5 0 0.5 0 0 1 8 0.1`
+- option 2 : run the simulation script with hard-coded parameters (see the `isae/sim_control/walkSimulation.py` class and the `isae/scripts/run_simulation.py` script), with the following line : `python isae/scripts/run_simulation.py`
 
-If you are on the Etienne or Thibault branch :\
-launch `gepetto-gui`, then `python -m solo_pybullet guiOn rtSimuOn bodyHeight stepPeriod stepLen phaseOffset_1 phaseOffset_2 phaseOffset_3 phaseOffset_4 point0_X point0_Y point1_X point1_Y point2_X point2_Y Kp Kd`\
-Ex : `python -m solo_pybullet True False 1.5 0.6 0.8 0 1.57 1.57 0 -0.5 0 0.5 0 0 1 8 0.1`
+The simulation in its current state should be completely handled by the pybullet engine and this repo, and should not interact with the Pinocchio packages except to load Solo URDF file.
 `
