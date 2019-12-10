@@ -28,7 +28,10 @@ def configure_simulation(dt, enableGUI):
 
     # Load horizontal plane for PyBullet
     p.setAdditionalSearchPath(pybullet_data.getDataPath())
-    p.loadURDF("plane.urdf")
+    groundPlaneId = p.loadURDF("plane.urdf")
+
+    # Set friction coeff of ground plane
+    p.changeDynamics(groundPlaneId, -1, lateralFriction=100)
 
     # Load the robot for PyBullet
     robotStartPos = [0, 0, 0.35]

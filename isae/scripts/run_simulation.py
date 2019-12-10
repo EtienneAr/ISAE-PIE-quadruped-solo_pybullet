@@ -9,11 +9,11 @@ from isae.sim_control.gradedSimulation import *
 
 # Loop parameters 
 pyb_gui = False
-duration = 10
+duration = 20
 
 # Trajectory parameters
-period = 1.6
-offsets = [0.0,0.5,0.0,0.5]
+period = 4
+offsets = [0.5,0.5,0.0,0.0]
 #offsets = [0.3,0.3,0.,0.]
 
 # Feet trajectories
