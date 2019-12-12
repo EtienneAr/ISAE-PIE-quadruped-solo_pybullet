@@ -23,7 +23,7 @@ from mpl_toolkits.mplot3d import Axes3D
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from isae.sim_control.initialization_simulation_pybullet import configure_simulation, getPosVelJoints
 
-class walkSimulation:
+class walkSimulation(object):
     def __init__(self):
 
         # Parameters for the main pybullet loop
@@ -248,6 +248,37 @@ class walkSimulation:
         plt.plot(self.qdotBase[:,0,0],self.qdotBase[:,1,0], 'g',linewidth=0.5, label='Base xy speed')
         plt.plot(xdotAvg,ydotAvg, 'r', linewidth=2,label='Avg base speed')
         #plt.plot([x0,xf],[y0,yf], '--', linewidth = 2)
+
+    def plotBaseSpeedXY(self):
+        self.qdotBase = np.array(self.qdotBase)
+
+        filter_size = 500
+        xdotAvg = self.rollingAvg(self.qdotBase[:,0,0], filter_size)
+        ydotAvg = self.rollingAvg(self.qdotBase[:,1,0], filter_size)
+
+        plt.plot(self.qdotBase[:,0,0],'g',linewidth=0.5, label='Base x speed')
+        plt.plot(xdotAvg, 'r', linewidth=2,label='Avg base speed')
+        plt.legend()
+        plt.figure()
+        plt.plot(self.qdotBase[:,1,0], 'g',linewidth=0.5, label='Base y speed')
+        plt.plot(ydotAvg, 'r', linewidth=2,label='Avg base speed')
+
+    def plotBaseAbsXYSpeed(self, filters=[500]):
+        self.qdotBase = np.array(self.qdotBase)
+        absXYSpeed = np.sqrt(self.qdotBase[:,0,0]**2 + self.qdotBase[:,1,0]**2)
+        lw = 0.5
+
+        plt.plot(absXYSpeed,linewidth=lw, label='Base abs speed')
+
+        for s in filters : 
+            filter_size = s
+            xdotAvg = self.rollingAvg(self.qdotBase[s/2:,0,0], filter_size)
+            ydotAvg = self.rollingAvg(self.qdotBase[s/2:,1,0], filter_size)
+            avgAbsXYSpeed = np.sqrt(xdotAvg**2 + ydotAvg**2)
+
+            plt.plot(avgAbsXYSpeed, linewidth=lw, label='Avg base abs speed filter ' + str(s))
+        
+
 
     def plotTrajBase(self):
         fig = plt.figure()
