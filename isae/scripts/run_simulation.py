@@ -10,11 +10,11 @@ from isae.optim.genAlgParam import *
 
 # Loop parameters 
 pyb_gui = True
-duration = 15
+duration = 8
 
 # Trajectory parameters
 #period = 1.9
-period = 0.95
+period = 1.
 
 #offsets = [0.0,0.5,0.0,0.5]
 offsets = [0.5,0.,0.5,0.]
@@ -22,20 +22,25 @@ offsets = [0.5,0.,0.5,0.]
 # params : bh1, bh2, Kp, Kd, period
 #0.96, 1.27, 12.2, 0.52, 0.82   optim1 (pop 10, gen 20)
 #1.19, 1.65, 13.3, 0.54, 0.95   optim2 (pop 40, gen 20)
+#best_params = [1.3, 1.32, 14.2, 1.1, 2.56]  # for speed ref = [0.2,0]
+#1.41570218598
+#1.59286447661
+#15.3423324557
+#3.60968563781
+#1.30976605128
 
-#
 # params : triangle summits
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-footTraj3 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[2])
+footTraj3 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
 footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
-bodyHeights = 2*[1.19] + 2*[1.65]
+bodyHeights = 2*[1.4] + 2*[1.4]
 #bodyHeights = [1.7,1.7,1.7,1.7]
 
 # Geometry and controller
@@ -46,9 +51,9 @@ sols = [False, False, True, True]
 #sols = [True, True, True, True]
 
 #Kp = 8
-Kp = 13.3
+Kp = 8
 #Kd = 0.2
-Kd = 0.54
+Kd = 0.2
 
 best_param = [0,0,0,0]
 best_dist = 0
@@ -69,6 +74,8 @@ walkSim.initializeSim()
 walkSim.runSim()
 
 print(walkSim.getFinalDistance())
+plt.figure()
+walkSim.plotContactPoints()
 plt.figure()
 walkSim.plotBaseSpeed()
 plt.legend()

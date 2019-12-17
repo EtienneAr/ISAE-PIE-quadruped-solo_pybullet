@@ -61,6 +61,11 @@ class walkSimulation(object):
         # Results to be stored
         # Contacts between the robot and the ground
         self.contactPoints = []
+        self.contactsFoot0 = []
+        self.contactsFoot1 = []
+        self.contactsFoot2 = []
+        self.contactsFoot3 = []
+        self.otherContacts = []
         self.storeContactPoints = True
         # Feet positions in time
         self.feetPos = []
@@ -145,6 +150,16 @@ class walkSimulation(object):
             for point in contacts : 
                 self.contactPoints.append([point[5][0], point[5][1], point[4]]) # stores the x,y position of the contact point and the link (index) in contact with the ground
 
+                if (point[4] == 2):# or (point[4] == 2): # link index for foot0 and leg0 bottom part
+                    self.contactsFoot0.append(self.step)
+                elif point[4] == 5: # link index for foot1
+                    self.contactsFoot1.append(self.step)
+                elif point[4] == 8: # link index for foot2
+                    self.contactsFoot2.append(self.step)
+                elif point[4] == 11: # link index for foot3
+                    self.contactsFoot3.append(self.step)
+                else: # link index for foot1
+                    self.otherContacts.append(self.step)
         self.step += 1
 
 
@@ -195,7 +210,27 @@ class walkSimulation(object):
         self.contactPoints = np.array(self.contactPoints)
         colors = self.contactPoints[:,2]
 
-        plt.scatter(self.contactPoints[:,0], self.contactPoints[:,1], c=colors, marker='+',s=25)
+        filter_size = 10
+        
+        foot0_timeline = 1.0*np.array([t in self.contactsFoot0 for t in range(self.step)])
+        foot1_timeline = 1.0*np.array([t in self.contactsFoot1 for t in range(self.step)])
+        foot2_timeline = 1.0*np.array([t in self.contactsFoot2 for t in range(self.step)])
+        foot3_timeline = 1.0*np.array([t in self.contactsFoot3 for t in range(self.step)])
+
+        timeline = [i*self.dt for i in range(self.step)]
+
+        print(str(len(self.contactPoints)) + " contact points")
+        plt.fill_between(timeline, 3, 3+foot0_timeline, color='b', label="Foot 0 - FL")
+        plt.fill_between(timeline, 2, 2+foot1_timeline, color='r', label="Foot 1 - FR")
+        plt.fill_between(timeline, 1, 1+foot2_timeline, color='g', label="Foot 2 - RL")
+        plt.fill_between(timeline, 0, 0+foot3_timeline, color='y', label="Foot 3 - RR")
+        #plt.plot(4. + np.array(foot1_timeline), label="Foot 1")
+        #plt.plot(2. + np.array(foot2_timeline), label="Foot 2")
+        #plt.plot(np.array(foot3_timeline), label="Foot 3")
+
+        # TO KEEP
+        #plt.scatter(self.contactPoints[:,0], self.contactPoints[:,1], c=colors, marker='+',s=25)
+        plt.legend()
         plt.title("Contact points with ground")
 
     def plotFeetAvgPos(self):

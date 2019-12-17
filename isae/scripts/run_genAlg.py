@@ -7,7 +7,7 @@ from isae.optim.genAlg import *
 
 GA = geneticAlgorithm()
 
-GA.pop_size = 8
+GA.pop_size = 5
 GA.n_gen = 2
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -22,7 +22,7 @@ def paramToSim_Bh_KpKd_T(paramsInstance):
 
     # Loop parameters 
     pyb_gui = False
-    duration = 10
+    duration = 8
 
     #period = 1.5
     offsets = [0.5,0.,0.5,0.]
@@ -57,6 +57,7 @@ GA.setParamToSim(paramToSim_Bh_KpKd_T)
 # params : bh1, bh2, Kp, Kd, period
 paramTypes = ["scalar", "scalar","scalar","scalar","scalar"]
 paramArgs = [[0.8,1.7],[0.8,1.7],[4,20],[0,5],[0.5,4]]
+paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
 
 # params : triangles summits for traj
 #paramTypes = ["2dPoint","2dPoint","2dPoint"]
@@ -64,5 +65,11 @@ paramArgs = [[0.8,1.7],[0.8,1.7],[4,20],[0,5],[0.5,4]]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
+GA.setParamNames(paramNames)
 
 best_per_gen = GA.runOptim()
+best_fit_per_gen = [indiv[0] for indiv in best_per_gen]
+
+plt.plot(best_fit_per_gen)
+plt.show()
+

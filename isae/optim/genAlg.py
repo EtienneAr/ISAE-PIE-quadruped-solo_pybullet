@@ -20,11 +20,14 @@ class geneticAlgorithm(object):
     def setParamArgs(self,paramArgs):
         self.paramArgs = paramArgs
 
+    def setParamNames(self,paramNames):
+        self.paramNames = paramNames
+
     def printParamsInstance(self, paramsInstance):
         for k in range(len(paramsInstance)):
             print(paramsInstance[k].value)
 
-    # Fonction A CHANGER, definie pour l'instant pour
+    # Fonction A CHANGER, definie pour l'insparamArgs
     # des cas specifiques a chaque fois
 
     def setParamToSim(self, paramToSim):
@@ -128,12 +131,10 @@ class geneticAlgorithm(object):
             for i in range(len(self.paramTypes)):
                 if(self.paramTypes[i] == "scalar"):
                     paramInstance = GA_scalar(self.paramArgs[i])
-                    paramInstance.initRandom()
-                    indiv.append(paramInstance)
                 if(self.paramTypes[i] == "2dPoint"):
                     paramInstance = GA_2dPoint(self.paramArgs[i])
-                    paramInstance.initRandom()
-                    indiv.append(paramInstance)
+                paramInstance.initRandom()
+                indiv.append(paramInstance)
             pop.append(indiv)
         return pop
 
@@ -150,10 +151,10 @@ class geneticAlgorithm(object):
             sim.initializeSim()
             sim.runSim()
             # Choice of optimization function in sim.grades list
-            gradedPop.append([sim.grades[0], indiv])
+            gradedPop.append([sim.grades[3], indiv])
             print(BLUE + "Indiv. " + str(i) + " : " + DEFAULT)
             self.printParamsInstance(indiv)
-            print(GREEN + "Fitness : " + str(sim.grades[0]) + DEFAULT)
+            print(GREEN + "Fitness : " + str(sim.grades[3]) + DEFAULT)
             print('\n')
         return gradedPop
     
@@ -205,13 +206,26 @@ class geneticAlgorithm(object):
             print("Best params : ")
             self.printParamsInstance(pop[0][1])
             bests.append(pop[0])
+            #self.plotParamHist(pop)
             pop = self.selectBest(pop)
             pop = self.reprodPopulation(pop)
-            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))
-
+            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))      
         return bests
 
     # Analysis methods
+    def plotParamHist(self, gradedPop):
+        samples = [[]]*len(self.paramTypes)
+        for indiv in gradedPop:
+            for k in range(len(indiv)):
+                samples[k].append(indiv[1][k].value)
+        
+        for i in range(len(samples)):
+            plt.figure()
+            plt.hist(samples[i])
+            plt.title(self.paramNames[i] + ' histogram for current gen')
+        plt.show()
+
+
 
 
 

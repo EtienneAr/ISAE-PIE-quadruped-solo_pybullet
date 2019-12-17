@@ -5,7 +5,7 @@ from isae.sim_control.walkSimulation import *
 class gradedSimulation(walkSimulation):
     def __init__(self):
         walkSimulation.__init__(self)
-        self.grades = [0,0]
+        self.grades = [0,0,0,0]
         self.gradesSeries = []
 
         #self.total_grade = 0
@@ -19,7 +19,7 @@ class gradedSimulation(walkSimulation):
     #    self.gradingClass = gradingClass
 
     def updateGrade_RMStoQdotRef(self,qdot_ref, factors, dt):
-        return -np.sum(factors * (self.qdotBase[0][:6] - qdot_ref) ** 2) * dt
+        return -np.sum(factors * (self.qdotBase[-1][:6] - qdot_ref) ** 2) * dt
 
     def updateGrade_MaxFinalDist(self, maxDist, offset = 0):
         #print(len(self.qBase[0]))
@@ -33,18 +33,27 @@ class gradedSimulation(walkSimulation):
             return diff
         return 0
 
+    def updateGrade_penalizeContacts(self):
+        contacts = p.getContactPoints(bodyA = 0) # checks collisions with bodyA=0 (ground plane)
+        return -len(contacts)/2
+
     # update all specified grades, 2 for now
     # has to be the same number as len(self.grades)
     def updateGrades(self):
         # Dist
-        self.grades[0] += self.updateGrade_MaxFinalDist(self.grades[0])
+        d = self.updateGrade_MaxFinalDist(self.grades[0])
+        self.grades[0] += d
         # RMS       
-        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([75, 10, 10, 1, 1, 1]), np.vstack([.2, 0, 0, 0, 0, 0]), self.dt)
+        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([75, 10, 10, 1, 1, 1]), self.dt)
+        # Contacts penalization
+        #self.grades[2] += self.updateGrade_penalizeContacts()
+        # Dist + contacts
+        self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
     
     def stepSim(self):
         super(gradedSimulation, self).stepSim()
         self.updateGrades()
-        #print(self.grades[1])
+        #print(self.grades[2])
         self.gradesSeries.append(list(self.grades))
     
     def plotGrades(self):
