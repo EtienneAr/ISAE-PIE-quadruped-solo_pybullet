@@ -4,7 +4,7 @@ import numpy as np  # Numpy library
 
 import pybullet as p  # PyBullet simulator
 import pybullet_data
-from example_robot_data import loadSolo  # Functions to load the SOLO quadruped
+#from example_robot_data import loadSolo  # Functions to load the SOLO quadruped
 
 
 def configure_simulation(dt, enableGUI):
@@ -36,7 +36,7 @@ def configure_simulation(dt, enableGUI):
     # Load the robot for PyBullet
     robotStartPos = [0, 0, 0.35]
     robotStartOrientation = p.getQuaternionFromEuler([0, 0, 0])
-    p.setAdditionalSearchPath("/opt/openrobots/share/example-robot-data/robots/solo_description/robots")
+    p.setAdditionalSearchPath("./solo_description/robots")
     robotId = p.loadURDF("solo.urdf", robotStartPos, robotStartOrientation)
 
     # Set time step of the simulation
