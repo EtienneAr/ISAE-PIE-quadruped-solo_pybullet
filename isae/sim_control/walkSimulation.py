@@ -69,7 +69,7 @@ class walkSimulation(object):
         self.storeContactPoints = True
         # Feet positions in time
         self.feetPos = []
-        self.storeFeetPos = True    
+        self.storeFeetPos = True
         # Base state 
         self.qBase = []
         self.qdotBase = []
@@ -79,6 +79,7 @@ class walkSimulation(object):
         self.robotController = None 
         self.robotId = None
         self.revoluteJointIndices = None
+        self.physicsClient = None
 
     ###
     # Setting attributes (simulation parameters)
@@ -108,23 +109,24 @@ class walkSimulation(object):
     # Running the simulation
     ###
     def initializeSim(self):
-        self.robotId, self.revoluteJointIndices = configure_simulation(self.dt, self.enableGUI) # initializes PyBullet client
+        self.robotId, self.revoluteJointIndices, self.physicsClient = configure_simulation(self.dt, self.enableGUI) # initializes PyBullet client
         #self.robotController = footTrajController(self.bodyHeights, self.Leg, self.sols, self.legsTraj, self.period, self.Kp, self.Kd, 3 * np.ones((8, 1)))
 
+    # Wrapper around pybullet_client.stepSimulation()
     def stepSim(self):
         # Time at the start of the loop
         #t0 = time.clock()
         # Get position and velocity of all joints in PyBullet (free flying base + motors)
-        q, qdot = getPosVelJoints(self.robotId, self.revoluteJointIndices)
+        q, qdot = getPosVelJoints(self.robotId, self.revoluteJointIndices, self.physicsClient)
 
         # Call controller to get torques for all joints
         jointTorques = self.robotController.c(q, qdot, self.step*self.dt, self.dt) # c_walking(q, qdot, dt, solo, i * dt)
 
         # Set control torques for all joints in PyBullet
-        p.setJointMotorControlArray(self.robotId, self.revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
+        self.physicsClient.setJointMotorControlArray(self.robotId, self.revoluteJointIndices, controlMode=self.physicsClient.TORQUE_CONTROL, forces=jointTorques)
 
         # Compute one step of simulation
-        p.stepSimulation()
+        self.physicsClient.stepSimulation()
 
         # Duration of the step
         #t_step = time.clock() - t0
@@ -146,7 +148,7 @@ class walkSimulation(object):
 
         if self.storeContactPoints:
             # Store contact points at this time step
-            contacts = p.getContactPoints(bodyA = 0) # checks collisions with bodyA=0 (ground plane)
+            contacts = self.physicsClient.getContactPoints(bodyA = 0) # checks collisions with bodyA=0 (ground plane)
             for point in contacts : 
                 self.contactPoints.append([point[5][0], point[5][1], point[4]]) # stores the x,y position of the contact point and the link (index) in contact with the ground
 
@@ -173,12 +175,42 @@ class walkSimulation(object):
             self.stepSim()
 
         # Shut down the PyBullet client
-        p.disconnect()
+        self.physicsClient.disconnect()
 
         end_sim_date = time.clock()
         print("##########################################\n"+
             "Simulation finished in " +
             str(end_sim_date - init_sim_date) + " s\n##########################################")
+    
+    # Synchronizes the stepSim() calls for multiple simulations
+    # other_sims : list of simulation that have been initialized, and assumes the same duration for now
+    def runSimParallelWith(self, other_sims):
+        init_sim_date = time.clock()
+
+        for sim in other_sims :
+            sim.initializeSim()
+        #self.initializeSim()
+
+        # Main loop
+        iterations = int(self.duration/self.dt)
+        for k in range(iterations):
+            self.stepSim()
+            other_sims[0].stepSim()
+            #for sim in other_sims :
+            #    sim.stepSim()
+            
+        
+        # Shut down pybullet clients
+        self.physicsClient.disconnect()
+        for sim in other_sims :
+            sim.physicsClient.disconnect()
+        
+        
+        end_sim_date = time.clock()
+        print("##########################################\n"+
+            str(len(other_sims)) + " simulations finished in " +
+            str(end_sim_date - init_sim_date) + " s\n##########################################")
+            
     
     ###
     # Helpful functions for grading
@@ -307,8 +339,8 @@ class walkSimulation(object):
 
         for s in filters : 
             filter_size = s
-            xdotAvg = self.rollingAvg(self.qdotBase[s/2:,0,0], filter_size)
-            ydotAvg = self.rollingAvg(self.qdotBase[s/2:,1,0], filter_size)
+            xdotAvg = self.rollingAvg(self.qdotBase[int(s/2):,0,0], filter_size)
+            ydotAvg = self.rollingAvg(self.qdotBase[int(s/2):,1,0], filter_size)
             avgAbsXYSpeed = np.sqrt(xdotAvg**2 + ydotAvg**2)
 
             plt.plot(avgAbsXYSpeed, linewidth=lw, label='Avg base abs speed filter ' + str(s))

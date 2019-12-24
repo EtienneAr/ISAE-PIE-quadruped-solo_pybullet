@@ -4,11 +4,13 @@ from sys import argv
 sys.path.insert(0, os.getcwd()) # adds current directory to python path
 
 from isae.optim.genAlg import *
+from isae.optim.multiprocessGenAlg import *
 
-GA = geneticAlgorithm()
+#GA = geneticAlgorithm()
+GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 5
-GA.n_gen = 2
+GA.pop_size = 40
+GA.n_gen = 5
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -72,4 +74,8 @@ best_fit_per_gen = [indiv[0] for indiv in best_per_gen]
 
 plt.plot(best_fit_per_gen)
 plt.show()
+
+print("\n########### \n Best param : ")
+GA.printParamsInstance(best_per_gen[0][1])
+print("\n\nFitness : {}\n###########".format(best_fit_per_gen[0]))
 

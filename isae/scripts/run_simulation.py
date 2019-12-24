@@ -8,8 +8,13 @@ from isae.sim_control.gradedSimulation import *
 from isae.optim.genAlgParam import *
 #from isae.gui.gui_client import *
 
+import multiprocessing
+
+print("Number of cpu : ", multiprocessing.cpu_count())
+
+
 # Loop parameters 
-pyb_gui = True
+pyb_gui = False
 duration = 8
 
 # Trajectory parameters
@@ -33,10 +38,10 @@ offsets = [0.5,0.,0.5,0.]
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-0.6,0],[-0.0,.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-footTraj3 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
+footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
 footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
@@ -55,23 +60,28 @@ Kp = 8
 #Kd = 0.2
 Kd = 0.2
 
-best_param = [0,0,0,0]
-best_dist = 0
-
-walkSim = gradedSimulation()
-
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+
+# Create simulation
+walkSim = gradedSimulation()
+walkSim1 = gradedSimulation()
 
 # Assign parameters to the simulation
 walkSim.setLoopParams(pyb_gui, duration)
 walkSim.setController(robotController)
 walkSim.setTrajectoryParams(leg, period, trajs, bodyHeights)
 
+walkSim1.setLoopParams(pyb_gui, duration)
+walkSim1.setController(robotController)
+walkSim1.setTrajectoryParams(leg, period, trajs, bodyHeights)
+
 walkSim.initializeSim()
+#walkSim1.initializeSim()
 
 # Run sim
 walkSim.runSim()
+#walkSim.runSimParallelWith([walkSim1])
 
 print(walkSim.getFinalDistance())
 plt.figure()
@@ -85,7 +95,8 @@ plt.legend()
 plt.figure()
 walkSim.plotBasePos()
 plt.legend()
-plt.figure()
-walkSim.plotGrades()
-plt.legend()
+#plt.figure()
+#walkSim.plotGrades()
+#plt.legend()
 plt.show()
+"""
