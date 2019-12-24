@@ -4,6 +4,7 @@ import numpy as np  # Numpy library
 
 import pybullet as p  # PyBullet simulator
 import pybullet_data
+import pybullet_utils.bullet_client as bc
 #from example_robot_data import loadSolo  # Functions to load the SOLO quadruped
 
 
@@ -17,36 +18,37 @@ def configure_simulation(dt, enableGUI):
 
     # Start the client for PyBullet
     if enableGUI:
-        physicsClient = p.connect(p.GUI)
+        physicsClient = bc.BulletClient(connection_mode=p.GUI)
     else:
-        physicsClient = p.connect(p.DIRECT)  # noqa
+        physicsClient = bc.BulletClient(connection_mode=p.DIRECT)
+        #physicsClient = p.connect(p.DIRECT)  # noqa
     # p.GUI for graphical version
     # p.DIRECT for non-graphical version
 
     # Set gravity (disabled by default)
-    p.setGravity(0, 0, -9.81)
+    physicsClient.setGravity(0, 0, -9.81)
 
     # Load horizontal plane for PyBullet
-    p.setAdditionalSearchPath(pybullet_data.getDataPath())
-    groundPlaneId = p.loadURDF("plane.urdf")
+    physicsClient.setAdditionalSearchPath(pybullet_data.getDataPath())
+    groundPlaneId = physicsClient.loadURDF("plane.urdf")
 
     # Set friction coeff of ground plane
-    p.changeDynamics(groundPlaneId, -1, lateralFriction=2)
+    physicsClient.changeDynamics(groundPlaneId, -1, lateralFriction=2)
 
     # Load the robot for PyBullet
     robotStartPos = [0, 0, 0.35]
     robotStartOrientation = p.getQuaternionFromEuler([0, 0, 0])
-    p.setAdditionalSearchPath("./solo_description/robots")
-    robotId = p.loadURDF("solo.urdf", robotStartPos, robotStartOrientation)
+    physicsClient.setAdditionalSearchPath("./solo_description/robots")
+    robotId = physicsClient.loadURDF("solo.urdf", robotStartPos, robotStartOrientation)
 
     # Set time step of the simulation
     # dt = 0.001
-    p.setTimeStep(dt)
+    physicsClient.setTimeStep(dt)
     # realTimeSimulation = True # If True then we will sleep in the main loop to have a frequency of 1/dt
 
     # Disable default motor control for revolute joints
     revoluteJointIndices = [0, 1, 3, 4, 6, 7, 9, 10]
-    p.setJointMotorControlArray(robotId,
+    physicsClient.setJointMotorControlArray(robotId,
                                 jointIndices=revoluteJointIndices,
                                 controlMode=p.VELOCITY_CONTROL,
                                 targetVelocities=[0.0 for m in revoluteJointIndices],
@@ -54,21 +56,21 @@ def configure_simulation(dt, enableGUI):
 
     # Enable torque control for revolute joints
     jointTorques = [0.0 for m in revoluteJointIndices]
-    p.setJointMotorControlArray(robotId, revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
+    physicsClient.setJointMotorControlArray(robotId, revoluteJointIndices, controlMode=p.TORQUE_CONTROL, forces=jointTorques)
 
     # Compute one step of simulation for initialization
-    p.stepSimulation()
+    physicsClient.stepSimulation()
 
-    # return robotId, solo, revoluteJointIndices
-    return robotId, revoluteJointIndices
+    # return robotId, solo, revoluteJointIndices, physicsClient
+    return robotId, revoluteJointIndices, physicsClient
 
 
 # Function to get the position/velocity of the base and the angular position/velocity of all joints
-def getPosVelJoints(robotId, revoluteJointIndices):
+def getPosVelJoints(robotId, revoluteJointIndices, physicsClient):
 
-    jointStates = p.getJointStates(robotId, revoluteJointIndices)  # State of all joints
-    baseState = p.getBasePositionAndOrientation(robotId)  # Position of the free flying base
-    baseVel = p.getBaseVelocity(robotId)  # Velocity of the free flying base
+    jointStates = physicsClient.getJointStates(robotId, revoluteJointIndices)  # State of all joints
+    baseState = physicsClient.getBasePositionAndOrientation(robotId)  # Position of the free flying base
+    baseVel = physicsClient.getBaseVelocity(robotId)  # Velocity of the free flying base
 
     # Reshaping data into q and qdot
     q = np.vstack((np.array([baseState[0]]).transpose(), np.array([baseState[1]]).transpose(),
