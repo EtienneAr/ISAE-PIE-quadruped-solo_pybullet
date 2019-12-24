@@ -1,6 +1,7 @@
 from isae.optim.genAlgParam import *
 from isae.sim_control.gradedSimulation import *
 
+
 class geneticAlgorithm(object):
 
     def __init__(self):
@@ -169,7 +170,7 @@ class geneticAlgorithm(object):
     def reprodPopulation(self, gradedPop):
         rand.shuffle(gradedPop)
         newPop = []
-        for k in range(len(gradedPop)/2):
+        for k in range(int(len(gradedPop)/2)):
             parent1 = gradedPop[k][1]
             parent2 = gradedPop[-1-k][1]
             child1 = []
@@ -193,6 +194,8 @@ class geneticAlgorithm(object):
         return
 
     def runOptim(self):
+        
+        init_time = time.clock()
         CYAN = "\033[36m"
         DEFAULT = "\033[39m"
 
@@ -201,6 +204,7 @@ class geneticAlgorithm(object):
         for k in range(self.n_gen):
             print("\n\n")
             print(CYAN + "GEN " + str(k) + DEFAULT)
+            print("Pop size : {}".format(len(pop)))
             pop = self.gradePopulation(pop)
             self.sortGradedPopulation(pop)
             print("Best params : ")
@@ -209,7 +213,11 @@ class geneticAlgorithm(object):
             #self.plotParamHist(pop)
             pop = self.selectBest(pop)
             pop = self.reprodPopulation(pop)
-            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))      
+            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))
+        self.sortGradedPopulation(bests)     
+        end_time = time.clock()
+        dur = end_time - init_time
+        print("# ## ## ## ## ## ## ## #\nGeneteic optimization finished in {} s \n# ## ## ## ## ## ## ## #".format(dur)) 
         return bests
 
     # Analysis methods

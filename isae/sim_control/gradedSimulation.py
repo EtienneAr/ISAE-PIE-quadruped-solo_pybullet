@@ -5,8 +5,7 @@ from isae.sim_control.walkSimulation import *
 class gradedSimulation(walkSimulation):
     def __init__(self):
         walkSimulation.__init__(self)
-        self.grades = [0,0,0,0]
-        self.gradesSeries = []
+        self.grades = [0]*4
 
         #self.total_grade = 0
         #self.gradingClass = None # set from outside
@@ -43,6 +42,7 @@ class gradedSimulation(walkSimulation):
         # Dist
         d = self.updateGrade_MaxFinalDist(self.grades[0])
         self.grades[0] += d
+        #print(self.grades[0])
         # RMS       
         self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([75, 10, 10, 1, 1, 1]), self.dt)
         # Contacts penalization
@@ -50,12 +50,13 @@ class gradedSimulation(walkSimulation):
         # Dist + contacts
         self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
     
+    
     def stepSim(self):
         super(gradedSimulation, self).stepSim()
         self.updateGrades()
         #print(self.grades[2])
-        self.gradesSeries.append(list(self.grades))
+        #self.gradesSeries.append(list(self.grades))
     
-    def plotGrades(self):
-        gr_array = np.array(self.gradesSeries)
-        plt.plot(gr_array[:,0], label='Dist')
+    #def plotGrades(self):
+    #    gr_array = np.array(self.grades[0])
+    #    plt.plot(gr_array, label='Dist')
