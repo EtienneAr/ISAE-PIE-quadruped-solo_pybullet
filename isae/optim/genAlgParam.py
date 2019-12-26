@@ -3,6 +3,7 @@
 # by a genetic algorithm
 
 import random as rand
+import numpy as np
 
 # Super class with methods that should be implemented
 # in order to pass the parameter to the GA
@@ -72,3 +73,83 @@ class GA_2dPoint(genAlgParam):
         randIncY = 0.1*(-0.5 + rand.random())*self.yRange[1]
         newVal = [randIncX, randIncY]
         return GA_2dPoint([self.xRange, self.yRange], value=newVal)
+
+class GA_pointFootTraj(genAlgParam):
+    def __init__(self, paramRanges, value=None):
+        # paramRanges : [xRange, yRange, nRange]
+        self.xRange = paramRanges[0]
+        self.yRange = paramRanges[1]
+        self.nRange = paramRanges[2]
+        self.value = value
+
+    def pointsToPolygon(self, points):    
+        sort_x = points[points[:,0].argsort()]
+        sorted_points = np.array([sort_x[0]])
+
+        superior_y = sort_x[sort_x[:,1] > sort_x[0,1]]
+        superior_y = superior_y[superior_y[:,0].argsort()]
+
+        inferior_y = sort_x[sort_x[:,1] < sort_x[0,1]]
+        inferior_y = inferior_y[inferior_y[:,0].argsort()[::-1]]
+
+        sorted_points = np.vstack((sorted_points, superior_y))
+        sorted_points = np.vstack((sorted_points, inferior_y))
+        sorted_points = np.vstack((sorted_points, sorted_points[0]))
+
+        return sorted_points
+    
+    def initRandom(self):
+        self.value = []
+        n = rand.randint(int(self.nRange[0]), int(self.nRange[1]))
+        for k in range(n):
+            randX = self.xRange[0] + rand.random()*(self.xRange[1] - self.xRange[0])
+            randY = self.yRange[0] + rand.random()*(self.yRange[1] - self.yRange[0])
+            self.value.append([randX, randY])
+        self.value = np.array(self.value)
+        self.value = self.pointsToPolygon(self.value)
+
+    def mergeWith(self, other):
+        min_len = min(len(self.value), len(other.value))
+        cut_index = rand.randint(1,min_len - 2)
+
+        childVal1 = np.vstack((self.value[:cut_index], other.value[cut_index:]))
+        childVal2 = np.vstack((other.value[:cut_index], self.value[cut_index:]))
+
+        childVal1[-1] = childVal1[0]
+        childVal2[-1] = childVal2[0]
+
+        return GA_pointFootTraj([self.xRange, self.yRange, self.nRange], value=childVal1), GA_pointFootTraj([self.xRange, self.yRange, self.nRange], value=childVal2)
+
+    def mutate_movePoints(self):
+        for k in range(len(self.value) - 1):
+            randIncX = 0.1*(-0.5 + rand.random())*self.xRange[1]
+            randIncY = 0.1*(-0.5 + rand.random())*self.yRange[1]
+            newVal = np.array([randIncX, randIncY])
+            self.value[k] += newVal
+
+        return
+
+    def mutate_addPoint(self):
+        # appends point between new_index and new_index + 1 
+        new_index = rand.randint(0,len(self.value) - 2)
+        newX = 0.5*(self.value[new_index][0] + self.value[new_index + 1][0])
+        newY = 0.5*(self.value[new_index][1] + self.value[new_index + 1][1])
+
+        self.value = np.insert(self.value, new_index + 1, [newX, newY], axis = 0)
+        return 
+
+    def mutate_removePoint(self):
+        rmv_index = rand.randint(0,len(self.value) - 2)
+
+        self.value = np.delete(self.value, rmv_index + 1, axis = 0)
+        return 
+
+    def mutate(self):
+        self.mutate_movePoints()
+        if rand.random() < 0.2:
+            self.mutate_addPoint()
+        if rand.random() < 0.2:
+            self.mutate_removePoint()
+
+        self.value[-1] = self.value[0]
+        return self

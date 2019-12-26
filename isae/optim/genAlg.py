@@ -134,6 +134,8 @@ class geneticAlgorithm(object):
                     paramInstance = GA_scalar(self.paramArgs[i])
                 if(self.paramTypes[i] == "2dPoint"):
                     paramInstance = GA_2dPoint(self.paramArgs[i])
+                if(self.paramTypes[i] == "ptFtTraj"):
+                    paramInstance = GA_pointFootTraj(self.paramArgs[i])
                 paramInstance.initRandom()
                 indiv.append(paramInstance)
             pop.append(indiv)
@@ -195,8 +197,9 @@ class geneticAlgorithm(object):
 
     def runOptim(self):
         
-        init_time = time.clock()
+        init_time = time.time()
         CYAN = "\033[36m"
+        RED = "\033[91m"
         DEFAULT = "\033[39m"
 
         bests = []
@@ -215,9 +218,11 @@ class geneticAlgorithm(object):
             pop = self.reprodPopulation(pop)
             self.mutatePopulation(pop, [0.1]*len(self.paramTypes))
         self.sortGradedPopulation(bests)     
-        end_time = time.clock()
+        end_time = time.time()
         dur = end_time - init_time
-        print("# ## ## ## ## ## ## ## #\nGeneteic optimization finished in {} s \n# ## ## ## ## ## ## ## #".format(dur)) 
+        #print("# ## ## ## ## ## ## ## #\nGeneteic optimization finished in {} s \n# ## ## ## ## ## ## ## #".format(dur)) 
+        print(RED + "\nGENETIC OPTIMIZATION FINISHED")
+        print("Duration : {:.1f} s".format(dur) + DEFAULT)
         return bests
 
     # Analysis methods
