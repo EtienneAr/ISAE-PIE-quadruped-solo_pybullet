@@ -23,6 +23,12 @@ from mpl_toolkits.mplot3d import Axes3D
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from isae.sim_control.initialization_simulation_pybullet import configure_simulation, getPosVelJoints
 
+from matplotlib import rc
+rc('font',**{'family':'serif','serif':['New Century Schoolbook'], 'size'   : 14})
+## for Palatino and other serif fonts use:
+#rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
+
 class walkSimulation(object):
     def __init__(self):
 
@@ -131,7 +137,7 @@ class walkSimulation(object):
         # Duration of the step
         #t_step = time.clock() - t0
 
-        if self.storeFeetPos:
+        if self.storeFeetPos :
             q_joints = q[7:]
             footpos0 = self.Leg.getFootPos(q_joints[0:2])
             footpos1 = self.Leg.getFootPos(q_joints[2:4])
@@ -140,7 +146,7 @@ class walkSimulation(object):
 
             self.feetPos.append([footpos0,footpos1,footpos2,footpos3])
         
-        if self.store_qBase:
+        if self.store_qBase :
             q_base = q[:7]
             qdot_base = qdot[:7]
             self.qBase.append(q_base)
@@ -150,7 +156,7 @@ class walkSimulation(object):
             # Store contact points at this time step
             contacts = self.physicsClient.getContactPoints(bodyA = 0) # checks collisions with bodyA=0 (ground plane)
             for point in contacts : 
-                self.contactPoints.append([point[5][0], point[5][1], point[4]]) # stores the x,y position of the contact point and the link (index) in contact with the ground
+                self.contactPoints.append([point[5][0], point[5][1], point[4], point[9], self.step]) # stores the x,y position of the contact point, the link (index) in contact with the ground and the normal force
 
                 if (point[4] == 2):# or (point[4] == 2): # link index for foot0 and leg0 bottom part
                     self.contactsFoot0.append(self.step)
@@ -240,9 +246,6 @@ class walkSimulation(object):
 
     def plotContactPoints(self):
         self.contactPoints = np.array(self.contactPoints)
-        colors = self.contactPoints[:,2]
-
-        filter_size = 10
         
         foot0_timeline = 1.0*np.array([t in self.contactsFoot0 for t in range(self.step)])
         foot1_timeline = 1.0*np.array([t in self.contactsFoot1 for t in range(self.step)])
@@ -262,9 +265,41 @@ class walkSimulation(object):
 
         # TO KEEP
         #plt.scatter(self.contactPoints[:,0], self.contactPoints[:,1], c=colors, marker='+',s=25)
+        plt.xlabel("$\mathbf{t} (s)$")
         plt.legend()
         plt.title("Contact points with ground")
 
+    def plotContactForces(self):
+        self.contactPoints = np.array(self.contactPoints)
+        #contacts = self.contactPoints[:,2:5]
+        timeline = [i*self.dt for i in range(self.step)]
+
+        force0,force1,force2,force3 = len(timeline)*[0.],len(timeline)*[0.],len(timeline)*[0.],len(timeline)*[0.]
+        for p in self.contactPoints:
+            if p[2] == 2.:
+                force0[int(p[4])] = p[3]
+            if p[2] == 5.:
+                force1[int(p[4])] = p[3]
+            if p[2] == 8.:
+                force2[int(p[4])] = p[3]
+            if p[2] == 11.:
+                force3[int(p[4])] = p[3]
+
+        filter_size = 10
+        force0 = self.rollingAvg(force0, filter_size)
+        force1 = self.rollingAvg(force1, filter_size)
+        force2 = self.rollingAvg(force2, filter_size)
+        force3 = self.rollingAvg(force3, filter_size)
+
+        plt.fill_between(timeline, 0, force0, label="Foot 0 - FL", color='b', alpha = 0.3)
+        plt.fill_between(timeline, 0, force1, label="Foot 1 - FR", color='r', alpha = 0.3)
+        plt.fill_between(timeline, 0, force2, label="Foot 2 - RL", color='g', alpha = 0.3)
+        plt.fill_between(timeline, 0, force3, label="Foot 3 - RR", color='y', alpha = 0.3)
+
+        plt.xlabel("$\mathbf{t} (s)$")
+        plt.ylabel("$\mathbf{F_n}$ $(N)$")
+        plt.title("Contact forces with ground")
+        
     def plotFeetAvgPos(self):
         self.feetPos = np.array(self.feetPos)
         
@@ -299,6 +334,10 @@ class walkSimulation(object):
         plt.plot(self.qBase[:,0], self.qBase[:,1], label='Base xy traj.')
         plt.plot(xAvg, yAvg, 'r', linewidth=2, label='Avg. base xy traj.')
         plt.plot([x0,xf],[y0,yf], '--', linewidth = 2)
+
+        plt.xlabel("x (m)")
+        plt.ylabel("y (m)")
+        plt.title("Base [x,y] position")
     
     def plotBaseSpeed(self):
         self.qdotBase = np.array(self.qdotBase)
@@ -315,6 +354,10 @@ class walkSimulation(object):
         plt.plot(self.qdotBase[:,0,0],self.qdotBase[:,1,0], 'g',linewidth=0.5, label='Base xy speed')
         plt.plot(xdotAvg,ydotAvg, 'r', linewidth=2,label='Avg base speed')
         #plt.plot([x0,xf],[y0,yf], '--', linewidth = 2)
+        
+        plt.xlabel("$v_x (m.s^{-1})$")
+        plt.ylabel("$v_y (m.s^{-1})$")
+        plt.title("Base [x,y] speed")
 
     def plotBaseSpeedXY(self):
         self.qdotBase = np.array(self.qdotBase)
@@ -330,6 +373,8 @@ class walkSimulation(object):
         plt.plot(self.qdotBase[:,1,0], 'g',linewidth=0.5, label='Base y speed')
         plt.plot(ydotAvg, 'r', linewidth=2,label='Avg base speed')
 
+        plt.title("Base [x,y] speed")
+
     def plotBaseAbsXYSpeed(self, filters=[500]):
         self.qdotBase = np.array(self.qdotBase)
         absXYSpeed = np.sqrt(self.qdotBase[:,0,0]**2 + self.qdotBase[:,1,0]**2)
@@ -344,6 +389,10 @@ class walkSimulation(object):
             avgAbsXYSpeed = np.sqrt(xdotAvg**2 + ydotAvg**2)
 
             plt.plot(avgAbsXYSpeed, linewidth=lw, label='Avg base abs speed filter ' + str(s))
+
+        plt.xlabel("t (ms)")
+        plt.ylabel("$v_abs (m.s^{-1})$")
+        plt.title("Base absolute speed")
         
 
 
