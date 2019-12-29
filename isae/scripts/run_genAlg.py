@@ -5,12 +5,20 @@ sys.path.insert(0, os.getcwd()) # adds current directory to python path
 
 from isae.optim.genAlg import *
 from isae.optim.multiprocessGenAlg import *
+from datetime import datetime
+
+BLUE = "\033[34m"
+GREEN = "\033[32m"
+DEFAULT = "\033[39m"
+YELLOW = "\033[33m"
+CYAN = "\033[36m"
+RED = "\033[91m"
 
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
 GA.pop_size = 4
-GA.n_gen = 5
+GA.n_gen = 2
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -108,20 +116,31 @@ paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
 
 # params : bh1, bh2, footTraj
 paramTypes = ["scalar", "scalar", "ptFtTraj"]
-paramArgs = [[0.8,1.7],[0.8,1.7],[[-1,1.],[0,1.5],[3.,4]] ]
+paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]] ]
 paramNames = ["BH0", "BH1", "FootTraj"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
 GA.setParamNames(paramNames)
 
-best_per_gen = GA.runOptim()
-best_fit_per_gen = [indiv[0] for indiv in best_per_gen]
+GA.runOptim()
+genLog = GA.genLog
 
-#plt.plot(best_fit_per_gen)
-#plt.show()
+date = datetime.now()
+np.save("optim_logs/optim_" + date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", genLog, allow_pickle=True)
+#print(genLog)
 
-print("\n########### \n Best param : ")
-GA.printParamsInstance(best_per_gen[0][1])
-print("\n\nFitness : {}\n###########".format(best_fit_per_gen[0]))
+#for k in range(GA.n_gen):
+#    pop = np.array(GA.genLog)[k,:]
+#    hist = np.histogram(pop[:,0])
+#    plt.hist(hist, label="Gen {}".format(k), alpha = 0.5)
 
+n_best = 2
+best_per_gen = np.array(GA.genLog)[:,:,0:n_best]
+
+for i in range(len(best_per_gen)):
+    print(RED + "\n==========================================" + DEFAULT)
+    for j in range(n_best):
+        print(BLUE + "Best indiv. {} for gen {}".format(j, i) + DEFAULT)
+        print(best_per_gen[i, 1, j])
+        print(GREEN + "Fitness : {}\n".format(best_per_gen[i, 0, j]) + DEFAULT)

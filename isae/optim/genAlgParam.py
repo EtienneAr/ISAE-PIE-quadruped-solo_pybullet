@@ -48,6 +48,9 @@ class GA_scalar(genAlgParam):
         newVal = min(self.maxVal, newVal)
         newVal = max(self.minVal, newVal)
         return GA_scalar([self.minVal, self.maxVal], value=newVal)
+    
+    def toArray(self):
+        return self.value
 
 # 2d point parameter
 class GA_2dPoint(genAlgParam):
@@ -73,6 +76,9 @@ class GA_2dPoint(genAlgParam):
         randIncY = 0.1*(-0.5 + rand.random())*self.yRange[1]
         newVal = [randIncX, randIncY]
         return GA_2dPoint([self.xRange, self.yRange], value=newVal)
+    
+    def toArray(self):
+        return self.value
 
 class GA_pointFootTraj(genAlgParam):
     def __init__(self, paramRanges, value=None):
@@ -153,3 +159,6 @@ class GA_pointFootTraj(genAlgParam):
 
         self.value[-1] = self.value[0]
         return self
+
+    def toArray(self):
+        return self.value

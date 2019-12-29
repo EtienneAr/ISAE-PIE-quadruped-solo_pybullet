@@ -25,13 +25,12 @@ class multiprocessGeneticAlgorithm(geneticAlgorithm):
         sim = self.simFromParam(pop_indiv)
         sim.initializeSim()
         sim.runSim()
-        #gradedPop.append([sim.grades[3], indiv])
         print(BLUE + "Indiv. " + randomString() + " : " + DEFAULT)
-        self.printParamsInstance(pop_indiv)
+        print(self.getIndivArray(pop_indiv))
         print(GREEN + "Fitness : " + str(sim.grades[3]) + DEFAULT)
         print('\n')
 
-        return [sim.grades[3], pop_indiv]
+        return [sim.grades[3], pop_indiv, self.getIndivArray(pop_indiv)]
 
     def gradePopulation(self, pop):
         pool = mp.Pool(mp.cpu_count())

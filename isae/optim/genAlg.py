@@ -11,6 +11,7 @@ class geneticAlgorithm(object):
         self.pop_size = 4
         self.n_gen = 1
         self.best_per_gen = []
+        self.genLog = []
         self.paramToSim = None # expects a function paramToSim(paramsInstance) that returns a gradedSimulation with parameters set
                                 # this function has to be defined from outside,
                                 # which allows to use any simulation parameters as parameters for optimizatiob
@@ -27,6 +28,9 @@ class geneticAlgorithm(object):
     def printParamsInstance(self, paramsInstance):
         for k in range(len(paramsInstance)):
             print(paramsInstance[k].value)
+
+    def getIndivArray(self, indiv):
+        return np.array([p.toArray() for p in indiv])
 
     # Fonction A CHANGER, definie pour l'insparamArgs
     # des cas specifiques a chaque fois
@@ -148,22 +152,26 @@ class geneticAlgorithm(object):
         YELLOW = "\033[33m"
 
         gradedPop = []
+        popLog = []
         for i in range(len(pop)):
             indiv = pop[i]
             sim = self.simFromParam(indiv)
             sim.initializeSim()
             sim.runSim()
             # Choice of optimization function in sim.grades list
-            gradedPop.append([sim.grades[3], indiv])
+            gradedPop.append([sim.grades[3], indiv, self.getIndivArray(indiv)])
             print(BLUE + "Indiv. " + str(i) + " : " + DEFAULT)
-            self.printParamsInstance(indiv)
+            print(self.getIndivArray(indiv))
             print(GREEN + "Fitness : " + str(sim.grades[3]) + DEFAULT)
             print('\n')
+        self.genLog.append(popLog)
         return gradedPop
     
     def sortGradedPopulation(self, gradedPop):
         gradedPop.sort(key=lambda p: -p[0])
-        #print(gradedPop)
+        popParams = np.array(gradedPop)[:,2]
+        popFitness = np.array(gradedPop)[:,0]
+        self.genLog.append([popFitness, popParams])
 
     def selectBest(self, gradedPop, propToKeep = 0.5):
         n = int(propToKeep*len(gradedPop))
@@ -202,7 +210,6 @@ class geneticAlgorithm(object):
         RED = "\033[91m"
         DEFAULT = "\033[39m"
 
-        bests = []
         pop = self.initPopulation()
         for k in range(self.n_gen):
             print("\n\n")
@@ -212,18 +219,15 @@ class geneticAlgorithm(object):
             self.sortGradedPopulation(pop)
             print("Best params : ")
             self.printParamsInstance(pop[0][1])
-            bests.append(pop[0])
-            #self.plotParamHist(pop)
             pop = self.selectBest(pop)
             pop = self.reprodPopulation(pop)
-            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))
-        self.sortGradedPopulation(bests)     
+            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))   
         end_time = time.time()
         dur = end_time - init_time
-        #print("# ## ## ## ## ## ## ## #\nGeneteic optimization finished in {} s \n# ## ## ## ## ## ## ## #".format(dur)) 
         print(RED + "\nGENETIC OPTIMIZATION FINISHED")
         print("Duration : {:.1f} s".format(dur) + DEFAULT)
-        return bests
+        self.genLog = np.array(self.genLog)
+        return 
 
     # Analysis methods
     def plotParamHist(self, gradedPop):
