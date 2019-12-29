@@ -5,6 +5,8 @@ import numpy as np  # Numpy library
 import pybullet as p  # PyBullet simulator
 import pybullet_data
 import pybullet_utils.bullet_client as bc
+
+import random as rand
 #from example_robot_data import loadSolo  # Functions to load the SOLO quadruped
 
 
@@ -26,7 +28,10 @@ def configure_simulation(dt, enableGUI):
     # p.DIRECT for non-graphical version
 
     # Set gravity (disabled by default)
-    physicsClient.setGravity(0, 0, -9.81)
+    grav = -9.81
+    randGrav = grav*(1 + 0.1*(0.5 - rand.random())) # random gravity for optimization
+
+    physicsClient.setGravity(0, 0, grav)
 
     # Load horizontal plane for PyBullet
     physicsClient.setAdditionalSearchPath(pybullet_data.getDataPath())
