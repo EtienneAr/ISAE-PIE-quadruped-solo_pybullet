@@ -98,9 +98,8 @@ def paramToSim_Bh_Traj(paramsInstance):
     robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
     simInstance = gradedSimulation()
-    simInstance.setLoopParams(pyb_gui, duration)
+    simInstance.setLoopParams(pyb_gui, duration, leg)
     simInstance.setController(robotController)
-    simInstance.setTrajectoryParams(leg, period, trajs, bodyHeights)
 
     return simInstance
 

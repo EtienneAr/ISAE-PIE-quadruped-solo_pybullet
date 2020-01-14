@@ -90,9 +90,10 @@ class walkSimulation(object):
     ###
     # Setting attributes (simulation parameters)
     ###
-    def setLoopParams(self,enableGUI, duration, RTF=0.):
+    def setLoopParams(self,enableGUI, duration, legGeometry, RTF=0.):
         self.enableGUI = enableGUI
         self.duration = duration
+        self.Leg = legGeometry
         self.RTF = RTF
 
     #def setControllerParams(self,Leg, sols = 4*[False], Kp = 0, Kd = 0, sat = float('inf')):
@@ -104,12 +105,6 @@ class walkSimulation(object):
 
     def setController(self, robotController):
         self.robotController = robotController
-        
-    def setControllerParams(self, leg, period):
-        self.Leg = leg
-        self.period = period
-        #self.legsTraj = legsTraj
-        #self.bodyHeights = bodyHeights
 
     ###
     # Running the simulation

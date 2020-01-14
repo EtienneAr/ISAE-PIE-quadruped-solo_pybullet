@@ -67,9 +67,8 @@ robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, 
 walkSim = gradedSimulation()
 
 # Assign parameters to the simulation
-walkSim.setLoopParams(pyb_gui, duration)
+walkSim.setLoopParams(pyb_gui, duration, leg)
 walkSim.setController(robotController)
-walkSim.setControllerParams(leg, period)
 
 walkSim.initializeSim()
 
