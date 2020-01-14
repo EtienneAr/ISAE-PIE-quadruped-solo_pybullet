@@ -19,6 +19,7 @@ GA = multiprocessGeneticAlgorithm()
 
 GA.pop_size = 4
 GA.n_gen = 2
+GA.grade_index = 3
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??

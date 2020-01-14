@@ -10,6 +10,7 @@ class geneticAlgorithm(object):
         self.paramNames = [] # ex : ["Period", "Kp"]
         self.pop_size = 4
         self.n_gen = 1
+        self.grade_index = 0
         self.best_per_gen = []
         self.genLog = []
         self.paramToSim = None # expects a function paramToSim(paramsInstance) that returns a gradedSimulation with parameters set
@@ -159,10 +160,10 @@ class geneticAlgorithm(object):
             sim.initializeSim()
             sim.runSim()
             # Choice of optimization function in sim.grades list
-            gradedPop.append([sim.grades[3], indiv, self.getIndivArray(indiv)])
+            gradedPop.append([sim.grades[self.grade_index], indiv, self.getIndivArray(indiv)])
             print(BLUE + "Indiv. " + str(i) + " : " + DEFAULT)
             print(self.getIndivArray(indiv))
-            print(GREEN + "Fitness : " + str(sim.grades[3]) + DEFAULT)
+            print(GREEN + "Fitness : " + str(sim.grades[self.grade_index]) + DEFAULT)
             print('\n')
         self.genLog.append(popLog)
         return gradedPop
