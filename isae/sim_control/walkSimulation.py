@@ -105,11 +105,11 @@ class walkSimulation(object):
     def setController(self, robotController):
         self.robotController = robotController
         
-    def setTrajectoryParams(self, leg, period, legsTraj, bodyHeights):
+    def setControllerParams(self, leg, period):
         self.Leg = leg
         self.period = period
-        self.legsTraj = legsTraj
-        self.bodyHeights = bodyHeights
+        #self.legsTraj = legsTraj
+        #self.bodyHeights = bodyHeights
 
     ###
     # Running the simulation

@@ -14,12 +14,12 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 
 
 # Loop parameters 
-pyb_gui = False
+pyb_gui = True
 duration = 8
 
 # Trajectory parameters
 #period = 1.9
-period = 1.
+period = 1.5
 
 #offsets = [0.0,0.5,0.0,0.5]
 offsets = [0.5,0.,0.5,0.]
@@ -38,14 +38,14 @@ offsets = [0.5,0.,0.5,0.]
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
 footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
 footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
-bodyHeights = 2*[1.4] + 2*[1.4]
+bodyHeights = 2*[1.5] + 2*[1.5]
 #bodyHeights = [1.7,1.7,1.7,1.7]
 
 # Geometry and controller
@@ -65,23 +65,16 @@ robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, 
 
 # Create simulation
 walkSim = gradedSimulation()
-walkSim1 = gradedSimulation()
 
 # Assign parameters to the simulation
 walkSim.setLoopParams(pyb_gui, duration)
 walkSim.setController(robotController)
-walkSim.setTrajectoryParams(leg, period, trajs, bodyHeights)
-
-walkSim1.setLoopParams(pyb_gui, duration)
-walkSim1.setController(robotController)
-walkSim1.setTrajectoryParams(leg, period, trajs, bodyHeights)
+walkSim.setControllerParams(leg, period)
 
 walkSim.initializeSim()
-#walkSim1.initializeSim()
 
 # Run sim
 walkSim.runSim()
-#walkSim.runSimParallelWith([walkSim1])
 
 print(walkSim.getFinalDistance())
 plt.figure()
@@ -99,4 +92,3 @@ plt.legend()
 #walkSim.plotGrades()
 #plt.legend()
 plt.show()
-"""
