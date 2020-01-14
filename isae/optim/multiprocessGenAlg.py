@@ -2,7 +2,7 @@ from isae.optim.genAlg import *
 from isae.sim_control.gradedSimulation import *
 import random
 import string
-
+from colorama import Fore
 import multiprocessing as mp
 
 def randomString(stringLength=7):
@@ -17,10 +17,10 @@ class multiprocessGeneticAlgorithm(geneticAlgorithm):
         geneticAlgorithm.__init__(self)
 
     def __call__(self, pop_indiv):
-        BLUE = "\033[34m"
-        GREEN = "\033[32m"
-        DEFAULT = "\033[39m"
-        YELLOW = "\033[33m"
+        BLUE = Fore.BLUE
+        GREEN = Fore.GREEN
+        DEFAULT = Fore.RESET
+        YELLOW = Fore.YELLOW
 
         sim = self.simFromParam(pop_indiv)
         sim.initializeSim()

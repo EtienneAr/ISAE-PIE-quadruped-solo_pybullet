@@ -1,6 +1,6 @@
 from isae.optim.genAlgParam import *
 from isae.sim_control.gradedSimulation import *
-
+from colorama import Fore
 
 class geneticAlgorithm(object):
 
@@ -147,10 +147,10 @@ class geneticAlgorithm(object):
         return pop
 
     def gradePopulation(self, pop):
-        BLUE = "\033[34m"
-        GREEN = "\033[32m"
-        DEFAULT = "\033[39m"
-        YELLOW = "\033[33m"
+        BLUE = Fore.BLUE
+        GREEN = Fore.GREEN
+        DEFAULT = Fore.RESET
+        YELLOW = Fore.YELLOW
 
         gradedPop = []
         popLog = []
@@ -207,9 +207,9 @@ class geneticAlgorithm(object):
     def runOptim(self):
         
         init_time = time.time()
-        CYAN = "\033[36m"
-        RED = "\033[91m"
-        DEFAULT = "\033[39m"
+        CYAN = Fore.CYAN
+        RED = Fore.RED
+        DEFAULT = Fore.RESET
 
         pop = self.initPopulation()
         for k in range(self.n_gen):
