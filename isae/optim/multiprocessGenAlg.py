@@ -33,7 +33,6 @@ class multiprocessGeneticAlgorithm(geneticAlgorithm):
         return [sim.grades[self.grade_index], pop_indiv, self.getIndivArray(pop_indiv)]
 
     def gradePopulation(self, pop):
-        pool = mp.Pool(mp.cpu_count())
-        gradedPop = pool.map(self, pop)
-
+        with mp.Pool(mp.cpu_count()) as pool:
+            gradedPop = pool.map(self, pop)
         return gradedPop
