@@ -141,6 +141,8 @@ class geneticAlgorithm(object):
                     paramInstance = GA_2dPoint(self.paramArgs[i])
                 if(self.paramTypes[i] == "ptFtTraj"):
                     paramInstance = GA_pointFootTraj(self.paramArgs[i])
+                if(self.paramTypes[i] == "legsOffsets"):
+                    paramInstance = GA_legsOffsets(self.paramArgs[i])
                 paramInstance.initRandom()
                 indiv.append(paramInstance)
             pop.append(indiv)

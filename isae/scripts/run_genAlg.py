@@ -57,9 +57,8 @@ def paramToSim_Bh_KpKd_T(paramsInstance):
     robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
     simInstance = gradedSimulation()
-    simInstance.setLoopParams(pyb_gui, duration)
+    simInstance.setLoopParams(pyb_gui, duration, leg)
     simInstance.setController(robotController)
-    simInstance.setTrajectoryParams(leg, period, trajs, bodyHeights)
 
     return simInstance
 
@@ -115,9 +114,13 @@ paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
 #paramArgs = [[[-1.,0],[0,0.2]] , [[-1.,1],[0,1.5]] , [[0,1],[0,0.2]]]
 
 # params : bh1, bh2, footTraj
-paramTypes = ["scalar", "scalar", "ptFtTraj"]
-paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]] ]
-paramNames = ["BH0", "BH1", "FootTraj"]
+#paramTypes = ["scalar", "scalar", "ptFtTraj"]
+#paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]]]
+#paramNames = ["BH0", "BH1", "FootTraj"]
+
+paramTypes = ["scalar", "scalar", "ptFtTraj", "legsOffsets"]
+paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]], 0.6]
+paramNames = ["BH0", "BH1", "FootTraj", "legsOffsets"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)

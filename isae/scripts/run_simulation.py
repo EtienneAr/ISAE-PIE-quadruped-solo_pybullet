@@ -19,7 +19,7 @@ duration = 8
 
 # Trajectory parameters
 #period = 1.9
-period = 1.5
+period = 1.2
 
 #offsets = [0.0,0.5,0.0,0.5]
 offsets = [0.5,0.,0.5,0.]
@@ -38,14 +38,20 @@ offsets = [0.5,0.,0.5,0.]
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-1.14472959,  0.03284315],
+       [ 0.46659341,  0.51091852],
+       [ 0.68658772,  0.76576489],
+       [-1.14472959,  0.03284315]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
+footTraj3 = footTrajectory([[-1.14472959,  0.03284315],
+       [ 0.46659341,  0.51091852],
+       [ 0.68658772,  0.76576489],
+       [-1.14472959,  0.03284315]], phaseOffset = offsets[2])
 footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
-bodyHeights = 2*[1.5] + 2*[1.5]
+bodyHeights = 2*[0.82] + 2*[0.514]
 #bodyHeights = [1.7,1.7,1.7,1.7]
 
 # Geometry and controller
@@ -56,7 +62,7 @@ sols = [False, False, True, True]
 #sols = [True, True, True, True]
 
 #Kp = 8
-Kp = 8
+Kp = 10
 #Kd = 0.2
 Kd = 0.2
 
