@@ -97,10 +97,12 @@ class GA_pointFootTraj(genAlgParam):
 
         inferior_y = sort_x[sort_x[:,1] < sort_x[0,1]]
         inferior_y = inferior_y[inferior_y[:,0].argsort()[::-1]]
-
+        
         sorted_points = np.vstack((sorted_points, superior_y))
         sorted_points = np.vstack((sorted_points, inferior_y))
         sorted_points = np.vstack((sorted_points, sorted_points[0]))
+
+        sorted_points[:,-1] -= np.min(sorted_points[:,1])
 
         return sorted_points
     
@@ -121,6 +123,9 @@ class GA_pointFootTraj(genAlgParam):
         childVal1 = np.vstack((self.value[:cut_index], other.value[cut_index:]))
         childVal2 = np.vstack((other.value[:cut_index], self.value[cut_index:]))
 
+        childVal1 = self.pointsToPolygon(childVal1)
+        childVal2 = self.pointsToPolygon(childVal2)
+        
         childVal1[-1] = childVal1[0]
         childVal2[-1] = childVal2[0]
 

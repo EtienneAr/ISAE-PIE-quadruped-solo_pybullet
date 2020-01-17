@@ -265,7 +265,7 @@ class geneticAlgorithm(object):
         RED = Fore.RED
         DEFAULT = Fore.RESET
 
-        if fromPop.any == None:
+        if fromPop == None:
             pop = self.initRandomPopulation()
         #elif fromPop == None:
         #    pop = self.initFromIndiv(fromIndiv)
