@@ -129,8 +129,8 @@ class geneticAlgorithm(object):
 
         return simInstance
     """
-
-    def initPopulation(self):
+    # initializes a random population, using GA_<param>.initRandom(args) with args specified in self.paramArgs
+    def initRandomPopulation(self):
         pop = []
         for k in range(self.pop_size):
             indiv = []
@@ -147,7 +147,52 @@ class geneticAlgorithm(object):
                 indiv.append(paramInstance)
             pop.append(indiv)
         return pop
+    
+    # initializes a population from a list of given solutions
+    # the population is populated with self.pop_size/n instances of each individual in the list, n being the length of this list
+    # indivList is a list of GA_<param>.value, as defined in the respective GA_<param> classes
+    def initFromIndiv(self, indivList):
+        pop = []
+        n = len(indivList)
+        for k in range(n):
+            for j in range(int(self.pop_size/n)):
+                indiv = []
+                for i in range(len(self.paramTypes)):
+                    if(self.paramTypes[i] == "scalar"):
+                        paramInstance = GA_scalar(self.paramArgs[i], value=indivList[k][i])
+                    if(self.paramTypes[i] == "2dPoint"):
+                        paramInstance = GA_2dPoint(self.paramArgs[i], value=indivList[k][i])
+                    if(self.paramTypes[i] == "ptFtTraj"):
+                        paramInstance = GA_pointFootTraj(self.paramArgs[i], value=indivList[k][i])
+                    if(self.paramTypes[i] == "legsOffsets"):
+                        paramInstance = GA_legsOffsets(self.paramArgs[i], value=indivList[k][i])
+                    indiv.append(paramInstance)
+                pop.append(indiv)
+        return pop
+    
+    def initFromPopLog(self, popLog):
+        pop = []
+        n = len(popLog[1])
+        for k in range(n):
+            indiv = []
+            params = popLog[1,k]
+            for i in range(len(self.paramTypes)):
+                if(self.paramTypes[i] == "scalar"):
+                    paramInstance = GA_scalar(self.paramArgs[i], value=params[i])
+                if(self.paramTypes[i] == "2dPoint"):
+                    paramInstance = GA_2dPoint(self.paramArgs[i], value=params[i])
+                if(self.paramTypes[i] == "ptFtTraj"):
+                    paramInstance = GA_pointFootTraj(self.paramArgs[i], value=params[i])
+                if(self.paramTypes[i] == "legsOffsets"):
+                    paramInstance = GA_legsOffsets(self.paramArgs[i], value=params[i])
+                indiv.append(paramInstance)
+            pop.append(indiv)
+        #TO DO : complete with random indiv
+        return pop
 
+    # initializes the simulations defined by the given pop and runs them while computing the optimization metrics
+    # returns an array that is consumed by the folowing steps of the optimization process,
+    # and appends the current population to the optimization log
     def gradePopulation(self, pop):
         BLUE = Fore.BLUE
         GREEN = Fore.GREEN
@@ -170,16 +215,21 @@ class geneticAlgorithm(object):
         self.genLog.append(popLog)
         return gradedPop
     
+    # sorts the population returned by self.gradePopulation() on descending order of score (fitness)
     def sortGradedPopulation(self, gradedPop):
         gradedPop.sort(key=lambda p: -p[0])
         popParams = np.array(gradedPop)[:,2]
         popFitness = np.array(gradedPop)[:,0]
         self.genLog.append([popFitness, popParams])
 
+    # selects the part of the population that will go on with the optimization
+    # and be used to recreate new solutions
     def selectBest(self, gradedPop, propToKeep = 0.5):
         n = int(propToKeep*len(gradedPop))
         return gradedPop[:n]
 
+    # repopulates the population with 'children' of the surviving individuals
+    # returned by self.selectBest()
     def reprodPopulation(self, gradedPop):
         rand.shuffle(gradedPop)
         newPop = []
@@ -199,6 +249,7 @@ class geneticAlgorithm(object):
 
         return newPop
     
+    # applies a mutation to the individuals with a propbability defined for each of their GA_<param>
     def mutatePopulation(self,gradedPop, probaMut):
         for indiv in gradedPop:
             for k in range(len(probaMut)):
@@ -206,14 +257,20 @@ class geneticAlgorithm(object):
                     indiv[k] = indiv[k].mutate()
         return
 
-    def runOptim(self):
+    # puts it all together to run the full optimization process
+    def runOptim(self, fromIndiv=None, fromPop=None):
         
         init_time = time.time()
         CYAN = Fore.CYAN
         RED = Fore.RED
         DEFAULT = Fore.RESET
 
-        pop = self.initPopulation()
+        if fromPop.any == None:
+            pop = self.initRandomPopulation()
+        #elif fromPop == None:
+        #    pop = self.initFromIndiv(fromIndiv)
+        else:
+            pop = self.initFromPopLog(fromPop)
         for k in range(self.n_gen):
             print("\n\n")
             print(CYAN + "GEN " + str(k) + DEFAULT)
