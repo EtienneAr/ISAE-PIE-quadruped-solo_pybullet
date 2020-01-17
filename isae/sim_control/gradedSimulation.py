@@ -36,6 +36,11 @@ class gradedSimulation(walkSimulation):
         contacts = p.getContactPoints(bodyA = 0) # checks collisions with bodyA=0 (ground plane)
         return -len(contacts)/2
 
+    def updateGrade_constantZ(self, bhs):
+        z_error = np.sqrt((0.25*np.sum(bhs) - self.qBase[-1][2])**2)
+        return -z_error
+
+
     # update all specified grades, 2 for now
     # has to be the same number as len(self.grades)
     def updateGrades(self):
@@ -47,6 +52,8 @@ class gradedSimulation(walkSimulation):
         self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([75, 10, 10, 1, 1, 1]), self.dt)
         # Contacts penalization
         #self.grades[2] += self.updateGrade_penalizeContacts()
+        # Body height stability
+        self.grades[2] += self.updateGrade_constantZ(self.robotController.bHs)/(self.duration/self.dt)
         # Dist + contacts
         self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
     
