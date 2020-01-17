@@ -166,21 +166,23 @@ class GA_pointFootTraj(genAlgParam):
 class GA_legsOffsets(genAlgParam):
     def __init__(self, maxOffset=1, value=[0.,0.,0.,0.]):
         self.maxOffset = maxOffset
-        self.value = value
+        self.value = np.array(value)
 
     def initRandom(self):
         randOffsets = [self.maxOffset*rand.random() for i in range(4)]
-        self.value = randOffsets
+        self.value = np.array(randOffsets)
     
     def mergeWith(self, other):
-        randInd = rand.randint(0,3)
-        childVal1 = self.value[randInd:] + other.value[:randInd]
-        childVal2 = other.value[randInd:] + self.value[:randInd]
+        randInd = rand.randint(0,4)
+        childVal1 = np.concatenate((self.value[randInd:],other.value[:randInd]))
+        childVal2 = np.concatenate((other.value[randInd:],self.value[:randInd]))
         return GA_legsOffsets(self.maxOffset, value=childVal1), GA_legsOffsets(self.maxOffset, value=childVal2)
     
     def mutate(self):
         randInd = rand.randint(0,3)
         self.value[randInd] += 0.1*(0.5 - rand.random())
+        self.value[randInd] = max(0,min(1, self.value[randInd]))
+        return GA_legsOffsets(self.maxOffset, self.value)
     
     def toArray(self):
         return np.array(self.value)
