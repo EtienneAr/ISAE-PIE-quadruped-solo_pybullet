@@ -2,6 +2,11 @@ from sys import path
 import numpy as np
 import _thread
 import isae.control.myPD
+import csv
+
+fname = "traj.csv"
+file = open(fname, "a")
+write_outfile = csv.writer(file)
 
 def async_input(controller):
 	while(True):
@@ -28,10 +33,19 @@ class myController:
 			_thread.start_new_thread(async_input, (self,))
 
 	def c(self, q, q_dot, time, dt):
+		
+		
 		self.currentPhase += dt / self.period
 		pos_ref = map(lambda phase : self.FootTraj.getPos(phase + self.currentPhase, self.factor), self.phasesOffset)
 		pos_ref = map(lambda pos : [pos[0],pos[1]-self.bH], pos_ref)
-		q_ref_temp = map(lambda pos : self.Leg.getJointsPos(pos), pos_ref)
+		
+		if(self.currentPhase // self.period <= 1):
+			
+			write_outfile.writerow(pos_ref)
+			
+
+
+		q_ref_temp = map(lambda pos : self.Leg.getJointsPos(pos,False), pos_ref)
 
 		q_ref = []
 		for qq in q_ref_temp:

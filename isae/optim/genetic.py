@@ -7,10 +7,14 @@ YELLOW = "\033[33m"
 GREEN = "\033[32m"
 DEFAULT = "\033[39m"
 
-from isae.optim.evaluate import parametersRange, runSimu, randomConfig, randomTries
+from isae.optim.evaluate_TC import parametersRange, runSimu, randomConfig, randomTries
 
+file1 = open("MyFile.txt","a") 
 
 def getBest(toKeep, population):
+	for elt in population:
+		print(elt[0])
+
 	population.sort(key=lambda p: -p[0])
 	return population[:toKeep]
 
@@ -45,6 +49,11 @@ def geneticSearch(popSize = 15, n_generation = 10):
 
 	for j in range(1, n_generation):
 		currGen = getBest(popSize//3, currGen)
+		temp_str = ''
+		for value in currGen[0][1]:
+			temp_str += " " + str(value)
+		file1.write(temp_str)
+		file1.write('\n')
 		print(BLUE + "####")
 		print("Survivors (generation " + str(j) + ") : ")
 		print_pop(currGen)

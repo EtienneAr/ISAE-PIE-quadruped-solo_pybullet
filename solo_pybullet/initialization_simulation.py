@@ -28,6 +28,7 @@ def configure_simulation(dt, enableGUI):
     robotStartPos = [0, 0, 0.35]
     robotStartOrientation = p.getQuaternionFromEuler([0, 0, 0])
     p.setAdditionalSearchPath("/opt/openrobots/share/example-robot-data/solo_description/robots")
+    p.setAdditionalSearchPath("/opt/openrobots/share/example-robot-data/robots/solo_description/robots")
     robotId = p.loadURDF("solo.urdf", robotStartPos, robotStartOrientation)
 
     # Set time step of the simulation
