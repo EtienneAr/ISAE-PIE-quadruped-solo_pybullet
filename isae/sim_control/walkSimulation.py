@@ -8,9 +8,6 @@ import time
 import pybullet as p 
 # Numpy library
 import numpy as np  
-
-# footTrajController class
-from isae.control.footTrajController import * 
 # Leg class
 from isae.tools.geometry import * 
 # footTrajectory class

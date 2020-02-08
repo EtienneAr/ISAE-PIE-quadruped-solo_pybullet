@@ -40,6 +40,13 @@ class gradedSimulation(walkSimulation):
         z_error = np.sqrt((0.25*np.sum(bhs) - self.qBase[-1][2])**2)
         return -z_error
 
+    # target orientation specified as a quaternion
+    def updateGrade_constantOrientation(self, targetOrientation):
+        selfOrientation = np.squeeze(np.asarray(self.qBase[-1][3:]))
+        targetOrientation = np.squeeze(np.asarray(targetOrientation))
+        orientationError = 1 - np.inner(selfOrientation, targetOrientation)**2
+        return -1.*orientationError
+
 
     # update all specified grades, 2 for now
     # has to be the same number as len(self.grades)
@@ -53,9 +60,12 @@ class gradedSimulation(walkSimulation):
         # Contacts penalization
         #self.grades[2] += self.updateGrade_penalizeContacts()
         # Body height stability
-        self.grades[2] += self.updateGrade_constantZ(self.robotController.bHs)/(self.duration/self.dt)
+        #self.grades[2] += self.updateGrade_constantZ(self.robotController.bHs)/(self.duration/self.dt)
+        self.grades[2] += self.updateGrade_constantOrientation(np.array([0,0,0,1]))
+        #print(self.updateGrade_constantOrientation(np.array([0,0,0,1])))
         # Dist + contacts
-        self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
+        #self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
+        self.grades[3] += d + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
     
     
     def stepSim(self):
