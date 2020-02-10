@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # coding: utf8
 import os, sys
 from sys import argv
@@ -15,14 +17,14 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 
 # Loop parameters 
 pyb_gui = True
-duration = 8
+duration = 80
 
 # Trajectory parameters
 #period = 1.9
-period = 1.5
+period = 1
 
 #offsets = [0.0,0.5,0.0,0.5]
-offsets = [0.5,0.,0.5,0.]
+offsets = [0,0.5,0.75,0.25]
 
 # params : bh1, bh2, Kp, Kd, period
 #0.96, 1.27, 12.2, 0.52, 0.82   optim1 (pop 10, gen 20)
@@ -34,15 +36,22 @@ offsets = [0.5,0.,0.5,0.]
 #3.60968563781
 #1.30976605128
 
-# params : triangle summits
-t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
+
+footTraj1 = pointsTrajectory([[1,1]], phaseOffset = 0.00, onGroundPhase = 0.75, factor=[0.8,0.5])
+footTraj2 = pointsTrajectory([[1,1]], phaseOffset = 0.50, onGroundPhase = 0.75, factor=[0.8,0.5])
+footTraj3 = pointsTrajectory([[1,1]], phaseOffset = 0.75, onGroundPhase = 0.75, factor=[0.8,0.5])
+footTraj4 = pointsTrajectory([[1,1]], phaseOffset = 0.25, onGroundPhase = 0.75, factor=[0.8,0.5])
+'''
 footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
 footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
 footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
+'''
+
+print(footTraj1.getPos(0.1))
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
 bodyHeights = 2*[1.5] + 2*[1.5]

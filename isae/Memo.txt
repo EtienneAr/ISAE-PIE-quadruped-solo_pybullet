@@ -1,0 +1,49 @@
+How to start a simulation : 
+	Dans scripts/
+		run_simulation.py
+			// Definition du controller, des params de simu, etc...
+			Le plus important est d'avoir un controller
+
+			#assign parameters to the simulation
+				Qque param pour la simu
+
+			walkSim.runSim()
+				Lance la simu
+
+
+How to start an optim :
+	Dans sim_control/
+		gradedSimulation.py
+			// C'est possible d'ajouter des Notations
+				Ajouter une fonction UpdateGrade_..
+					Utiliser les variable dispo dans walkSimulation.py (eg. self.bodyHeight, ...)
+				Agrandir la list self.grades
+				dans updateGrades() : remplir le nouvel element de la liste
+
+				../optim/genAlg.py && ../optim/multiprocessGenAlg.py
+					modifier sim.grades[] --> x2
+
+	Dans scripts/
+		run_genAlg.py
+			// Il faut definir une fonction qui transforme des params d'optim en simulation
+			
+		genAlgParam.py
+			// Donne les  definition pour remplir
+			(dans run_genAlg.py)
+			paramTypes
+			paramArgs
+			paraNames
+
+		// La mutation est calculée dans genAlg.py/def runOptim
+
+
+		Pour ajouter un type de param : 
+			Creer la class dans genAlgParam.py en s'aidant de la class "abstraite"
+			Puis dans genAlg.py modifier le initPopulation pour rajouter ce nouveau cas
+
+
+Randomiser la gravite : 
+	Dans sim_control/initialization_simulation_pybullet.py
+		randGrfav
+
+		(il y a aussi un coeff de friction)
