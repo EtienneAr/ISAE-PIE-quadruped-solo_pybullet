@@ -44,7 +44,7 @@ class gradedSimulation(walkSimulation):
         self.grades[0] += d
         #print(self.grades[0])
         # RMS       
-        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([75, 10, 10, 1, 1, 1]), self.dt)
+        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([70, 10, 10, 1, 1, 1]), self.dt)
         # Contacts penalization
         #self.grades[2] += self.updateGrade_penalizeContacts()
         # Dist + contacts

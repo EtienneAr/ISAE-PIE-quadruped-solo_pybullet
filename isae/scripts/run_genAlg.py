@@ -153,7 +153,7 @@ paramNames = ["BH0", "BH1", "FootTraj"]
 '''
 
 # params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , period , bodyHeight
-paramTypes = ["scalar"for _ in range(10)]
+paramTypes = ["scalarBinary"] * 10
 paramArgs = [   [ 0.5, 1.5],  #length
                 [ 0.5, 1.5],  #height
                 [-1.0, 1.0],  #top_dx
@@ -184,7 +184,7 @@ np.save("optim_logs/optim_"+ date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", ge
 #    hist = np.histogram(pop[:,0])
 #    plt.hist(hist, label="Gen {}".format(k), alpha = 0.5)
 
-n_best = 10
+n_best = 2
 best_per_gen = np.array(GA.genLog)[:,:,0:n_best]
 
 for i in range(len(best_per_gen)):

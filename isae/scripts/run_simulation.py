@@ -14,6 +14,29 @@ import multiprocessing
 
 print("Number of cpu : ", multiprocessing.cpu_count())
 
+params = [
+0.6339712812216678,
+0.5763344991926671,
+-0.6981066810384158,
+0.025945223510571658,
+-0.2206678686188413,
+0.1392758586078262,
+-0.18692625780688682,
+0.9404547725673897,
+1.3270760294392112,
+1.5473986573893712,
+
+# 0.8006669994075996,
+# 0.8043329670481421,
+# -0.078323670192583,
+# 0.138116160023265,
+# -0.15535914805882495,
+# -0.004626636778647319,
+# -0.05041553089667304,
+# 0.8849698258781956,
+# 1.1601537177339414,
+#1.3855528721673105,
+]
 
 # Loop parameters 
 pyb_gui = True
@@ -21,41 +44,19 @@ duration = 80
 
 # Trajectory parameters
 #period = 1.9
-period = 1
+period = params[8]
 
 #offsets = [0.0,0.5,0.0,0.5]
 offsets = [0,0.5,0.75,0.25]
 
-# params : bh1, bh2, Kp, Kd, period
-#0.96, 1.27, 12.2, 0.52, 0.82   optim1 (pop 10, gen 20)
-#1.19, 1.65, 13.3, 0.54, 0.95   optim2 (pop 40, gen 20)
-#best_params = [1.3, 1.32, 14.2, 1.1, 2.56]  # for speed ref = [0.2,0]
-#1.41570218598
-#1.59286447661
-#15.3423324557
-#3.60968563781
-#1.30976605128
-
-
 # Feet trajectories
 
-footTraj1 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0)
-footTraj2 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.50)
-footTraj3 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.75)
-footTraj4 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.25)
-'''
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
-#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
-footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
-'''
+footTraj1 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0)
+footTraj2 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.50)
+footTraj3 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.75)
+footTraj4 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.25)
 
-print(footTraj1.getPos(0.1))
-
-#bodyHeights = 2*[1.3] + 2*[1.3]
-bodyHeights = 2*[1.5] + 2*[1.5]
-#bodyHeights = [1.7,1.7,1.7,1.7]
+bodyHeights = [params[8]] * 4
 
 # Geometry and controller
 leg = Leg(1,1)

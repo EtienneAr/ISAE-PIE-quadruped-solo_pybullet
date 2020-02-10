@@ -15,6 +15,7 @@ def randomString(stringLength=7):
 class multiprocessGeneticAlgorithm(geneticAlgorithm):
     def __init__(self):
         geneticAlgorithm.__init__(self)
+        self.CATCH_ERROR = True
 
     def __call__(self, pop_indiv):
         BLUE = Fore.BLUE
@@ -29,7 +30,8 @@ class multiprocessGeneticAlgorithm(geneticAlgorithm):
             sim.runSim()
             grade = sim.grades[self.grade_index]
         except Exception as e:
-            pass
+            if not self.CATCH_ERROR:
+                raise e
 
         print(BLUE + "Indiv. " + randomString() + " : " + DEFAULT)
         print(self.getIndivArray(pop_indiv))

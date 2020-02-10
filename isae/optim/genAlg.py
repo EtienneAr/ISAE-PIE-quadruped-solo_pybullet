@@ -137,6 +137,8 @@ class geneticAlgorithm(object):
             for i in range(len(self.paramTypes)):
                 if(self.paramTypes[i] == "scalar"):
                     paramInstance = GA_scalar(self.paramArgs[i])
+                if(self.paramTypes[i] == "scalarBinary"):
+                    paramInstance = GA_scalarBinary(self.paramArgs[i])
                 if(self.paramTypes[i] == "2dPoint"):
                     paramInstance = GA_2dPoint(self.paramArgs[i])
                 if(self.paramTypes[i] == "ptFtTraj"):
@@ -174,35 +176,37 @@ class geneticAlgorithm(object):
         popFitness = np.array(gradedPop)[:,0]
         self.genLog.append([popFitness, popParams])
 
-    def selectBest(self, gradedPop, propToKeep = 0.5):
+    def selectBest(self, gradedPop, propToKeep = 0.33):
         n = int(propToKeep*len(gradedPop))
         return gradedPop[:n]
 
-    def reprodPopulation(self, gradedPop):
+    def reprodPopulation(self, gradedPop, newSize):
         rand.shuffle(gradedPop)
         newPop = []
-        for k in range(int(len(gradedPop)/2)):
-            parent1 = gradedPop[k][1]
-            parent2 = gradedPop[-1-k][1]
+
+        for p in gradedPop:
+            newPop.append(p[1])
+
+        for k in range(int((newSize - len(gradedPop))/2)):
+            p1 = int(rand.random() * len(gradedPop))
+            p2 = int(rand.random() * len(gradedPop))
+            parent1 = gradedPop[p1][1]
+            parent2 = gradedPop[p2][1]
             child1 = []
             child2 = []
             for i in range(len(parent1)):
                 cp1, cp2 = parent1[i].mergeWith(parent2[i])
                 child1.append(cp1)
                 child2.append(cp2)
-            newPop.append(parent1)
-            newPop.append(parent2)
             newPop.append(child1)
             newPop.append(child2)
 
         return newPop
     
-    def mutatePopulation(self,gradedPop, probaMut):
+    def mutatePopulation(self,gradedPop):
         for indiv in gradedPop:
-            for k in range(len(probaMut)):
-                if rand.random() < probaMut[k]:
-                    indiv[k] = indiv[k].mutate()
-        return
+            for gene in indiv:
+                gene.mutate()
 
     def runOptim(self):
         
@@ -221,8 +225,8 @@ class geneticAlgorithm(object):
             print("Best params : ")
             self.printParamsInstance(pop[0][1])
             pop = self.selectBest(pop)
-            pop = self.reprodPopulation(pop)
-            self.mutatePopulation(pop, [0.1]*len(self.paramTypes))   
+            pop = self.reprodPopulation(pop, self.pop_size)
+            self.mutatePopulation(pop)   
         end_time = time.time()
         dur = end_time - init_time
         print(RED + "\nGENETIC OPTIMIZATION FINISHED")
