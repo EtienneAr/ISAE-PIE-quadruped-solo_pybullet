@@ -24,13 +24,19 @@ class multiprocessGeneticAlgorithm(geneticAlgorithm):
 
         sim = self.simFromParam(pop_indiv)
         sim.initializeSim()
-        sim.runSim()
+        grade = -10e6
+        try:
+            sim.runSim()
+            grade = sim.grades[self.grade_index]
+        except Exception as e:
+            pass
+
         print(BLUE + "Indiv. " + randomString() + " : " + DEFAULT)
         print(self.getIndivArray(pop_indiv))
-        print(GREEN + "Fitness : " + str(sim.grades[self.grade_index]) + DEFAULT)
+        print(GREEN + "Fitness : " + str(grade) + DEFAULT)
         print('\n')
 
-        return [sim.grades[self.grade_index], pop_indiv, self.getIndivArray(pop_indiv)]
+        return [grade, pop_indiv, self.getIndivArray(pop_indiv)]
 
     def gradePopulation(self, pop):        
         with mp.Pool(mp.cpu_count()) as pool:
