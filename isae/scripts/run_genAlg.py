@@ -19,9 +19,9 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 4
-GA.n_gen = 2
-GA.grade_index = 3
+GA.pop_size = 40
+GA.n_gen = 10
+GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -184,7 +184,7 @@ np.save("optim_logs/optim_"+ date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", ge
 #    hist = np.histogram(pop[:,0])
 #    plt.hist(hist, label="Gen {}".format(k), alpha = 0.5)
 
-n_best = 2
+n_best = 10
 best_per_gen = np.array(GA.genLog)[:,:,0:n_best]
 
 for i in range(len(best_per_gen)):
