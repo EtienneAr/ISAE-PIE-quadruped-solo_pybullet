@@ -39,10 +39,10 @@ offsets = [0,0.5,0.75,0.25]
 
 # Feet trajectories
 
-footTraj1 = pointsTrajectory([[1,1]], phaseOffset = 0.00, onGroundPhase = 0.75, factor=[0.8,0.5])
-footTraj2 = pointsTrajectory([[1,1]], phaseOffset = 0.50, onGroundPhase = 0.75, factor=[0.8,0.5])
-footTraj3 = pointsTrajectory([[1,1]], phaseOffset = 0.75, onGroundPhase = 0.75, factor=[0.8,0.5])
-footTraj4 = pointsTrajectory([[1,1]], phaseOffset = 0.25, onGroundPhase = 0.75, factor=[0.8,0.5])
+footTraj1 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0)
+footTraj2 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.50)
+footTraj3 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.75)
+footTraj4 = customTrajectory(0.8, 0.5, 0, 0.1, 0.1, 0, 0.1, 0.75, 0.25)
 '''
 footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
@@ -84,6 +84,7 @@ walkSim.initializeSim()
 # Run sim
 walkSim.runSim()
 
+'''
 print(walkSim.getFinalDistance())
 plt.figure()
 walkSim.plotContactPoints()
@@ -100,3 +101,4 @@ plt.legend()
 #walkSim.plotGrades()
 #plt.legend()
 plt.show()
+'''
