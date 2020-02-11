@@ -6,6 +6,8 @@ sys.path.insert(0, os.getcwd()) # adds current directory to python path
 from isae.optim.genAlg import *
 from isae.optim.multiprocessGenAlg import *
 from datetime import datetime
+from isae.control.footTrajController import *
+from isae.control.footTrajControllerV2 import *
 
 BLUE = "\033[34m"
 GREEN = "\033[32m"
@@ -18,8 +20,8 @@ RED = "\033[91m"
 GA = multiprocessGeneticAlgorithm()
 
 GA.pop_size = 4
-GA.n_gen = 2
-GA.grade_index = 3
+GA.n_gen = 5
+GA.grade_index = 2
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -39,10 +41,10 @@ def paramToSim_Bh_KpKd_T(paramsInstance):
     offsets = [0.5,0.,0.5,0.]
     bodyHeights = 2*[bh0] + 2*[bh1]
 
-    footTraj1 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
-    footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-    footTraj3 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[2])
-    footTraj4 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[3])
+    footTraj1 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]])
+    footTraj2 = footTrajectory(         footTraj1.points           )
+    footTraj3 = footTrajectory(         footTraj1.points           )
+    footTraj4 = footTrajectory(         footTraj1.points           )
     trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 
     leg = Leg(1,1)
@@ -69,20 +71,22 @@ def paramToSim_Bh_Traj(paramsInstance):
     bh0 = paramsInstance[0].value
     bh1 = paramsInstance[1].value
     trajPoints0 = paramsInstance[2].value
+    legsOffsets = paramsInstance[3].value
 
     # Loop parameters 
     pyb_gui = False
     duration = 8
-    period = 1.2
+    period = 1.4
 
     #period = 1.5
-    offsets = [0.5,0.,0.5,0.]
+    #offsets = [0.5,0.,0.5,0.]
+    offsets = legsOffsets
     bodyHeights = 2*[bh0] + 2*[bh1]
 
-    footTraj1 = footTrajectory(           trajPoints0              , phaseOffset = offsets[0])
-    footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-    footTraj3 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[2])
-    footTraj4 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[3])
+    footTraj1 = footTrajectory(           trajPoints0              )
+    footTraj2 = footTrajectory(         footTraj1.points           )
+    footTraj3 = footTrajectory(         footTraj1.points           )
+    footTraj4 = footTrajectory(         footTraj1.points           )
     trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 
     leg = Leg(1,1)
@@ -126,8 +130,16 @@ GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
 GA.setParamNames(paramNames)
 
+#GA.runOptim(fromIndiv = [ [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.,0.5,0.,0.5]] ,
+#                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.,0.,0.5,0.5]] ,
+#                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.5,0.,0.5,0.]],
+#                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.5,0.,0.,0.5]]])
+prevGenLog = np.load("optim_logs/optim_gen30_pop60_bh_traj_offs.npy", allow_pickle=True)
+lastGen = prevGenLog[-1]
+print(len(lastGen))
+#GA.runOptim(fromPop = lastGen)
 GA.runOptim()
-genLog = GA.genLog
+genLog = np.array(GA.genLog)
 
 date = datetime.now()
 np.save("optim_logs/optim_" + date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", genLog, allow_pickle=True)
@@ -141,9 +153,9 @@ np.save("optim_logs/optim_" + date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", g
 n_best = 2
 best_per_gen = np.array(GA.genLog)[:,:,0:n_best]
 
-for i in range(len(best_per_gen)):
-    print(RED + "\n==========================================" + DEFAULT)
-    for j in range(n_best):
-        print(BLUE + "Best indiv. {} for gen {}".format(j, i) + DEFAULT)
-        print(best_per_gen[i, 1, j])
-        print(GREEN + "Fitness : {}\n".format(best_per_gen[i, 0, j]) + DEFAULT)
+#for i in range(len(best_per_gen)):
+#    print(RED + "\n==========================================" + DEFAULT)
+#    for j in range(n_best):
+#        print(BLUE + "Best indiv. {} for gen {}".format(j, i) + DEFAULT)
+#        print(best_per_gen[i, 1, j])
+#        print(GREEN + "Fitness : {}\n".format(best_per_gen[i, 0, j]) + DEFAULT)
