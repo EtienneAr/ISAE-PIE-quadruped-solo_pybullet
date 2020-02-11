@@ -28,7 +28,7 @@ class geneticAlgorithm(object):
 
     def printParamsInstance(self, paramsInstance):
         for k in range(len(paramsInstance)):
-            print(paramsInstance[k].value)
+            print(str(paramsInstance[k].value) + ", \t#" + self.paramNames[k])
 
     def getIndivArray(self, indiv):
         return np.array([p.toArray() for p in indiv])
@@ -222,8 +222,9 @@ class geneticAlgorithm(object):
             print("Pop size : {}".format(len(pop)))
             pop = self.gradePopulation(pop)
             self.sortGradedPopulation(pop)
-            print("Best params : ")
-            self.printParamsInstance(pop[0][1])
+
+            self.plotNBest(pop, 10)
+
             pop = self.selectBest(pop)
             pop = self.reprodPopulation(pop, self.pop_size)
             self.mutatePopulation(pop)   
@@ -246,6 +247,13 @@ class geneticAlgorithm(object):
             plt.hist(samples[i])
             plt.title(self.paramNames[i] + ' histogram for current gen')
         plt.show()
+
+
+    def plotNBest(self, pop, n):
+        for i in range(min(n, len(pop))):
+            print()
+            print(Fore.MAGENTA + "#" + str(i) + Fore.RESET + " => " + Fore.GREEN + str(int(pop[0][0])) + Fore.RESET)
+            self.printParamsInstance(pop[0][1])
 
 
 
