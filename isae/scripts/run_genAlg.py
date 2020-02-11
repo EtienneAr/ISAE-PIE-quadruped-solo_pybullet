@@ -20,8 +20,8 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 70
-GA.n_gen = 20
+GA.pop_size = 60
+GA.n_gen = 10
 GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -157,7 +157,7 @@ paramNames = ["BH0", "BH1", "FootTraj"]
 
 # params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , period , bodyHeight
 paramTypes = ["scalarBinary"] * 10
-paramArgs = [   [ 0.5, 1.5],  #length
+paramArgs = [   [ 0.4, 1.5],  #length
                 [ 0.5, 1.5],  #height
                 [-1.0, 1.0],  #top_dx
                 [ 0.0, 0.3],  #end_dx

@@ -12,22 +12,21 @@ class noiseIn_noiseOut:
 		self.torqueBias = np.array([0] * 8)
 
 		self.period = period
-		self.lastTime = -1e6
+		self.Time = 0
 
 	def c(self, q, q_dot, time, dt):
-		if(time > self.lastTime + self.period):
+		self.Time += dt
+
+		if(self.Time > self.period):
+			self.Time = 0
+
 			self.positionBias = (np.random.rand(8) - 0.5) * 2. * self.positionNoise
 			self.velocityBias = (np.random.rand(8) - 0.5) * 2. * self.velocityNoise
 			self.torqueBias = np.random.rand(8) - 0.5 * 2. * self.torqueNoise
-
-			self.lastTime = time
 			
 		q_biased     = np.vstack((q[:7],     q[7:]     + np.matrix(self.positionBias).T))
 		q_dot_biased = np.vstack((q_dot[:6], q_dot[6:] + np.matrix(self.velocityBias).T))
 
 		torque = self.controller.c(q_biased, q_dot_biased, time, dt)
 
-		# print()
-		# print(q)
-		# print(q_dot)
 		return torque + np.matrix(self.torqueBias).T
