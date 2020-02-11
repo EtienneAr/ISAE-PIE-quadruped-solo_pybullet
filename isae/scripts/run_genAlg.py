@@ -163,9 +163,9 @@ paramArgs = [   [ 0.1, 1.0],  #length
                 [ 0.0, 0.2],  #end_dx
                 [ 0.0, 0.2],  #end_dy
                 [-0.5, 0.5],  #middle_dx
-                [-0.3, 0.3],  #middle_dy
+                [-0.2, 0.2],  #middle_dy
                 [ 0.5, 1.0],  #onGroundPhase
-                [ 0.5, 1.0],  #period
+                [ 0.4, 1.0],  #period
                 [ 1.0, 2.0],  #bodyHeight
                 ]
 paramNames = ["length", "height", "top_dx", "end_dX", "end_dy", "middle_dx", "middle_dy", "onGroundPhase ", "preriod", "bodyHeight"]
