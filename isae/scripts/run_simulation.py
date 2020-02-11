@@ -14,17 +14,30 @@ import multiprocessing
 print("Number of cpu : ", multiprocessing.cpu_count())
 
 params = [
-#0 => -17
-0.46145736995143083, 	#length
-1.1088043084730161, 	#height
--0.767421454708398, 	#top_dx
-0.15076494691176015, 	#end_dX
--0.22743789422052113, 	#end_dy
-0.050391304172427764, 	#middle_dx
--0.022606724811983114, 	#middle_dy
-0.9300935097409295, 	#onGroundPhase 
-0.7434371952924206, 	#preriod
-1.581872873912653, 	#bodyHeight
+#0 => -22
+0.34176569688490543, 	#length
+1.1225985198070525, 	#height
+-0.17453035412428997, 	#top_dx
+0.03279811845703933, 	#end_dX
+0.16203856184795268, 	#end_dy
+0.33125288310211076, 	#middle_dx
+0.2216366133608652, 	#middle_dy
+0.9212202546088035, 	#onGroundPhase 
+0.6813213974278806, 	#preriod
+1.499986257699775, 	#bodyHeight
+
+
+# #0 => -17
+# 0.46145736995143083, 	#length
+# 1.1088043084730161, 	#height
+# -0.767421454708398, 	#top_dx
+# 0.15076494691176015, 	#end_dX
+# -0.22743789422052113, 	#end_dy
+# 0.050391304172427764, 	#middle_dx
+# -0.022606724811983114, 	#middle_dy
+# 0.9300935097409295, 	#onGroundPhase 
+# 0.7434371952924206, 	#preriod
+# 1.581872873912653, 	#bodyHeight
 
 
 # 0.40837721208727384, 	#length
@@ -104,7 +117,7 @@ footTraj2 = customTrajectory(params[0], params[1], params[2], params[3], params[
 footTraj3 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.75)
 footTraj4 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.25)
 
-bodyHeights = [params[8]] * 4
+bodyHeights = [params[9]] * 4
 
 # Geometry and controller
 leg = Leg(1,1)
