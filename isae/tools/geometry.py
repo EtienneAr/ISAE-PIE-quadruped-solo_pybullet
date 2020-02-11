@@ -1,5 +1,8 @@
 from math import pi, atan, atan2, cos, sin, sqrt, pow
 
+def pipimod(a):
+	return a - 2*pi * ((a + pi) // (2*pi))
+
 
 class Leg:
 	def __init__(self, upperLegLen, lowerLegLen):
@@ -21,9 +24,15 @@ class Leg:
 		d_theta_1 = 2*atan((self.l2+self.l1-sqrt(r2))/(self.l2-self.l1-sqrt(r2)) * sqrt((r2 - pow(self.l1-self.l2,2))/(pow(self.l1+self.l2,2)-r2)))
 
 		if(otherSol):
-			return [theta_mean + d_theta_1 + pi/2., -(pi + 2*atan(sqrt((r2 - pow(self.l1-self.l2,2)) / (pow(self.l1+self.l2,2)-r2))))]
+			return [
+			theta_mean + d_theta_1 + pi/2., 
+			pipimod(-(pi + 2*atan(sqrt((r2 - pow(self.l1-self.l2,2)) / (pow(self.l1+self.l2,2)-r2)))))
+					]
 
-		return [theta_mean - d_theta_1 + pi/2., pi + 2*atan(sqrt((r2 - pow(self.l1-self.l2,2)) / (pow(self.l1+self.l2,2)-r2)))]
+		return [
+		theta_mean - d_theta_1 + pi/2.,
+		pipimod(pi + 2*atan(sqrt((r2 - pow(self.l1-self.l2,2)) / (pow(self.l1+self.l2,2)-r2))))
+				]
 
 	def getJointsTorque(self, jointsPos, load):
 		# returns joint torques to hold a joints pos for a given load on the foot (to verify?)
