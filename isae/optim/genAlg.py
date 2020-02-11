@@ -252,7 +252,7 @@ class geneticAlgorithm(object):
     def plotNBest(self, pop, n):
         for i in range(min(n, len(pop))):
             print()
-            print(Fore.MAGENTA + "#" + str(i) + Fore.RESET + " => " + Fore.GREEN + str(int(pop[0][0])) + Fore.RESET)
+            print(Fore.MAGENTA + "#" + str(i) + Fore.RESET + " => " + Fore.GREEN + str(int(pop[i][0])) + Fore.RESET)
             self.printParamsInstance(pop[0][1])
 
 

@@ -20,7 +20,7 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 60
+GA.pop_size = 80
 GA.n_gen = 10
 GA.grade_index = 1
 
@@ -157,16 +157,16 @@ paramNames = ["BH0", "BH1", "FootTraj"]
 
 # params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , period , bodyHeight
 paramTypes = ["scalarBinary"] * 10
-paramArgs = [   [ 0.4, 1.5],  #length
+paramArgs = [   [ 0.1, 1.0],  #length
                 [ 0.5, 1.5],  #height
-                [-1.0, 1.0],  #top_dx
-                [ 0.0, 0.3],  #end_dx
-                [-0.3, 0.3],  #end_dy
-                [-1.0, 1.0],  #middle_dx
+                [-0.5, 0.5],  #top_dx
+                [ 0.0, 0.2],  #end_dx
+                [ 0.0, 0.2],  #end_dy
+                [-0.5, 0.5],  #middle_dx
                 [-0.3, 0.3],  #middle_dy
                 [ 0.5, 1.0],  #onGroundPhase
-                [ 0.5, 1.5],  #period
-                [ 1.0, 2.0],  #bodyHeight - stepHeight
+                [ 0.5, 1.0],  #period
+                [ 1.2, 2.0],  #bodyHeight
                 ]
 paramNames = ["length", "height", "top_dx", "end_dX", "end_dy", "middle_dx", "middle_dy", "onGroundPhase ", "preriod", "bodyHeight"]
 

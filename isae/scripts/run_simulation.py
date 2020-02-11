@@ -14,6 +14,19 @@ import multiprocessing
 print("Number of cpu : ", multiprocessing.cpu_count())
 
 params = [
+#0 => -17
+0.46145736995143083, 	#length
+1.1088043084730161, 	#height
+-0.767421454708398, 	#top_dx
+0.15076494691176015, 	#end_dX
+-0.22743789422052113, 	#end_dy
+0.050391304172427764, 	#middle_dx
+-0.022606724811983114, 	#middle_dy
+0.9300935097409295, 	#onGroundPhase 
+0.7434371952924206, 	#preriod
+1.581872873912653, 	#bodyHeight
+
+
 # 0.40837721208727384, 	#length
 # 0.9549255241301574, 	#height
 # -0.47767912333829576, 	#top_dx
@@ -107,7 +120,7 @@ Kd = 0.2
 
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
-noiseController = noiseIn_noiseOut(robotController, 1, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
+noiseController = noiseIn_noiseOut(robotController, 1 * 100000, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
 
 # Create simulation
 walkSim = gradedSimulation()
