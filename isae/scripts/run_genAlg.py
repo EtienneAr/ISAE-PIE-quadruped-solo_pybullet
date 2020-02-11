@@ -8,6 +8,7 @@ sys.path.insert(0, os.getcwd()) # adds current directory to python path
 from isae.optim.genAlg import *
 from isae.optim.multiprocessGenAlg import *
 from datetime import datetime
+from isae.control.noiser import *
 
 BLUE = "\033[34m"
 GREEN = "\033[32m"
@@ -19,8 +20,8 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 40
-GA.n_gen = 10
+GA.pop_size = 70
+GA.n_gen = 20
 GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -127,10 +128,12 @@ def paramToSim_Bh_EtienneCustom(paramsInstance):
     Kd = 0.2
 
     robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+    noiseController = noiseIn_noiseOut(robotController, 1, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
+
 
     simInstance = gradedSimulation()
     simInstance.setLoopParams(pyb_gui, duration, leg)
-    simInstance.setController(robotController)
+    simInstance.setController(noiseController)
 
     return simInstance
 
