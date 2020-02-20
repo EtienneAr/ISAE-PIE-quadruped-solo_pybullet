@@ -4,13 +4,14 @@ from sys import argv
 from functools import partial 
 sys.path.insert(0, os.getcwd()) # adds current directory to python path
 
-#from isae.sim_control.walkSimulation import *
+from isae.sim_control.walkSimulation import *
 from isae.sim_control.gradedSimulation import *
 from isae.optim.genAlgParam import *
 # footTrajController class
 from isae.control.footTrajController import * 
 from isae.control.footTrajControllerV2 import * 
 #from isae.gui.gui_client import *
+from isae.tools.cameraTool import * 
 
 import multiprocessing
 
@@ -19,7 +20,7 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 
 # Loop parameters 
 pyb_gui = True
-duration = 8
+duration = 4
 
 # Trajectory parameters
 #period = 1.9
@@ -43,11 +44,17 @@ offsets = [0.0,0.5,0.0,0.5]
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
+#footTraj1 = footTrajectory([[-1.14472959,  0.03284315],
+#      [ 0.46659341,  0.51091852],
+#       [ 0.68658772,  0.76576489],
+#       [-1.14472959,  0.03284315]], phaseOffset = offsets[0])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points   )
-footTraj3 = footTrajectory([[-0.5,0],[-0.1,0.8],[0.5,0],[-0.5,0]])
-footTraj4 = footTrajectory(         footTraj3.points   )
+#footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
+#footTraj3 = footTrajectory([[-1.14472959,  0.03284315],
+#       [ 0.46659341,  0.51091852],
+#       [ 0.68658772,  0.76576489],
+#       [-1.14472959,  0.03284315]], phaseOffset = offsets[2])
+#footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
 
 footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
@@ -99,12 +106,25 @@ setYVal = []
 #robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
 
+cameraTool = cameraTool()
+# Turn boolean to True to record Video (only for no parallel sim) 
+cameraTool.recordVideo = True
+# Main parameters for camera setting
+# See cameraTool class for others
+# Warning : Create the following folders
+cameraTool.fps = 24
+cameraTool.heightImage = 512
+cameraTool.widthImage = 512
+cameraTool.adressImage = 'isae/dataVideo/images/'
+cameraTool.adressVideo = 'isae/dataVideo/videos/'
+
 # Create simulation
 walkSim = gradedSimulation()
 
 # Assign parameters to the simulation
 walkSim.setLoopParams(pyb_gui, duration, leg)
 walkSim.setController(robotController)
+walkSim.setCameraTool(cameraTool)
 
 walkSim.initializeSim()
 
@@ -130,5 +150,5 @@ plt.legend()
 #walkSim.plotGrades()
 #plt.legend()
 plt.figure()
-walkSim.robotController.plotFootTraj(nbPoints=100)
+walkSim.robotController.plotFootTraj()
 plt.show()
