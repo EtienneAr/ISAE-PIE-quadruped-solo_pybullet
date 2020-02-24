@@ -12,6 +12,9 @@ import numpy as np
 from isae.tools.geometry import * 
 # footTrajectory class
 from isae.tools.footTrajectory import * 
+# footTajectory class Bezier Curve
+from isae.tools.footTrajectoryBezier import *
+
 # grading class : in optim module, expects grade and getGrade (aka final grade) as class methods
 
 # for 3D plots in matplotlib

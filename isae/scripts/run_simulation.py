@@ -24,9 +24,11 @@ duration = 4
 
 # Trajectory parameters
 #period = 1.9
-period = 1.
+period = 1 
+#period = 0.21 # Bezier ex
 
 offsets = [0.0,0.5,0.0,0.5]
+#offsets = [0.6950612122191265 ,  0.1807852291552356 ,  0.10563850077764253  ,  0.5874868206395045] # Bezier ex
 #offsets = [0.5,0.,0.5,0.]
 #offsets = [0.56231819, 0.10734445, 0.13353176, 0.57375114]
 
@@ -56,14 +58,25 @@ t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 #       [-1.14472959,  0.03284315]], phaseOffset = offsets[2])
 #footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
 
+#################################
+# Foot trajectory 1
+#################################
+#footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
+#footTraj2 = footTrajectory(         footTraj1.points)
+#footTraj3 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
+#footTraj4 = footTrajectory(         footTraj3.points)
 
-footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
-#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points)
-footTraj3 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
-footTraj4 = footTrajectory(         footTraj3.points)
+#################################
+# Foot trajectory  Bezier Curve
+#################################
+pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.2846, -0.2183, 0.5634], [0.1733, 0.0, 0.0136, 0.0, -0.1018, 0.1255, -0.2008, -0.1800]]
+footTraj1 = footTrajectoryBezier(pointsTraj)
+footTraj2 = footTrajectoryBezier(pointsTraj)
+footTraj3 = footTrajectoryBezier(pointsTraj)
+footTraj4 = footTrajectoryBezier(pointsTraj)
 
 bodyHeights = 2*[1.5] + 2*[1.3]
+#bodyHeights = 2*[1.5] + 2*[1.5] # Bezier ex
 #bodyHeights = 2*[1.6] + 2*[1.6]
 #bodyHeights = [1.7,1.7,1.7,1.7]
 
@@ -75,9 +88,10 @@ sols = [False, False, True, True]
 #sols = [True, True, True, True]
 
 #Kp = 8
-Kp = 7
-#Kd = 0.2
+Kp = 7.
+#Kp = 12.6 # Bezier ex
 Kd = 0.2
+#Kd = 0.8  # Bezier ex
 
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 
@@ -108,7 +122,7 @@ robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, p
 
 cameraTool = cameraTool()
 # Turn boolean to True to record Video (only for no parallel sim) 
-cameraTool.recordVideo = True
+cameraTool.recordVideo = False
 # Main parameters for camera setting
 # See cameraTool class for others
 # Warning : Create the following folders
