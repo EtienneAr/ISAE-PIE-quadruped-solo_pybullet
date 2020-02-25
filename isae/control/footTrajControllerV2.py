@@ -2,6 +2,7 @@ from sys import path
 import numpy as np
 import matplotlib.pyplot as plt
 from isae.control.myPD import PD
+from datetime import datetime
 
 class footTrajControllerV2:
 
@@ -47,13 +48,40 @@ class footTrajControllerV2:
 
 		return torques
 
-	def plotFootTraj(self):
+	def plotFootTraj(self, nbPoints = 1000):
 		footPos = []
-		
+		freq = int(1000/nbPoints)
 		for i in range(1000):
 			phase = i*1e-3
-			footPos.append(self.Feet4traj[0].getPos(self.cyclePhase(phase)))
-		
+			cPhase = self.cyclePhase(phase)
+			if(i%freq == 0):
+				footPos.append(self.Feet4traj[0].getPos(cPhase))
 		footPos = np.array(footPos)
-		print(footPos)
-		plt.plot(footPos[:,0,0], footPos[:,0,1], '+')
+		#print(footPos)
+		plt.scatter(footPos[:,0,0], footPos[:,0,1], marker='o')
+	
+	def sampleFootTrajToFile(self, filename):
+		qList = []
+		qDotList = []
+		for k in range(int(self.period * 1000)):
+			phase = k/(self.period * 1000)
+			# get 4 [x,y] positions from the Feet4traj array of trajectories
+			traj_pos_ref = [self.Feet4traj[i].getPos(self.cyclePhase(self.phase_offsets[i] + phase)) for i in range(4)]
+			# remap the positions in leg frame
+			legs_pos_ref = [[traj_pos_ref[i][0,0],traj_pos_ref[i][0,1]-self.bHs[i]] for i in range(len(traj_pos_ref))]
+			# compute desired joints positions [theta0, theta1] for each leg
+			q_ref_temp = [self.Leg.getJointsPos(legs_pos_ref[i], otherSol = self.sols[i]) for i in range(4)]
+
+			# remap q_ref as array of float instead array of pairs 
+			q_ref = []
+			for qq in q_ref_temp:
+				q_ref.append([qq[0]])
+				q_ref.append([qq[1]])
+			
+			qList.append(q_ref)
+			qDotList.append([0]*8)
+
+		date = datetime.now()
+		np.save("sampledTrajs/traj_" + filename + "_sampled.npy", qList, allow_pickle=True)
+		np.save("sampledTrajs/trajDot_" + filename + "_sampled.npy", qDotList, allow_pickle=True)
+		return

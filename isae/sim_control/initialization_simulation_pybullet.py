@@ -38,7 +38,7 @@ def configure_simulation(dt, enableGUI):
     groundPlaneId = physicsClient.loadURDF("plane.urdf")
 
     # Set friction coeff of ground plane
-    physicsClient.changeDynamics(groundPlaneId, -1, lateralFriction=2)
+    physicsClient.changeDynamics(groundPlaneId, -1, lateralFriction=4)
 
     # Load the robot for PyBullet
     robotStartPos = [0, 0, 0.35]
@@ -47,7 +47,6 @@ def configure_simulation(dt, enableGUI):
     robotId = physicsClient.loadURDF("solo.urdf", robotStartPos, robotStartOrientation)
 
     # Set time step of the simulation
-    # dt = 0.001
     physicsClient.setTimeStep(dt)
     # realTimeSimulation = True # If True then we will sleep in the main loop to have a frequency of 1/dt
 

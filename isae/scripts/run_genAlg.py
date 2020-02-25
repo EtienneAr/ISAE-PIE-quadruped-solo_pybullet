@@ -8,6 +8,7 @@ from isae.optim.multiprocessGenAlg import *
 from datetime import datetime
 from isae.control.footTrajController import *
 from isae.control.footTrajControllerV2 import *
+from functools import partial 
 
 BLUE = "\033[34m"
 GREEN = "\033[32m"
@@ -19,9 +20,9 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 4
+GA.pop_size = 52
 GA.n_gen = 5
-GA.grade_index = 2
+GA.grade_index = 3
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -106,12 +107,64 @@ def paramToSim_Bh_Traj(paramsInstance):
 
     return simInstance
 
-GA.setParamToSim(paramToSim_Bh_Traj)
+def paramToSim_T_cyclePhase_loffs(paramsInstance):
+
+    T = paramsInstance[0].value
+    xPhase = paramsInstance[1].value
+    yPhase = paramsInstance[2].value
+    #legsOffsets = paramsInstance[3].value
+    legsOffsets = [0.5,0.5,0.,0.]
+
+    # Loop parameters 
+    pyb_gui = False
+    duration = 8
+    period = T
+
+    offsets = legsOffsets
+    bodyHeights = 2*[1.7] + 2*[1.5]
+
+    footTraj1 = footTrajectory([[-0.5,0],[0.1,1.1],[0.5,0],[-0.5,0]])
+    footTraj2 = footTrajectory(         footTraj1.points           )
+    footTraj3 = footTrajectory(         footTraj1.points           )
+    footTraj4 = footTrajectory(         footTraj1.points           )
+    trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
+
+    leg = Leg(1,1)
+    sols = [False, False, True, True]
+
+    Kp = 8
+    Kd = 0.2
+
+    def lerpCyclePhase(phase, xVal=[0.5], yVal=[0.5]):
+        phase = phase%1.
+        
+        xVal.append(1)
+        xVal.append(0)
+        yVal.append(1)
+        yVal.append(0)
+        
+        for i in range(len(xVal) - 1):
+            if phase < xVal[i]:
+                return yVal[i-1] + (yVal[i] - yVal[i-1])*(1 - (xVal[i] - phase)/(xVal[i] - xVal[i-1]))
+    
+    setXVal = [xPhase]
+    setYVal = [yPhase]
+
+    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+    
+    simInstance = gradedSimulation()
+    simInstance.setLoopParams(pyb_gui, duration, leg)
+    simInstance.setController(robotController)
+
+    return simInstance
+
+#GA.setParamToSim(paramToSim_Bh_Traj)
+GA.setParamToSim(paramToSim_T_cyclePhase_loffs)
 
 # params : bh1, bh2, Kp, Kd, period
-paramTypes = ["scalar", "scalar","scalar","scalar","scalar"]
-paramArgs = [[0.8,1.7],[0.8,1.7],[4,20],[0,5],[0.5,4]]
-paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
+#paramTypes = ["scalar", "scalar","scalar","scalar","scalar"]
+#paramArgs = [[0.8,1.7],[0.8,1.7],[4,20],[0,5],[0.5,4]]
+#paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
 
 # params : triangles summits for traj
 #paramTypes = ["2dPoint","2dPoint","2dPoint"]
@@ -122,9 +175,15 @@ paramNames = ["BH0", "BH1", "Kp", "Kd", "T"]
 #paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]]]
 #paramNames = ["BH0", "BH1", "FootTraj"]
 
-paramTypes = ["scalar", "scalar", "ptFtTraj", "legsOffsets"]
-paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]], 0.6]
-paramNames = ["BH0", "BH1", "FootTraj", "legsOffsets"]
+# params : period, xPhase, yPhase, legsOffsets
+paramTypes = ["scalar", "scalar", "scalar"] #, "legsOffsets"]
+paramArgs = [[0.5,2],[0.1,0.9],[0.1,0.9]] #, 0.6]
+paramNames = ["T", "xPhase", "yPhase"] #, "legsOffsets"]
+
+# params : bh1, bh2, footTraj, legsOffsets
+#paramTypes = ["scalar", "scalar", "ptFtTraj", "legsOffsets"]
+#paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]], 0.6]
+#paramNames = ["BH0", "BH1", "FootTraj", "legsOffsets"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)

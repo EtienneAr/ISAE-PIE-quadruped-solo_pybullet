@@ -65,7 +65,7 @@ class gradedSimulation(walkSimulation):
         #print(self.updateGrade_constantOrientation(np.array([0,0,0,1])))
         # Dist + contacts
         #self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
-        self.grades[3] += d + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
+        self.grades[3] += 0.4*d + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1])) + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
     
     
     def stepSim(self):

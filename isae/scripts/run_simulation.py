@@ -23,10 +23,10 @@ duration = 8
 
 # Trajectory parameters
 #period = 1.9
-period = 1.
+period = 1.244
 
-offsets = [0.0,0.5,0.0,0.5]
-#offsets = [0.5,0.,0.5,0.]
+#offsets = [0.345278  , 0.24364393, 0.2484231 , 0.07805577]
+offsets = [0.,0.5,0.5,0.]
 #offsets = [0.56231819, 0.10734445, 0.13353176, 0.57375114]
 
 # params : bh1, bh2, Kp, Kd, period
@@ -43,20 +43,13 @@ offsets = [0.0,0.5,0.0,0.5]
 t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
-#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
 footTraj2 = footTrajectory(         footTraj1.points   )
 footTraj3 = footTrajectory([[-0.5,0],[-0.1,0.8],[0.5,0],[-0.5,0]])
 footTraj4 = footTrajectory(         footTraj3.points   )
 
 
-footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
-#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points)
-footTraj3 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])
-footTraj4 = footTrajectory(         footTraj3.points)
-
-bodyHeights = 2*[1.5] + 2*[1.3]
+bodyHeights = 2*[1.5] + 2*[1.5]
 #bodyHeights = 2*[1.6] + 2*[1.6]
 #bodyHeights = [1.7,1.7,1.7,1.7]
 
@@ -68,7 +61,7 @@ sols = [False, False, True, True]
 #sols = [True, True, True, True]
 
 #Kp = 8
-Kp = 7
+Kp = 8
 #Kd = 0.2
 Kd = 0.2
 
@@ -93,8 +86,8 @@ def lerpCyclePhase(phase, xVal=[0.3], yVal=[0.6]):
 
 #setXVal = [0.32]
 #setYVal = [0.68]
-setXVal = []
-setYVal = []
+setXVal = [0.187]
+setYVal = [0.714]
 
 #robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
@@ -111,7 +104,7 @@ walkSim.initializeSim()
 # Run sim
 walkSim.runSim()
 
-#walkSim.robotController.sampleFootTrajToFile('test')
+walkSim.robotController.sampleFootTrajToFile('walk_1')
 
 print(walkSim.getFinalDistance())
 print(walkSim.grades[2])
