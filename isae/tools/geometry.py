@@ -2,6 +2,7 @@ from math import pi, atan, atan2, cos, sin, sqrt, pow
 def PiPiMod(a):
 	return a - 2*pi*((a + pi)//(2*pi))
 
+
 class Leg:
 	def __init__(self, upperLegLen, lowerLegLen):
 		self.l1 = upperLegLen*1.

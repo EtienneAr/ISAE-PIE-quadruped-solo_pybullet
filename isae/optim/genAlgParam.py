@@ -52,6 +52,28 @@ class GA_scalar(genAlgParam):
     def toArray(self):
         return self.value
 
+class GA_scalarBinary(genAlgParam):
+    def __init__(self, minMaxVals, value = 0):
+        self.value = value
+        self.minVal = minMaxVals[0]
+        self.maxVal = minMaxVals[1]
+
+    def initRandom(self):
+        self.value = self.minVal + (self.maxVal - self.minVal)*rand.random()
+    
+    def mergeWith(self, other):
+        valueA, valueB = self.value, other.value
+        if(rand.random() > 0.5):
+            valueA, valueB = valueB, valueA
+        return GA_scalarBinary([self.minVal, self.maxVal], value=valueA), GA_scalarBinary([self.minVal, self.maxVal], value=valueB)
+    
+    def mutate(self):
+        if(rand.random() > 0.8):
+            self.value = self.minVal + rand.random() * (self.maxVal - self.minVal)
+    
+    def toArray(self):
+        return self.value
+
 # 2d point parameter
 class GA_2dPoint(genAlgParam):
     def __init__(self, xyRanges, value = [0,0]):
