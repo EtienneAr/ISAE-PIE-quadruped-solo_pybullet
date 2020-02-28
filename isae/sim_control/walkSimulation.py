@@ -180,10 +180,12 @@ class walkSimulation(object):
         for k in range(iterations):
             #t0 = time.clock()
             self.stepSim()
-            if self.cameraTool.recordVideo : self.saveImages(k)
+            if self.cameraTool != None:
+                if self.cameraTool.recordVideo : self.saveImages(k)
 
-        # Record the video from images saved        
-        if self.cameraTool.recordVideo : self.cameraTool.saveVideo()
+        # Record the video from images saved      
+        if self.cameraTool != None:  
+            if self.cameraTool.recordVideo : self.cameraTool.saveVideo()
 
         # Shut down the PyBullet client
         self.physicsClient.disconnect()

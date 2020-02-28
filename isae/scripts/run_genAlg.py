@@ -8,13 +8,10 @@ sys.path.insert(0, os.getcwd()) # adds current directory to python path
 from isae.optim.genAlg import *
 from isae.optim.multiprocessGenAlg import *
 from datetime import datetime
-<<<<<<< HEAD
 from isae.control.footTrajController import *
 from isae.control.footTrajControllerV2 import *
 from functools import partial 
-=======
 from isae.control.noiser import *
->>>>>>> Etienn_2
 
 BLUE = "\033[34m"
 GREEN = "\033[32m"
@@ -26,15 +23,9 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-<<<<<<< HEAD
-GA.pop_size = 52
+GA.pop_size = 4
 GA.n_gen = 5
 GA.grade_index = 3
-=======
-GA.pop_size = 80
-GA.n_gen = 10
-GA.grade_index = 1
->>>>>>> Etienn_2
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -132,6 +123,9 @@ def paramToSim_T_cyclePhase_loffs(paramsInstance):
     duration = 8
     period = T
 
+    Kp = 8
+    Kd = 0.2
+
     offsets = legsOffsets
     bodyHeights = 2*[1.7] + 2*[1.5]
 
@@ -139,29 +133,7 @@ def paramToSim_T_cyclePhase_loffs(paramsInstance):
     footTraj2 = footTrajectory(         footTraj1.points           )
     footTraj3 = footTrajectory(         footTraj1.points           )
     footTraj4 = footTrajectory(         footTraj1.points           )
-    
-def paramToSim_Bh_EtienneCustom(paramsInstance):
-    paramValue = list(map(lambda v : v.toArray(), paramsInstance))
 
-    pyb_gui = False
-    duration = 10
-    period = paramValue[8]
-
-    bodyHeights = [paramValue[9]] * 4
-
-    footTraj1 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0)
-    footTraj2 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.5)
-    footTraj3 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.75)
-    footTraj4 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.25)
-    trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
-
-    leg = Leg(1,1)
-    sols = [False, False, True, True]
-
-    Kp = 8
-    Kd = 0.2
-
-# THIBAULT EXAMPLE PARAM SET
     def lerpCyclePhase(phase, xVal=[0.5], yVal=[0.5]):
         phase = phase%1.
         
@@ -185,10 +157,24 @@ def paramToSim_Bh_EtienneCustom(paramsInstance):
 
     return simInstance
 
-#GA.setParamToSim(paramToSim_Bh_Traj)
-GA.setParamToSim(paramToSim_T_cyclePhase_loffs)
+def paramToSim_Bh_EtienneCustom(paramsInstance):
+    paramValue = list(map(lambda v : v.toArray(), paramsInstance))
 
-# ETIENNE EXAMPLE PARAM SET    
+    pyb_gui = False
+    duration = 10
+    period = paramValue[8]
+
+    bodyHeights = [paramValue[9]] * 4
+
+    footTraj1 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0)
+    footTraj2 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.5)
+    footTraj3 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.75)
+    footTraj4 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.25)
+    trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
+
+    leg = Leg(1,1)
+    sols = [False, False, True, True]
+   
     Kp = 8
     Kd = 0.2
 
@@ -202,6 +188,8 @@ GA.setParamToSim(paramToSim_T_cyclePhase_loffs)
 
     return simInstance
 
+#GA.setParamToSim(paramToSim_Bh_Traj)
+GA.setParamToSim(paramToSim_T_cyclePhase_loffs)
 GA.setParamToSim(paramToSim_Bh_EtienneCustom)
 
 '''
@@ -258,15 +246,15 @@ GA.setParamNames(paramNames)
 #                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.,0.,0.5,0.5]] ,
 #                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.5,0.,0.5,0.]],
 #                          [1.5,1.5,np.array([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]]), [0.5,0.,0.,0.5]]])
-prevGenLog = np.load("optim_logs/optim_gen30_pop60_bh_traj_offs.npy", allow_pickle=True)
-lastGen = prevGenLog[-1]
-print(len(lastGen))
+#prevGenLog = np.load("optim_logs/optim_gen30_pop60_bh_traj_offs.npy", allow_pickle=True)
+#lastGen = prevGenLog[-1]
+#print(len(lastGen))
 #GA.runOptim(fromPop = lastGen)
 GA.runOptim()
 genLog = np.array(GA.genLog)
 
-date = datetime.now()
-np.save("optim_logs/optim_"+ date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", genLog, allow_pickle=True)
+#date = datetime.now()
+#np.save("optim_logs/optim_"+ date.strftime("%d_%m_%Y_%H:%M:%S") + "_log.npy", genLog, allow_pickle=True)
 #print(genLog)
 
 #for k in range(GA.n_gen):

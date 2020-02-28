@@ -10,7 +10,7 @@ sys.path.insert(0, os.getcwd()) # adds current directory to python path
 from isae.sim_control.gradedSimulation import *
 from isae.optim.genAlgParam import *
 from isae.control.noiser import *
-from isae.tools.cameraTool import * 
+#from isae.tools.cameraTool import * 
 from isae.control.footTrajControllerV2 import * 
 from isae.control.footTrajController import * 
 
@@ -149,11 +149,11 @@ footTraj3 = customTrajectory(params[0], params[1], params[2], params[3], params[
 footTraj4 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.25)
 
 # Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
+footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]])
 #footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[2])
-footTraj4 = footTrajectory(         footTraj3.points           , phaseOffset = offsets[3])
+footTraj2 = footTrajectory(         footTraj1.points           )
+footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]])
+footTraj4 = footTrajectory(         footTraj3.points           )
 
 #bodyHeights = 2*[1.3] + 2*[1.3]
 bodyHeights = 2*[1.5] + 2*[1.5]
@@ -200,6 +200,7 @@ setYVal = [0.714]
 #robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
 
+'''
 cameraTool = cameraTool()
 # Turn boolean to True to record Video (only for no parallel sim) 
 cameraTool.recordVideo = False
@@ -211,6 +212,7 @@ cameraTool.heightImage = 512
 cameraTool.widthImage = 512
 cameraTool.adressImage = 'isae/dataVideo/images/'
 cameraTool.adressVideo = 'isae/dataVideo/videos/'
+'''
 
 # Create simulation
 walkSim = gradedSimulation()
