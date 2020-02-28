@@ -36,7 +36,7 @@ params = [
 -0.17260233493745536, 	#middle_dx
 0.06720471734525713, 	#middle_dy
 0.7841151011066362, 	#onGroundPhase 
-0.6451574599189981, 	#preriod
+2* 0.6451574599189981, 	#preriod
 1.5003555571893732, 	#bodyHeight
 
 
@@ -191,14 +191,14 @@ traj_log = []
 for my_t in range(int(period / dt)):
 	current_point = []
 	for j in range(len(trajs)):
-		foot_pos = trajs[j].getPos(dt * my_t / period + offsets[j])
+		foot_pos = trajs[j].getPos(dt * my_t / period)
 		foot_pos[0,1] -= bodyHeights[j]
-		joint_pos = leg.getJointsPos(foot_pos[0])
+		joint_pos = leg.getJointsPos(foot_pos[0], otherSol = sols[j])
 		current_point.append(joint_pos[0])
 		current_point.append(joint_pos[1])
-	traj_log.append(current_point)
+	traj_log.append(np.matrix(current_point).T)
 
-print(traj_log)
+traj_log = np.array(traj_log)
 np.save("test.npy", traj_log)
 
 assert False
