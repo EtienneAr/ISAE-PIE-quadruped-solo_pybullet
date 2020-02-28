@@ -14,17 +14,43 @@ import multiprocessing
 print("Number of cpu : ", multiprocessing.cpu_count())
 
 params = [
-#0 => -12
-0.13193453226003413, 	#length
-1.3512355234987758, 	#height
--0.43360866145837307, 	#top_dx
-0.08787105222212671, 	#end_dX
-0.09274779651763523, 	#end_dy
-0.004334391317216024, 	#middle_dx
--0.03784137239537205, 	#middle_dy
-0.9681577398305765, 	#onGroundPhase 
-0.5236698318512114, 	#preriod
-1.8242074368232974, 	#bodyHeight
+# #0 => -18
+# 0.3061055061406551, 	#length
+# 0.5951045790950397, 	#height
+# 0.31335926932491476, 	#top_dx
+# 0.05316726690076732, 	#end_dX
+# 0.002870177069226343, 	#end_dy
+# -0.1188468558677328, 	#middle_dx
+# 0.06720471734525713, 	#middle_dy
+# 0.7896768078427758, 	#onGroundPhase 
+# 0.5524070191929794, 	#preriod
+# 1.6379950795561544, 	#bodyHeight
+
+
+#0 => -22
+0.14563324113943493, 	#length
+0.5409825886779587, 	#height
+-0.06727575508813433, 	#top_dx
+0.11977483315736429, 	#end_dX
+0.1296427789524941, 	#end_dy
+-0.17260233493745536, 	#middle_dx
+0.06720471734525713, 	#middle_dy
+0.7841151011066362, 	#onGroundPhase 
+0.6451574599189981, 	#preriod
+1.5003555571893732, 	#bodyHeight
+
+
+# #0 => -12
+# 0.13193453226003413, 	#length
+# 1.3512355234987758, 	#height
+# -0.43360866145837307, 	#top_dx
+# 0.08787105222212671, 	#end_dX
+# 0.09274779651763523, 	#end_dy
+# 0.004334391317216024, 	#middle_dx
+# -0.03784137239537205, 	#middle_dy
+# 0.9681577398305765, 	#onGroundPhase 
+# 0.5236698318512114, 	#preriod
+# 1.8242074368232974, 	#bodyHeight
 
 # #0 => -17
 # 0.13979392750638392, 	#length
@@ -159,6 +185,24 @@ Kd = 0.2
 
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+
+dt = 0.001
+traj_log = []
+for my_t in range(int(period / dt)):
+	current_point = []
+	for j in range(len(trajs)):
+		foot_pos = trajs[j].getPos(dt * my_t / period + offsets[j])
+		foot_pos[0,1] -= bodyHeights[j]
+		joint_pos = leg.getJointsPos(foot_pos[0])
+		current_point.append(joint_pos[0])
+		current_point.append(joint_pos[1])
+	traj_log.append(current_point)
+
+print(traj_log)
+np.save("test.npy", traj_log)
+
+assert False
+
 noiseController = noiseIn_noiseOut(robotController, 1 * 100000, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
 
 # Create simulation
