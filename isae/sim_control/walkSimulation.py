@@ -12,6 +12,9 @@ import numpy as np
 from isae.tools.geometry import * 
 # footTrajectory class
 from isae.tools.footTrajectory import * 
+# footTajectory class Bezier Curve
+from isae.tools.footTrajectoryBezier import *
+
 # grading class : in optim module, expects grade and getGrade (aka final grade) as class methods
 
 # for 3D plots in matplotlib
@@ -78,6 +81,9 @@ class walkSimulation(object):
         self.qdotBase = []
         self.store_qBase = True
 
+        # Video parameters
+        self.cameraTool = None        
+
         # Internal variables
         self.robotController = None 
         self.robotId = None
@@ -102,6 +108,9 @@ class walkSimulation(object):
 
     def setController(self, robotController):
         self.robotController = robotController
+
+    def setCameraTool(self, cameraTool):
+        self.cameraTool = cameraTool
 
     ###
     # Running the simulation
@@ -171,6 +180,10 @@ class walkSimulation(object):
         for k in range(iterations):
             #t0 = time.clock()
             self.stepSim()
+            if self.cameraTool.recordVideo : self.saveImages(k)
+
+        # Record the video from images saved        
+        if self.cameraTool.recordVideo : self.cameraTool.saveVideo()
 
         # Shut down the PyBullet client
         self.physicsClient.disconnect()
@@ -409,3 +422,11 @@ class walkSimulation(object):
         ax2.legend()
         ax2.grid(True)
         plt.show()
+    
+    def saveImages(self, iteration):
+        iteration_begin = int(self.cameraTool.timeBeginning/self.dt)
+        nb_iteration_max = int(self.duration/self.dt)
+        nb_total_image =  int( (self.duration - self.cameraTool.timeBeginning) * self.cameraTool.fps)
+        if iteration > iteration_begin:                  
+            if iteration%int(nb_iteration_max/nb_total_image) == 0:
+                self.cameraTool.saveImage(self.cameraTool.getRGBAImage())
