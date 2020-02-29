@@ -155,6 +155,16 @@ footTraj2 = footTrajectory(         footTraj1.points           )
 footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]])
 footTraj4 = footTrajectory(         footTraj3.points           )
 
+
+#################################
+# Foot trajectory  Bezier Curve
+#################################
+pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.2846, -0.2183, 0.5634], [0.1733, 0.0, 0.0136, 0.0, -0.1018, 0.1255, -0.2008, -0.1800]]
+footTraj1 = footTrajectoryBezier(pointsTraj)
+footTraj2 = footTrajectoryBezier(pointsTraj)
+footTraj3 = footTrajectoryBezier(pointsTraj)
+footTraj4 = footTrajectoryBezier(pointsTraj)
+
 #bodyHeights = 2*[1.3] + 2*[1.3]
 bodyHeights = 2*[1.5] + 2*[1.5]
 #bodyHeights = [1.7,1.7,1.7,1.7]
