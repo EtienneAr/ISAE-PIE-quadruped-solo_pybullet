@@ -1,6 +1,6 @@
 from isae.optim.genAlgParam import *
 from isae.sim_control.gradedSimulation import *
-from colorama import Fore
+from colorama import Fore, Back
 
 class geneticAlgorithm(object):
 
@@ -15,7 +15,7 @@ class geneticAlgorithm(object):
         self.genLog = []
         self.paramToSim = None # expects a function paramToSim(paramsInstance) that returns a gradedSimulation with parameters set
                                 # this function has to be defined from outside,
-                                # which allows to use any simulation parameters as parameters for optimizatiob
+                                # which allows to use any simulation parameters as parameters for optimization
 
     def setParamTypes(self,paramTypes):
         self.paramTypes = paramTypes
@@ -28,13 +28,10 @@ class geneticAlgorithm(object):
 
     def printParamsInstance(self, paramsInstance):
         for k in range(len(paramsInstance)):
-            print(str(paramsInstance[k].value) + ", \t#" + self.paramNames[k])
+            print(str(paramsInstance[k].value) + ", \t#" + Fore.BLACK + Back.WHITE + self.paramNames[k] + Fore.RESET + Back.RESET)
 
     def getIndivArray(self, indiv):
         return np.array([p.toArray() for p in indiv])
-
-    # Fonction A CHANGER, definie pour l'insparamArgs
-    # des cas specifiques a chaque fois
 
     def setParamToSim(self, paramToSim):
         self.paramToSim = paramToSim
@@ -42,93 +39,6 @@ class geneticAlgorithm(object):
     def simFromParam(self, paramsInstance):
         return self.paramToSim(paramsInstance)
 
-    """
-    # params : bh1, bh2, Kp, Kd, period
-    def simFromParam(self, paramsInstance):
-        # COMMENT FAIRE??
-
-        # OPTIMIZE BODY HEIGHTS FOR EXAMPLE
-        bh0 = paramsInstance[0].value
-        bh1 = paramsInstance[1].value
-        Kp = paramsInstance[2].value
-        Kd = paramsInstance[3].value
-        period = paramsInstance[4].value
-
-        # Loop parameters 
-        pyb_gui = False
-        duration = 10
-
-        #period = 1.5
-        offsets = [0.5,0.,0.5,0.]
-        bodyHeights = 2*[bh0] + 2*[bh1]
-
-        footTraj1 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]], phaseOffset = offsets[0])
-        footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-        footTraj3 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[2])
-        footTraj4 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[3])
-        trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
-
-        leg = Leg(1,1)
-        sols = [False, False, True, True]
-        #sols = [True, True, False, False]
-        #sols = [False, False, False, False]
-        #sols = [True, True, True, True]
-        
-        #Kp = 8
-        #Kd = 0.2
-
-        robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
-
-        simInstance = gradedSimulation()
-        simInstance.setLoopParams(pyb_gui, duration)
-        simInstance.setController(robotController)
-        simInstance.setTrajectoryParams(leg, period, trajs, bodyHeights)
-
-        return simInstance
-    """
-
-    """
-    # params : t0, t1, t2 triangle summits for the foot traj
-    def simFromParam(self, paramsInstance):
-        # COMMENT FAIRE??
-
-        # OPTIMIZE triangle points
-        t0 = paramsInstance[0].value
-        t1 = paramsInstance[1].value
-        t2 = paramsInstance[2].value
-
-        # Loop parameters 
-        pyb_gui = False
-        duration = 10
-
-        period = 1.2
-        offsets = [0.5,0.,0.5,0.]
-        bodyHeights = 2*[1] + 2*[1.2]
-
-        footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-        footTraj2 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[1])
-        footTraj3 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[2])
-        footTraj4 = footTrajectory(         footTraj1.points           , phaseOffset = offsets[3])
-        trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
-
-        leg = Leg(1,1)
-        sols = [False, False, True, True]
-        #sols = [True, True, False, False]
-        #sols = [False, False, False, False]
-        #sols = [True, True, True, True]
-        
-        Kp = 10
-        Kd = 0.4
-
-        robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
-
-        simInstance = gradedSimulation()
-        simInstance.setLoopParams(pyb_gui, duration)
-        simInstance.setController(robotController)
-        simInstance.setTrajectoryParams(leg, period, trajs, bodyHeights)
-
-        return simInstance
-    """
     # initializes a random population, using GA_<param>.initRandom(args) with args specified in self.paramArgs
     def initRandomPopulation(self):
         pop = []

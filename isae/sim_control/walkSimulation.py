@@ -23,11 +23,11 @@ from mpl_toolkits.mplot3d import Axes3D
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from isae.sim_control.initialization_simulation_pybullet import configure_simulation, getPosVelJoints
 
-from matplotlib import rc
-rc('font',**{'family':'serif','serif':['New Century Schoolbook'], 'size'   : 14})
+#from matplotlib import rc
+#rc('font',**{'family':'serif','serif':['New Century Schoolbook'], 'size'   : 14})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
-rc('text', usetex=True)
+#rc('text', usetex=True)
 
 class walkSimulation(object):
     def __init__(self):
@@ -193,37 +193,7 @@ class walkSimulation(object):
         end_sim_date = time.clock()
         print("##########################################\n"+
             "Simulation finished in " +
-            str(end_sim_date - init_sim_date) + " s\n##########################################")
-    
-    # Synchronizes the stepSim() calls for multiple simulations
-    # other_sims : list of simulation that have been initialized, and assumes the same duration for now
-    def runSimParallelWith(self, other_sims):
-        init_sim_date = time.clock()
-
-        for sim in other_sims :
-            sim.initializeSim()
-        #self.initializeSim()
-
-        # Main loop
-        iterations = int(self.duration/self.dt)
-        for k in range(iterations):
-            self.stepSim()
-            other_sims[0].stepSim()
-            #for sim in other_sims :
-            #    sim.stepSim()
-            
-        
-        # Shut down pybullet clients
-        self.physicsClient.disconnect()
-        for sim in other_sims :
-            sim.physicsClient.disconnect()
-        
-        
-        end_sim_date = time.clock()
-        print("##########################################\n"+
-            str(len(other_sims)) + " simulations finished in " +
-            str(end_sim_date - init_sim_date) + " s\n##########################################")
-            
+            str(end_sim_date - init_sim_date) + " s\n##########################################")            
     
     ###
     # Helpful functions for grading

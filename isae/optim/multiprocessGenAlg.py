@@ -1,12 +1,11 @@
 from isae.optim.genAlg import *
-from isae.sim_control.gradedSimulation import *
 import random
 import string
 from colorama import Fore
 import multiprocessing as mp
 
 def randomString(stringLength=7):
-    """Generate a random string of fixed length """
+    # Generate a random string of fixed length
     letters = string.ascii_letters
     return ''.join(random.choice(letters) for i in range(stringLength))
 

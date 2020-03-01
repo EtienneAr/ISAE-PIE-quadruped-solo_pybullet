@@ -5,18 +5,10 @@ from isae.sim_control.walkSimulation import *
 class gradedSimulation(walkSimulation):
     def __init__(self):
         walkSimulation.__init__(self)
+        self.metrics = []
         self.grades = [0]*4
 
-        #self.total_grade = 0
-        #self.gradingClass = None # set from outside
-
-    # functions needed for evaluation
-    # def updateGrade(self):
-    # def getGrade(self):
-
-    #def setGrading(self, gradingClass):
-    #    self.gradingClass = gradingClass
-
+# Examples of provided grading functions that can be passed through self.initGrades
     def updateGrade_RMStoQdotRef(self,qdot_ref, factors, dt):
         return -np.sum(factors * (self.qdotBase[-1][:6] - qdot_ref) ** 2) * dt
 
@@ -47,8 +39,15 @@ class gradedSimulation(walkSimulation):
         orientationError = 1 - np.inner(selfOrientation, targetOrientation)**2
         return -1.*orientationError
 
+    # sets the metrics that should be updated as a list of functions that take in at least a gradedSimulation arg.
+    # WIP
+    def initGrades(self, gradesList):
+        for metric in gradesList:
+            self.metrics.append(metric)
+            self.grades.append(0.)
+        
 
-    # update all specified grades, 2 for now
+    # updates specified grades
     # has to be the same number as len(self.grades)
     def updateGrades(self):
         # Dist
@@ -67,13 +66,11 @@ class gradedSimulation(walkSimulation):
         #self.grades[3] += d + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
         self.grades[3] += 0.4*d + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1])) + 0.1*self.updateGrade_penalizeContacts()/(self.duration/self.dt)
     
+    def new_updateGrades(self):
+        for k in range(len(self.metrics)):
+            self.grades[k] += self.metrics[k]
+    
     
     def stepSim(self):
         super(gradedSimulation, self).stepSim()
         self.updateGrades()
-        #print(self.grades[2])
-        #self.gradesSeries.append(list(self.grades))
-    
-    #def plotGrades(self):
-    #    gr_array = np.array(self.grades[0])
-    #    plt.plot(gr_array, label='Dist')
