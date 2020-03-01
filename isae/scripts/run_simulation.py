@@ -13,6 +13,7 @@ from isae.control.noiser import *
 #from isae.tools.cameraTool import * 
 from isae.control.footTrajControllerV2 import * 
 from isae.control.footTrajController import * 
+from isae.tools.lerpCyclePhasePoly import *
 
 import multiprocessing
 
@@ -165,6 +166,16 @@ footTraj2 = footTrajectoryBezier(pointsTraj)
 footTraj3 = footTrajectoryBezier(pointsTraj)
 footTraj4 = footTrajectoryBezier(pointsTraj)
 
+#################################
+# Class fonction speed cycle phase
+#################################
+P0 = [0 , 0]
+P1 = [0.99 , 0]
+P2 = [0, 0.99]
+P3 = [1,1]
+points_control = [P0,P1,P2,P3]
+fctCycle = lerpCyclePhasePoly(points_control)
+
 #bodyHeights = 2*[1.3] + 2*[1.3]
 bodyHeights = 2*[1.5] + 2*[1.5]
 #bodyHeights = [1.7,1.7,1.7,1.7]
@@ -208,7 +219,8 @@ setXVal = [0.187]
 setYVal = [0.714]
 
 #robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
-robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+#robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(fctCycle.lerpCyclePhase_3), Kp, Kd, 3 * np.ones((8, 1)))
 
 '''
 cameraTool = cameraTool()
