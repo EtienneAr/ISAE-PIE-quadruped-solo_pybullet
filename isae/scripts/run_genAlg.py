@@ -112,8 +112,9 @@ def paramToSim_T_cyclePhase_loffs(paramsInstance):
     T = paramsInstance[0].value
     xPhase = paramsInstance[1].value
     yPhase = paramsInstance[2].value
+    lOff = paramsInstance[3].value
     #legsOffsets = paramsInstance[3].value
-    legsOffsets = [0.5,0.5,0.,0.]
+    legsOffsets = [lOff, lOff, 0.,0.]
 
     # Loop parameters 
     pyb_gui = False
@@ -176,9 +177,9 @@ GA.setParamToSim(paramToSim_T_cyclePhase_loffs)
 #paramNames = ["BH0", "BH1", "FootTraj"]
 
 # params : period, xPhase, yPhase, legsOffsets
-paramTypes = ["scalar", "scalar", "scalar"] #, "legsOffsets"]
-paramArgs = [[0.5,2],[0.1,0.9],[0.1,0.9]] #, 0.6]
-paramNames = ["T", "xPhase", "yPhase"] #, "legsOffsets"]
+paramTypes = ["scalar", "scalar", "scalar", "scalar"]
+paramArgs = [[0.5,2],[0.1,0.9],[0.1,0.9], [0.2,0.8]]
+paramNames = ["T", "xPhase", "yPhase", "legsOffsets"]
 
 # params : bh1, bh2, footTraj, legsOffsets
 #paramTypes = ["scalar", "scalar", "ptFtTraj", "legsOffsets"]

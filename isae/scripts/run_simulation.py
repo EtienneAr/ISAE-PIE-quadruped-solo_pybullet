@@ -19,14 +19,14 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 
 # Loop parameters 
 pyb_gui = True
-duration = 8
+duration = 2
 
 # Trajectory parameters
 #period = 1.9
 period = 1.244
 
 #offsets = [0.345278  , 0.24364393, 0.2484231 , 0.07805577]
-offsets = [0.,0.5,0.5,0.]
+offsets = [0.5,0.,0.,0.5]
 #offsets = [0.56231819, 0.10734445, 0.13353176, 0.57375114]
 
 # params : bh1, bh2, Kp, Kd, period
@@ -44,9 +44,9 @@ t0, t1, t2 = [-0.51, 0.09],[0.52, 1.43],[0.73, 0.07]
 
 # Feet trajectories
 footTraj1 = footTrajectory([[-0.5,0],[0.1,0.8],[0.5,0],[-0.5,0]])#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points   )
+footTraj2 = footTrajectory(footTraj1.points)
 footTraj3 = footTrajectory([[-0.5,0],[-0.1,0.8],[0.5,0],[-0.5,0]])
-footTraj4 = footTrajectory(         footTraj3.points   )
+footTraj4 = footTrajectory(footTraj3.points)
 
 
 bodyHeights = 2*[1.5] + 2*[1.5]
@@ -104,7 +104,7 @@ walkSim.initializeSim()
 # Run sim
 walkSim.runSim()
 
-walkSim.robotController.sampleFootTrajToFile('walk_1')
+walkSim.robotController.sampleFootTrajToFile('walk1')
 
 print(walkSim.getFinalDistance())
 print(walkSim.grades[2])
