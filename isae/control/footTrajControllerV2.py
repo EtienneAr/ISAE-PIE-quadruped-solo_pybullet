@@ -75,8 +75,8 @@ class footTrajControllerV2:
 			# remap q_ref as array of float instead array of pairs 
 			q_ref = []
 			for qq in q_ref_temp:
-				q_ref.append([qq[0]])
-				q_ref.append([qq[1]])
+				q_ref.append(qq[0])
+				q_ref.append(qq[1])
 			
 			qList.append(q_ref)
 			qDotList.append([0]*8)

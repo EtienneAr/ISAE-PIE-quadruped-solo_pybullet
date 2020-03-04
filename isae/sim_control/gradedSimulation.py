@@ -8,7 +8,7 @@ class gradedSimulation(walkSimulation):
         self.metrics = []
         self.grades = [0]*4
 
-# Examples of provided grading functions that can be passed through self.initGrades
+# Examples of provided grading functions that can be passed through self.initGrades (WIP)
     def updateGrade_RMStoQdotRef(self,qdot_ref, factors, dt):
         return -np.sum(factors * (self.qdotBase[-1][:6] - qdot_ref) ** 2) * dt
 

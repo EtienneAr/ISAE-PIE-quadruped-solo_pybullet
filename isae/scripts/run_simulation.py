@@ -124,6 +124,7 @@ walkSim.setController(robotController)
 walkSim.initializeSim()
 
 # Run sim
+print(walkSim.revoluteJointIndices)
 walkSim.runSim()
 
 print(walkSim.getFinalDistance())
