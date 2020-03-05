@@ -124,8 +124,8 @@ def paramToSim_Bh_EtienneCustom(paramsInstance):
     leg = Leg(1,1)
     sols = [False, False, True, True]
     
-    Kp = 8
-    Kd = 0.2
+    Kp = 3
+    Kd = 0.01
 
     robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
     noiseController = noiseIn_noiseOut(robotController, 1, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
@@ -164,8 +164,8 @@ paramArgs = [   [ 0.1, 1.0],  #length
                 [ 0.0, 0.2],  #end_dy
                 [-0.5, 0.5],  #middle_dx
                 [-0.2, 0.2],  #middle_dy
-                [ 0.6, 0.8],  #onGroundPhase
-                [ 0.4, 1.0],  #period
+                [ 0.55, 0.85],  #onGroundPhase
+                [ 0.6, 1.5],  #period
                 [ 1.0, 2.0],  #bodyHeight
                 ]
 paramNames = ["length", "height", "top_dx", "end_dX", "end_dy", "middle_dx", "middle_dy", "onGroundPhase ", "preriod", "bodyHeight"]

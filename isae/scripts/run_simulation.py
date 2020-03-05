@@ -14,6 +14,19 @@ import multiprocessing
 print("Number of cpu : ", multiprocessing.cpu_count())
 
 params = [
+#9 => -76
+0.643345889094262, 	#length
+1.398342073702966, 	#height
+-0.4956180981283066, 	#top_dx
+0.10093295265688274, 	#end_dX
+0.02409428995602876, 	#end_dy
+0.2175901210376624, 	#middle_dx
+-0.17810740536304492, 	#middle_dy
+0.7898107054286556, 	#onGroundPhase 
+1.4185140530815525, 	#preriod
+1.7240405298825696, 	#bodyHeight
+
+
 # #0 => -18
 # 0.3061055061406551, 	#length
 # 0.5951045790950397, 	#height
@@ -27,17 +40,18 @@ params = [
 # 1.6379950795561544, 	#bodyHeight
 
 
-#0 => -22
-0.14563324113943493, 	#length
-0.5409825886779587, 	#height
--0.06727575508813433, 	#top_dx
-0.11977483315736429, 	#end_dX
-0.1296427789524941, 	#end_dy
--0.17260233493745536, 	#middle_dx
-0.06720471734525713, 	#middle_dy
-0.7841151011066362, 	#onGroundPhase 
-2* 0.6451574599189981, 	#preriod
-1.5003555571893732, 	#bodyHeight
+# TESTED ON ROBOT
+# #0 => -22
+# 0.14563324113943493, 	#length
+# 0.5409825886779587, 	#height
+# -0.06727575508813433, 	#top_dx
+# 0.11977483315736429, 	#end_dX
+# 0.1296427789524941, 	#end_dy
+# -0.17260233493745536, 	#middle_dx
+# 0.06720471734525713, 	#middle_dy
+# 0.7841151011066362, 	#onGroundPhase 
+# 2* 0.6451574599189981, 	#preriod
+# 1.5003555571893732, 	#bodyHeight
 
 
 # #0 => -12
@@ -201,7 +215,6 @@ for my_t in range(int(period / dt)):
 traj_log = np.array(traj_log)
 np.save("test.npy", traj_log)
 
-assert False
 
 noiseController = noiseIn_noiseOut(robotController, 1 * 100000, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
 
