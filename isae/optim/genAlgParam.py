@@ -68,7 +68,7 @@ class GA_scalarBinary(genAlgParam):
         return GA_scalarBinary([self.minVal, self.maxVal], value=valueA), GA_scalarBinary([self.minVal, self.maxVal], value=valueB)
     
     def mutate(self):
-        if(rand.random() > 0.8):
+        if(rand.random() > 0.7):
             self.value = self.minVal + rand.random() * (self.maxVal - self.minVal)
     
     def toArray(self):

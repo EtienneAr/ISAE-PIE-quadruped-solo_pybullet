@@ -15,6 +15,7 @@ class lerpCyclePhasePoly:
         return [A[0]*u+B[0]*v,A[1]*u+B[1]*v]
 
     def point_bezier_3(self,t):
+        # polynome de degre 2
         x=(1-t)**2
         y=t*t
         A = self.combinaison_lineaire(self.P0,self.P1,(1-t)*x,3*t*x)
@@ -27,6 +28,7 @@ class lerpCyclePhasePoly:
         return self.point_bezier_3(t)[0]
 
     def lerpCyclePhase_bezier(self,t):
+        #Bezier curve
         if t == 1:
             return 1
         if t == 0:
