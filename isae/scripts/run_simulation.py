@@ -130,77 +130,45 @@ params = [
 # 1.1601537177339414,
 #1.3855528721673105,
 ]
-params = [1.35078763 ,1.39788482, 6.19697739, 0.08665497 ,1.05016447, 0.29173469,
- 0.47913477,0.63950572, 0.30679604 ,0.9,0.4, 0.9,
- 0.4]
+paramsInstance = [1.3970040759095335,     #BH0
+1.3966946651189274,     #BH1
+7.1206989066169495,     #Kp
+0.9641576669468045,     #Kd
+0.800711228688953,      #Period
+0.16205778619884972,    #x1
+0.7660218028383298,     #x2
+0.1955398937242107,     #y1
+0.2970654097064856,     #y2
+]
 # Loop parameters 
 pyb_gui = True
-duration = 3
+duration = 5
 
-# Trajectory parameters
-#period = 1.9
-period = 0.8
+# OPTIMIZE BODY HEIGHTS FOR EXAMPLE
+bh0 = paramsInstance[0]
+bh1 = paramsInstance[1]
+Kp = paramsInstance[2]
+Kd = paramsInstance[3]
+period = paramsInstance[4]
+x1 = paramsInstance[5]
+x2 = paramsInstance[6]
+y1 = paramsInstance[7]
+y2 = paramsInstance[8]
 
+
+period = period
 offsets = [0.0,0.5,0.5,0.0]
-#offsets = [params[8],params[9],params[10],params[11]]
+bodyHeights = 2*[bh0] + 2*[bh1]
 
-# Feet trajectories
-
-footTraj1 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0)
-footTraj2 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.50)
-footTraj3 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.75)
-footTraj4 = customTrajectory(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], 0.25)
-
-# Feet trajectories
-footTraj1 = footTrajectory([[-0.6,0],[-0.0,1.2], [0.6,0], [-0.6,0]])
-#footTraj1 = footTrajectory([t0,t1,t2,t0], phaseOffset = offsets[0])
-footTraj2 = footTrajectory(         footTraj1.points           )
-footTraj3 = footTrajectory([[-0.6,0],[-0.0,0.9], [0.6,0], [-0.6,0]])
-footTraj4 = footTrajectory(         footTraj3.points           )
-
-
-#################################
-# Foot trajectory  Bezier Curve
-#################################
-#pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.2846, -0.2183, 0.5634], [0.1733, 0.0, 0.0136, 0.0, -0.1018, 0.1255, -0.2008, -0.1800]]
 pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
 
 footTraj1 = footTrajectoryBezier(pointsTraj)
 footTraj2 = footTrajectoryBezier(pointsTraj)
 footTraj3 = footTrajectoryBezier(pointsTraj)
 footTraj4 = footTrajectoryBezier(pointsTraj)
-
-#################################
-# Class fonction speed cycle phase
-#################################
-P0 = [0 , 0]
-P1 = [0.9, 0.01]
-P2 = [0.01,0.9]
-P3 = [1,1]
-points_control = [P0,P1,P2,P3]
-fctCycle = lerpCyclePhasePoly(points_control)
-
-#bodyHeights = 2*[1.3] + 2*[1.3]
-bodyHeights = 2*[params[0]] + 2*[params[1]]
-#bodyHeights = [1.7,1.7,1.7,1.7]
-
-# Geometry and controller
-leg = Leg(1,1)
-sols = [False, False, True, True]
-#sols = [True, True, False, False]
-#sols = [False, False, False, False]
-#sols = [True, True, True, True]
-
-#Kp = 8
-Kp = params[2]
-#Kd = 0.2
-Kd = params[3]
-#Kd = 0.8  # Bezier ex
-
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
-#robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
-def lerpCyclePhase(phase, xVal=[0.3], yVal=[0.6]):
+def lerpCyclePhase(phase, xVal=[0.5], yVal=[0.5]):
     phase = phase%1.
     
     xVal.append(1)
@@ -212,18 +180,24 @@ def lerpCyclePhase(phase, xVal=[0.3], yVal=[0.6]):
         if phase < xVal[i]:
             return yVal[i-1] + (yVal[i] - yVal[i-1])*(1 - (xVal[i] - phase)/(xVal[i] - xVal[i-1]))
 
+setXVal = [x1,x2]
+setYVal = [y1,y2]
 
 
-#cyclePhase = lambda x : x
-#cyclePhase = lambda x : (x%1.)**0.7
 
-#setXVal = [0.5]
-#setYVal = [0.5]
-setXVal = [0.05,0.7]
-setYVal = [0.15,0.35]
+leg = Leg(1,1)
+sols = [False, False, True, True]
+#sols = [True, True, False, False]
+#sols = [False, False, False, False]
+#sols = [True, True, True, True]
+
+Kp = Kp
+Kd = Kd
+
+robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
 
 #robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
-robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+#robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
 #robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, fctCycle.lerpCyclePhase_3, Kp, Kd, 3 * np.ones((8, 1)))
 
 '''
