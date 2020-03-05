@@ -235,7 +235,6 @@ def paramToSim_thomas(paramsInstance):
     setXVal = [x1,x2]
     setYVal = [y1,y2]
 
-    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
     
 
     leg = Leg(1,1)
@@ -247,7 +246,7 @@ def paramToSim_thomas(paramsInstance):
     Kp = Kp
     Kd = Kd
 
-    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(fctCycle.lerpCyclePhase_3), Kp, Kd, 3 * np.ones((8, 1)))
+    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
 
     simInstance = gradedSimulation()
     simInstance.setLoopParams(pyb_gui, duration, leg)
