@@ -23,11 +23,11 @@ from mpl_toolkits.mplot3d import Axes3D
 # Functions to initialize the simulation and retrieve joints positions/velocities
 from isae.sim_control.initialization_simulation_pybullet import configure_simulation, getPosVelJoints
 
-from matplotlib import rc
-rc('font',**{'family':'serif','serif':['New Century Schoolbook'], 'size'   : 14})
+#from matplotlib import rc
+#rc('font',**{'family':'serif','serif':['New Century Schoolbook'], 'size'   : 14})
 ## for Palatino and other serif fonts use:
 #rc('font',**{'family':'serif','serif':['Palatino']})
-rc('text', usetex=True)
+#rc('text', usetex=True)
 
 class walkSimulation(object):
     def __init__(self):

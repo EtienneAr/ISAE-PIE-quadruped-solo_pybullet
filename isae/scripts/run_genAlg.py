@@ -198,36 +198,45 @@ def paramToSim_thomas(paramsInstance):
     Kp = paramsInstance[2].value
     Kd = paramsInstance[3].value
     period = paramsInstance[4].value
-    P1_1 = paramsInstance[5].value
-    P1_2 = paramsInstance[6].value
-    P2_1 = paramsInstance[7].value
-    P2_2 = paramsInstance[8].value
-    legsOf_1 = paramsInstance[9].value
-    legsOf_2 = paramsInstance[10].value
-    legsOf_3 = paramsInstance[11].value
-    legsOf_4 = paramsInstance[12].value
+    x1 = paramsInstance[5].value
+    x2 = paramsInstance[6].value
+    y1 = paramsInstance[7].value
+    y2 = paramsInstance[8].value
+
 
     # Loop parameters 
     pyb_gui = False
     duration = 10
 
     period = period
-    offsets = [legsOf_1,legsOf_2,legsOf_3,legsOf_4]
+    offsets = [0.0,0.5,0.5,0.0]
     bodyHeights = 2*[bh0] + 2*[bh1]
 
-    pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.2846, -0.2183, 0.5634], [0.1733, 0.0, 0.0136, 0.0, -0.1018, 0.1255, -0.2008, -0.1800]]
+    pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+
     footTraj1 = footTrajectoryBezier(pointsTraj)
     footTraj2 = footTrajectoryBezier(pointsTraj)
     footTraj3 = footTrajectoryBezier(pointsTraj)
     footTraj4 = footTrajectoryBezier(pointsTraj)
     trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 
-    P0 = [0 , 0]
-    P1 = [P1_1,P1_2]
-    P2 = [P2_1,P2_2]
-    P3 = [1,1]
-    points_control = [P0,P1,P2,P3]
-    fctCycle = lerpCyclePhasePoly(points_control)
+    def lerpCyclePhase(phase, xVal=[0.5], yVal=[0.5]):
+        phase = phase%1.
+        
+        xVal.append(1)
+        xVal.append(0)
+        yVal.append(1)
+        yVal.append(0)
+        
+        for i in range(len(xVal) - 1):
+            if phase < xVal[i]:
+                return yVal[i-1] + (yVal[i] - yVal[i-1])*(1 - (xVal[i] - phase)/(xVal[i] - xVal[i-1]))
+    
+    setXVal = [x1,x2]
+    setYVal = [y1,y2]
+
+    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+    
 
     leg = Leg(1,1)
     sols = [False, False, True, True]
@@ -300,22 +309,18 @@ paramTypes = ["scalar", "scalar", "scalar", "scalar", "scalar","2dPoint","2dPoin
 paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]],[[0.01,0.99],[0.01,0.99]],0.6 ]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
 '''
-paramTypes = ["scalarBinary"] * 13
-paramArgs = [   [1.2,1.7],  #bh0
-                [1.2,1.7],  #bh1
-                [0.5,10],  #Kp
-                [0.02,2],  #Kd
-                [1,2],  #period
-                [0.01,0.99],  #P1_1
-                [0.01,0.99],  #P1_2
-                [0.01,0.99],  #P2_1
-                [0.01,0.99],  #P2_2
-                [0.00,0.99],  #off1
-                [0.00,0.99],  #off2
-                [0.00,0.99],  #off3
-                [0.00,0.99],  #off4
+paramTypes = ["scalarBinary"] * 9
+paramArgs = [   [1.3,1.4],  #bh0
+                [1.3,1.4],  #bh1
+                [4,8],  #Kp
+                [0.1,1],  #Kd
+                [0.8,1.2],  #period
+                [0.05,0.5],  #x1
+                [0.5,0.95],  #x2
+                [0.05,0.25],  #y1
+                [0.25,0.45],  #y2
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","P1_1","P1_2","P2_1","P2_2","legsOff_1","legsOff_2","legsOff_3","legsOff_4"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)

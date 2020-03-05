@@ -29,7 +29,8 @@ class footTrajControllerV2:
 		self.currentPhase %= 1.
 		# get 4 [x,y] positions from the Feet4traj array of trajectories
 		#traj_pos_ref = list(map(lambda contTraj : contTraj.getPos(self.cyclePhase(self.currentPhase)), self.Feet4traj))
-		traj_pos_ref = [self.Feet4traj[i].getPos(self.cyclePhase(self.phase_offsets[i] + self.currentPhase)) for i in range(4)]
+
+		traj_pos_ref = [self.Feet4traj[i].getPos(self.cyclePhase((self.phase_offsets[i] + self.currentPhase)%1)) for i in range(4)]
 		# remap the positions in leg frame
 		#legs_pos_ref = map(lambda pos : [pos[0,0],pos[0,1]-self.bH], traj_pos_ref)
 		legs_pos_ref = [[traj_pos_ref[i][0,0],traj_pos_ref[i][0,1]-self.bHs[i]] for i in range(len(traj_pos_ref))]
