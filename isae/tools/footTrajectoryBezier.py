@@ -2,12 +2,13 @@ import numpy as np
 
 class footTrajectoryBezier:
 	
-    def __init__(self, points, phaseOffset = 0):
+    def __init__(self, points, phaseOffset = 0, ratio = [0,0]):
         self.points = points # form : [[x1 y1 x2 y2] , [delta_x1 d_y1 d_x2 d_y2]]  
                              # d_x1 : delta x for derivative to positionnate points around x1 
 							 # --> assure continuous fonction
         self.pointsL = []
         self.phaseOffset = phaseOffset
+        self.ratio = ratio
 
     #Compute x,y : Bezier poly with 4 control points, t € [0,1]
     def point_bezier_3(self,points_control,t):
@@ -59,6 +60,8 @@ class footTrajectoryBezier:
         #Contact with the ground
         phase = (phase + self.phaseOffset) %1
 
+        phase = adaptMieux(phase) % 1
+
 		#Curve separated into segments with 4 control points
         #Get index of the segment
         nb_curve = (len(self.pointsL)-1)//3
@@ -71,7 +74,11 @@ class footTrajectoryBezier:
 
         points_control = [self.pointsL[indice_1 ], self.pointsL[indice_1 + 1] ,self.pointsL[indice_1 + 2] , self.pointsL[indice_1+ 3] ]
 
-        return self.point_bezier_3(points_control, t_ref_poly)
+        pts_out = self.point_bezier_3(points_control, t_ref_poly)
+        pts_out[0, 0] *= self.ratio[0]
+        pts_out[0, 1] *= self.ratio[1]
+        return pts_out
+        
     
     # def plot(self):
     #     T = np.linspace(0,1,50)
@@ -79,8 +86,47 @@ class footTrajectoryBezier:
     #         [x,y] = self.getPos(elt)  
     #         plt.plot(x,y,'x')
 	
+def adapt(x):
+    if(x < 0.75):
+        return x*0.25/0.75
+    return (-256/3)*x**3 + 224*x**2 - 575/3 * x + 54
 
+def adaptMieux(x):
+    if(x < 0.8):
+        return x*0.25/0.8
+    return 103125/8*x**5 - 928125/16*x**4 + 831875/8*x**3 - 185625/2*x**2 + 660005/16 * x - 7304
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    points = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.4183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+    footTraj1 = footTrajectoryBezier(points)
+
+
+    # T = np.linspace(0,0.25,10)
+    # for elt in T:    
+    #     p = footTraj1.getPos(elt)
+    #     plt.plot(p[0,0], p[0,1],'rx')
     
+    # T = np.linspace(0.25,0.5,10)
+    # for elt in T:    
+    #     p = footTraj1.getPos(elt)
+    #     plt.plot(p[0,0], p[0,1],'bx')
 
+    # T = np.linspace(0.5,0.75,10)
+    # for elt in T:    
+    #     p = footTraj1.getPos(elt)
+    #     plt.plot(p[0,0], p[0,1],'gx')
 
+    # T = np.linspace(0.75,1,10)
+    # for elt in T:    
+    #     p = footTraj1.getPos(elt)
+    #     plt.plot(p[0,0], p[0,1],'yx')
 
+    T = np.linspace(0,1,100)
+    for x in T:    
+        plt.plot(x, adaptMieux(x),'bx')
+
+    plt.show(block=False)
+    plt.pause(0.001)
+    while(True):
+        pass

@@ -18,16 +18,16 @@ pyb_gui = True
 duration = 80
 
 # Trajectory parameters
-period = 0.88
+period = 1
 
 offsets = [0,0.5,0.75,0.25]
-
+ratio = [0.3, 0.75]
 # Feet trajectories
 points = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.4183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
-footTraj1 = footTrajectoryBezier(points, phaseOffset = offsets[0])
-footTraj2 = footTrajectoryBezier(points, phaseOffset = offsets[1])
-footTraj3 = footTrajectoryBezier(points, phaseOffset = offsets[2])
-footTraj4 = footTrajectoryBezier(points, phaseOffset = offsets[3])
+footTraj1 = footTrajectoryBezier(points, phaseOffset = offsets[0], ratio = ratio)
+footTraj2 = footTrajectoryBezier(points, phaseOffset = offsets[1], ratio = ratio)
+footTraj3 = footTrajectoryBezier(points, phaseOffset = offsets[2], ratio = ratio)
+footTraj4 = footTrajectoryBezier(points, phaseOffset = offsets[3], ratio = ratio)
 
 bodyHeights = [1.35] * 4
 
@@ -59,7 +59,7 @@ for my_t in range(int(period / dt)):
 	traj_log.append(np.array(current_point))
 
 traj_log = np.array(traj_log)
-np.save("vertical_main.npy", traj_log)
+np.save("bezier_3pattes.npy", traj_log)
 
 
 # Create simulation
