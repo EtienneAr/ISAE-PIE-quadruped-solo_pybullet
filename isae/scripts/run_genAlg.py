@@ -137,6 +137,39 @@ def paramToSim_Bh_EtienneCustom(paramsInstance):
 
     return simInstance
 
+def paramToSim_Bh_BezierLisse(paramsInstance):
+    paramValue = list(map(lambda v : v.toArray(), paramsInstance))
+
+    pyb_gui = False
+    duration = 10
+    period = paramValue[0] #paramValue[8]
+
+    bodyHeights = [paramValue[1]] * 4
+
+    points = [[-paramValue[2], 0.0, paramValue[3], 0.0, paramValue[4], paramValue[5], paramValue[6], paramValue[7]], [paramValue[8], 0.0, paramValue[9], 0.0, paramValue[10], paramValue[11], paramValue[12], paramValue[13]]]
+
+    footTraj1 = footTrajectoryBezier(points, phaseOffset = 0)
+    footTraj2 = footTrajectoryBezier(points, phaseOffset = 0.5)
+    footTraj3 = footTrajectoryBezier(points, phaseOffset = 0.75)
+    footTraj4 = footTrajectoryBezier(points, phaseOffset = 0.25)
+    trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
+
+    leg = Leg(1,1)
+    sols = [False, False, True, True]
+    
+    Kp = 6
+    Kd = 0.01
+
+    robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
+    noiseController = noiseIn_noiseOut(robotController, 1, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
+
+
+    simInstance = gradedSimulation()
+    simInstance.setLoopParams(pyb_gui, duration, leg)
+    simInstance.setController(noiseController)
+
+    return simInstance
+
 GA.setParamToSim(paramToSim_Bh_EtienneCustom)
 
 '''
@@ -156,28 +189,13 @@ paramNames = ["BH0", "BH1", "FootTraj"]
 '''
 
 # params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , #period# , bodyHeight
-paramTypes = ["scalarBinary"] * 9 #* 10
-paramArgs = [   [ 0.1, 1.0],  #length
-                [ 0.5, 1.5],  #height
-                [-0.5, 0.5],  #top_dx
-                [ 0.0, 0.2],  #end_dx
-                [ 0.0, 0.2],  #end_dy
-                [-0.5, 0.5],  #middle_dx
-                [-0.2, 0.2],  #middle_dy
-                [ 0.55, 0.85],  #onGroundPhase
-                #[ 0.6, 1.5],  #period
-                [ 1.0, 2.0],  #bodyHeight
-                ]
-paramNames = ["length",
-"height",
-"top_dx",
-"end_dX",
-"end_dy", 
-"middle_dx",
-"middle_dy",
-"onGroundPhase ",
-#"preriod",
-"bodyHeight"]
+paramTypes = ["scalarBinary"] * 14 #* 10
+paramArgs = [   [ 0.8, 1.5],  #period
+                [ 0.5, 1.5] ] + [[-1.0, 1.0]] *12  #height #bezierpoints
+paramNames = ["period", "height"] + ["bezierPoint"] * 12
+
+print(paramArgs)
+print(paramNames)
 
 
 GA.setParamTypes(paramTypes)

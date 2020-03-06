@@ -17,19 +17,23 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 pyb_gui = True
 duration = 80
 
-# Trajectory parameters
-period = 1
+period = paramValue[0] #paramValue[8]
 
-offsets = [0,0.5,0.75,0.25]
-ratio = [0.3, 0.75]
-# Feet trajectories
-points = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.4183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
-footTraj1 = footTrajectoryBezier(points, phaseOffset = offsets[0], ratio = ratio)
-footTraj2 = footTrajectoryBezier(points, phaseOffset = offsets[1], ratio = ratio)
-footTraj3 = footTrajectoryBezier(points, phaseOffset = offsets[2], ratio = ratio)
-footTraj4 = footTrajectoryBezier(points, phaseOffset = offsets[3], ratio = ratio)
+bodyHeights = [paramValue[1]] * 4
 
-bodyHeights = [1.35] * 4
+points = [[-paramValue[2], 0.0, paramValue[3], 0.0, paramValue[4], paramValue[5], paramValue[6], paramValue[7]], [paramValue[8], 0.0, paramValue[9], 0.0, paramValue[10], paramValue[11], paramValue[12], paramValue[13]]]
+
+footTraj1 = footTrajectoryBezier(points, phaseOffset = 0)
+footTraj2 = footTrajectoryBezier(points, phaseOffset = 0.5)
+footTraj3 = footTrajectoryBezier(points, phaseOffset = 0.75)
+footTraj4 = footTrajectoryBezier(points, phaseOffset = 0.25)
+trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
+
+leg = Leg(1,1)
+sols = [False, False, True, True]
+
+Kp = 6
+Kd = 0.01
 
 # Geometry and controller
 leg = Leg(1,1)
@@ -37,11 +41,6 @@ sols = [False, False, True, True]
 #sols = [True, True, False, False]
 #sols = [False, False, False, False]
 #sols = [True, True, True, True]
-
-#Kp = 8
-Kp = 8
-#Kd = 0.2
-Kd = 0.2
 
 trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
