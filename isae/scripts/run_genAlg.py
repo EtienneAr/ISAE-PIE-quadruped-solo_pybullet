@@ -111,9 +111,9 @@ def paramToSim_Bh_EtienneCustom(paramsInstance):
 
     pyb_gui = False
     duration = 10
-    period = paramValue[8]
+    period = 1.5 #paramValue[8]
 
-    bodyHeights = [paramValue[9]] * 4
+    bodyHeights = [paramValue[8]] * 4 #[paramValue[9]] * 4
 
     footTraj1 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0)
     footTraj2 = customTrajectory(paramValue[0], paramValue[1], paramValue[2], paramValue[3], paramValue[4], paramValue[5], paramValue[6], paramValue[7], 0.5)
@@ -155,8 +155,8 @@ paramArgs = [[1.2,1.7],[1.2,1.7],[[-1,1.],[0,1.2],[3,4]] ]
 paramNames = ["BH0", "BH1", "FootTraj"]
 '''
 
-# params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , period , bodyHeight
-paramTypes = ["scalarBinary"] * 10
+# params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , #period# , bodyHeight
+paramTypes = ["scalarBinary"] * 9 #* 10
 paramArgs = [   [ 0.1, 1.0],  #length
                 [ 0.5, 1.5],  #height
                 [-0.5, 0.5],  #top_dx
@@ -165,10 +165,19 @@ paramArgs = [   [ 0.1, 1.0],  #length
                 [-0.5, 0.5],  #middle_dx
                 [-0.2, 0.2],  #middle_dy
                 [ 0.55, 0.85],  #onGroundPhase
-                [ 0.6, 1.5],  #period
+                #[ 0.6, 1.5],  #period
                 [ 1.0, 2.0],  #bodyHeight
                 ]
-paramNames = ["length", "height", "top_dx", "end_dX", "end_dy", "middle_dx", "middle_dy", "onGroundPhase ", "preriod", "bodyHeight"]
+paramNames = ["length",
+"height",
+"top_dx",
+"end_dX",
+"end_dy", 
+"middle_dx",
+"middle_dy",
+"onGroundPhase ",
+#"preriod",
+"bodyHeight"]
 
 
 GA.setParamTypes(paramTypes)

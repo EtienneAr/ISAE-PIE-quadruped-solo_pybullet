@@ -14,17 +14,31 @@ import multiprocessing
 print("Number of cpu : ", multiprocessing.cpu_count())
 
 params = [
-#9 => -76
-0.643345889094262, 	#length
-1.398342073702966, 	#height
--0.4956180981283066, 	#top_dx
-0.10093295265688274, 	#end_dX
-0.02409428995602876, 	#end_dy
-0.2175901210376624, 	#middle_dx
--0.17810740536304492, 	#middle_dy
-0.7898107054286556, 	#onGroundPhase 
-1.4185140530815525, 	#preriod
-1.7240405298825696, 	#bodyHeight
+0.4, 	#length
+0.4, 	#height
+0, 	#top_dx
+0.3, 	#end_dX
+0.3, 	#end_dy
+0.0, 	#middle_dx
+0.0, 	#middle_dy
+0.82, 	#onGroundPhase 
+3, #period
+1.5, 	#bodyHeight
+
+
+
+# #0 => -51
+# 0.1404125976121936, 	#length
+# 0.5422511958451965, 	#height
+# 0.08550494008487197, 	#top_dx
+# 0.04994501161726333, 	#end_dX
+# 0.014083287157346037, 	#end_dy
+# 0.2233985102263838, 	#middle_dx
+# 0.17793357475753685, 	#middle_dy
+# 0.6693514715596918, 	#onGroundPhase 
+# 1.2, #period
+# 1.4051279926093874, 	#bodyHeight
+
 
 
 # #0 => -18
@@ -210,10 +224,10 @@ for my_t in range(int(period / dt)):
 		joint_pos = leg.getJointsPos(foot_pos[0], otherSol = sols[j])
 		current_point.append(joint_pos[0])
 		current_point.append(joint_pos[1])
-	traj_log.append(np.matrix(current_point).T)
+	traj_log.append(np.array(current_point))
 
 traj_log = np.array(traj_log)
-np.save("test.npy", traj_log)
+np.save("vertical_main.npy", traj_log)
 
 
 noiseController = noiseIn_noiseOut(robotController, 1 * 100000, positionNoise=0.05, velocityNoise=0, torqueNoise=0.05)
