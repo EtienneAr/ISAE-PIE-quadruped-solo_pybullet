@@ -10,6 +10,8 @@ from isae.optim.multiprocessGenAlg import *
 from datetime import datetime
 from isae.control.noiser import *
 
+from isae.tools.footTrajectoryBezier import *
+
 BLUE = "\033[34m"
 GREEN = "\033[32m"
 DEFAULT = "\033[39m"
@@ -20,8 +22,8 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 80
-GA.n_gen = 10
+GA.pop_size = 120
+GA.n_gen = 15
 GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -142,16 +144,16 @@ def paramToSim_Bh_BezierLisse(paramsInstance):
 
     pyb_gui = False
     duration = 10
-    period = paramValue[0] #paramValue[8]
+    period = paramValue[0]
 
     bodyHeights = [paramValue[1]] * 4
 
-    points = [[-paramValue[2], 0.0, paramValue[3], 0.0, paramValue[4], paramValue[5], paramValue[6], paramValue[7]], [paramValue[8], 0.0, paramValue[9], 0.0, paramValue[10], paramValue[11], paramValue[12], paramValue[13]]]
+    points = [[paramValue[2], 0.0, paramValue[3], 0.0, paramValue[4], paramValue[5], paramValue[6], paramValue[7]], [paramValue[8], 0.0, paramValue[9], 0.0, paramValue[10], paramValue[11], paramValue[12], paramValue[13]]]
 
-    footTraj1 = footTrajectoryBezier(points, phaseOffset = 0)
-    footTraj2 = footTrajectoryBezier(points, phaseOffset = 0.5)
-    footTraj3 = footTrajectoryBezier(points, phaseOffset = 0.75)
-    footTraj4 = footTrajectoryBezier(points, phaseOffset = 0.25)
+    footTraj1 = footTrajectoryBezier(points, phaseOffset = 0, ratio = [paramValue[14], paramValue[15]])
+    footTraj2 = footTrajectoryBezier(points, phaseOffset = 0.5, ratio = [paramValue[14], paramValue[15]])
+    footTraj3 = footTrajectoryBezier(points, phaseOffset = 0.75, ratio = [paramValue[14], paramValue[15]])
+    footTraj4 = footTrajectoryBezier(points, phaseOffset = 0.25, ratio = [paramValue[14], paramValue[15]])
     trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
 
     leg = Leg(1,1)
@@ -170,7 +172,7 @@ def paramToSim_Bh_BezierLisse(paramsInstance):
 
     return simInstance
 
-GA.setParamToSim(paramToSim_Bh_EtienneCustom)
+GA.setParamToSim(paramToSim_Bh_BezierLisse)
 
 '''
 # params : bh1, bh2, Kp, Kd, period
@@ -189,14 +191,43 @@ paramNames = ["BH0", "BH1", "FootTraj"]
 '''
 
 # params : STEP : [ length, height, top_dx, end_dX, end_dy, middle_dx, middle_dy, onGroundPhase] , #period# , bodyHeight
-paramTypes = ["scalarBinary"] * 14 #* 10
-paramArgs = [   [ 0.8, 1.5],  #period
-                [ 0.5, 1.5] ] + [[-1.0, 1.0]] *12  #height #bezierpoints
-paramNames = ["period", "height"] + ["bezierPoint"] * 12
+paramTypes = ["scalarBinary"] * 16 #* 10
+paramArgs = [   [ 0.8, 1.5], #period
+                [ 0.5, 1.5], #height
 
-print(paramArgs)
-print(paramNames)
+                [-1.0, 1.0], #bezier point x1
+                [-1.0, 1.0], #bezier point x2
+                [-1.0, 1.0], #bezier point x3
+                [ 0.0, 1.5], #bezier point y3
+                [-1.0, 1.0], #bezier point x4
+                [ 0.0, 1.5], #bezier point y4
 
+                [ 0.0, 1.0], #bezier point dx1
+                [ 0.0, 1.0], #bezier point dx2
+                [-1.0, 1.0], #bezier point dx3
+                [-1.0, 1.0], #bezier point dy3
+                [-1.0, 1.0], #bezier point dx4
+                [-1.0, 1.0], #bezier point dy4
+
+                [ 0.0, 3.0], #ratio X
+                [ 0.0, 3.0], #ratio Y
+                ]
+paramNames = ["period",
+"height",
+"bezier point x1",
+"bezier point x2",
+"bezier point x3",
+"bezier point y3",
+"bezier point x4",
+"bezier point y4",
+"bezier point dx1",
+"bezier point dx2",
+"bezier point dx3",
+"bezier point dy3",
+"bezier point dx4",
+"bezier point dy4",
+"ratio X",
+"ratio Y"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
