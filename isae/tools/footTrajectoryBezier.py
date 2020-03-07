@@ -2,7 +2,7 @@ import numpy as np
 
 class footTrajectoryBezier:
 	
-    def __init__(self, points, phaseOffset = 0, ratio = [0,0]):
+    def __init__(self, points, phaseOffset = 0, ratio = [1,1]):
         self.points = points # form : [[x1 y1 x2 y2] , [delta_x1 d_y1 d_x2 d_y2]]  
                              # d_x1 : delta x for derivative to positionnate points around x1 
 							 # --> assure continuous fonction
