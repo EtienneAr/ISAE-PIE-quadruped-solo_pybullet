@@ -24,8 +24,8 @@ RED = "\033[91m"
 #GA = geneticAlgorithm()
 GA = multiprocessGeneticAlgorithm()
 
-GA.pop_size = 70
-GA.n_gen = 70
+GA.pop_size = 100
+GA.n_gen = 100
 GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -203,6 +203,21 @@ def paramToSim_thomas(paramsInstance):
     y1 = paramsInstance[7].value
     y2 = paramsInstance[8].value
 
+    # Bezier arg
+    #P0_x = paramsInstance[9].value
+    #P1_x = paramsInstance[10].value
+    P2_x = paramsInstance[9].value
+    P2_y = paramsInstance[10].value
+    P3_x = paramsInstance[11].value
+    P3_y = paramsInstance[12].value
+
+    # Bezier arg derivee
+    #D0_x = paramsInstance[9].value
+    #D1_x = paramsInstance[10].value
+    #D2_x = paramsInstance[9].value
+    #D2_y = paramsInstance[10].value
+    #P3_x = paramsInstance[9].value
+    #P3_y = paramsInstance[10].value
 
     # Loop parameters 
     pyb_gui = False
@@ -212,8 +227,10 @@ def paramToSim_thomas(paramsInstance):
     offsets = [0.0,0.5,0.5,0.0]
     bodyHeights = 2*[bh0] + 2*[bh1]
 
-    pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
-
+    #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+    #pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, -0.2008, -0.1800]]
+    pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+    
     footTraj1 = footTrajectoryBezier(pointsTraj)
     footTraj2 = footTrajectoryBezier(pointsTraj)
     footTraj3 = footTrajectoryBezier(pointsTraj)
@@ -308,7 +325,7 @@ paramTypes = ["scalar", "scalar", "scalar", "scalar", "scalar","2dPoint","2dPoin
 paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]],[[0.01,0.99],[0.01,0.99]],0.6 ]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
 '''
-paramTypes = ["scalarBinary"] * 9
+paramTypes = ["scalarBinary"] * 13
 paramArgs = [   [1.3,1.4],  #bh0
                 [1.3,1.4],  #bh1
                 [4,8],  #Kp
@@ -318,8 +335,12 @@ paramArgs = [   [1.3,1.4],  #bh0
                 [0.5,0.95],  #x2
                 [0.05,0.25],  #y1
                 [0.25,0.45],  #y2
+                [0.1,0.35],  #P2_x
+                [0.3,0.60],  #P2_y
+                [-0.35,-0.1],  #P3_x
+                [0.3,0.6],  #P3_y
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P2_x","P2_y","P3_x","P3_y"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
