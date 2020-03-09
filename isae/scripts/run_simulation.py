@@ -22,16 +22,17 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 #########
 #param simu
 #########
-paramsInstance = [1.3972100690111018,     #BH0
-1.3068572993528498,     #BH1
-7.31361762238662,       #Kp
-0.8325437299822159,     #Kd
-0.8808261948626241,     #Period
-0.1745214891774621,     #x1
-0.8017562659872206,     #x2
-0.16310053613432962,    #y1
-0.34013176850814875,    #y2
-]
+paramsInstance = [1.3795727080519222 ,1.2767326216086354 ,5.542689574090813,
+ 0.31873028984268814 ,0.8753232056854438 ,0.401656420970068,
+ 0.8950312650957308, 0.09482759534228254, 0.3111570609668366,
+ -0.0663810033069333, 0.4629271898305571, 0.1273156860449515,
+ 0.4613413391533199, -0.33358014428349286, 0.573564153376901,
+ 0.1519333210761974, 0.2995929634467611, -0.11509685645212919,
+ 0.2268761721252515, -0.14311286016085176, -0.15299604582272447,
+ [0.04151969, 0.25559237, 0.59991313, 0.36667742]]
+
+
+
 
 # Loop parameters 
 pyb_gui = True
@@ -48,16 +49,36 @@ x2 = paramsInstance[6]
 y1 = paramsInstance[7]
 y2 = paramsInstance[8]
 
+# Bezier arg points
+P0_x = paramsInstance[9]
+P1_x = paramsInstance[10]
+P2_x = paramsInstance[11]
+P2_y = paramsInstance[12]
+P3_x = paramsInstance[13]
+P3_y = paramsInstance[14]
+
+
+# Bezier arg derivee
+D0_x = paramsInstance[15]
+D1_x = paramsInstance[16]
+D2_x = paramsInstance[17]
+D2_y = paramsInstance[18]
+D3_x = paramsInstance[19]
+D3_y = paramsInstance[20]
+legOffset = paramsInstance[21]
+
 
 period = period
-offsets = [0.0,0.5,0.5,0.0]
+#offsets = [0.0,0.5,0.5,0.0]
+offsets = legOffset 
 bodyHeights = 2*[bh0] + 2*[bh1]
 
 #points traj optim en cours
 # param : [[x0,y0,x1,y1,x2,y2,x3,y3],[vx0,vy0,vx1,vy1,vx2,vy2,vx3,vy3]
 #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
 #2eme points traj (remontee arriere plus rapide)
-pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.4183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+#pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, D3_x, D3_y]]
 
 footTraj1 = footTrajectoryBezier(pointsTraj)
 footTraj2 = footTrajectoryBezier(pointsTraj)

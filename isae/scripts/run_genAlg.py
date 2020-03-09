@@ -203,33 +203,37 @@ def paramToSim_thomas(paramsInstance):
     y1 = paramsInstance[7].value
     y2 = paramsInstance[8].value
 
-    # Bezier arg
-    #P0_x = paramsInstance[9].value
-    #P1_x = paramsInstance[10].value
-    P2_x = paramsInstance[9].value
-    P2_y = paramsInstance[10].value
-    P3_x = paramsInstance[11].value
-    P3_y = paramsInstance[12].value
+    # Bezier arg points
+    P0_x = paramsInstance[9].value
+    P1_x = paramsInstance[10].value
+    P2_x = paramsInstance[11].value
+    P2_y = paramsInstance[12].value
+    P3_x = paramsInstance[13].value
+    P3_y = paramsInstance[14].value
+
 
     # Bezier arg derivee
-    #D0_x = paramsInstance[9].value
-    #D1_x = paramsInstance[10].value
-    #D2_x = paramsInstance[9].value
-    #D2_y = paramsInstance[10].value
-    #P3_x = paramsInstance[9].value
-    #P3_y = paramsInstance[10].value
+    D0_x = paramsInstance[15].value
+    D1_x = paramsInstance[16].value
+    D2_x = paramsInstance[17].value
+    D2_y = paramsInstance[18].value
+    D3_x = paramsInstance[19].value
+    D3_y = paramsInstance[20].value
+
+    legsOffsets = paramsInstance[21].value
 
     # Loop parameters 
     pyb_gui = False
     duration = 10
 
     period = period
-    offsets = [0.0,0.5,0.5,0.0]
+    #offsets = [0.0,0.5,0.5,0.0]
+    offsets = legsOffsets
     bodyHeights = 2*[bh0] + 2*[bh1]
 
     #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
-    #pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, -0.2008, -0.1800]]
-    pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+    pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, D3_x, D3_y]]
+    #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
     
     footTraj1 = footTrajectoryBezier(pointsTraj)
     footTraj2 = footTrajectoryBezier(pointsTraj)
@@ -324,23 +328,32 @@ paramNames = ["length", "height", "top_dx", "end_dX", "end_dy", "middle_dx", "mi
 paramTypes = ["scalar", "scalar", "scalar", "scalar", "scalar","2dPoint","2dPoint","legsOffsets"]
 paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]],[[0.01,0.99],[0.01,0.99]],0.6 ]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
-'''
-paramTypes = ["scalarBinary"] * 13
-paramArgs = [   [1.3,1.4],  #bh0
-                [1.3,1.4],  #bh1
+'''    
+paramTypes = ["scalarBinary"] * 21 + ["legsOffsets"]
+paramArgs = [   [1.2,1.4],  #bh0
+                [1.2,1.4],  #bh1
                 [4,8],  #Kp
                 [0.1,1],  #Kd
-                [0.8,1.2],  #period
+                [0.8,1.5],  #period
                 [0.05,0.5],  #x1
                 [0.5,0.95],  #x2
                 [0.05,0.25],  #y1
-                [0.25,0.45],  #y2
+                [0.25,0.5],  #y2
+                [-0.5,0.2],  #P0_x
+                [0.2,0.5],  #P1_x
                 [0.1,0.35],  #P2_x
                 [0.3,0.60],  #P2_y
                 [-0.35,-0.1],  #P3_x
                 [0.3,0.6],  #P3_y
+                [0.03,0.31],  #D0_x
+                [0.03,0.31],  #D1_x
+                [-0.35,-0.05],  #D2_x
+                [0.03,0.32],  #D2_y
+                [-0.05,-0.35],  #D3_x
+                [-0.32,-0.03],  #D3_y
+                0.95, #legoffsets
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P2_x","P2_y","P3_x","P3_y"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P0_x","P1_x","P2_x","P2_y","P3_x","P3_y","D0_x","D1_x","D2_x","D2_y","D3_x","D3_y","legoffset"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
