@@ -22,22 +22,47 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 #########
 #param simu
 #########
-paramsInstance = [1.3795727080519222 ,1.2767326216086354 ,5.542689574090813,
- 0.31873028984268814 ,0.8753232056854438 ,0.401656420970068,
- 0.8950312650957308, 0.09482759534228254, 0.3111570609668366,
- -0.0663810033069333, 0.4629271898305571, 0.1273156860449515,
- 0.4613413391533199, -0.33358014428349286, 0.573564153376901,
- 0.1519333210761974, 0.2995929634467611, -0.11509685645212919,
- 0.2268761721252515, -0.14311286016085176, -0.15299604582272447,
- [0.04151969, 0.25559237, 0.59991313, 0.36667742]]
-
-
+paramsInstance =[1.3924710316213387, 	#BH0
+1.354254895497005, 	#BH1
+6.631169231524435, 	#Kp
+0.8305574694147392, 	#Kd
+0.829491680700853, 	#Period
+0.12243875755770296, 	#x1
+0.807590954790508, 	#x2
+0.20723872800599347, 	#y1
+0.3238040358957621, 	#y2
+0.17324550855980203, 	#P2_x
+0.5656963468012588, 	#P2_y
+-0.28576367612585063, 	#P3_x
+0.5853004323094276, 	#P3_y
+]
 
 
 # Loop parameters 
 pyb_gui = True
-duration = 5
+duration = 10
 
+#optim_08_03
+bh0 = paramsInstance[0]
+bh1 = paramsInstance[1]
+Kp = paramsInstance[2]
+Kd = paramsInstance[3]
+period = paramsInstance[4]
+x1 = paramsInstance[5]
+x2 = paramsInstance[6]
+y1 = paramsInstance[7]
+y2 = paramsInstance[8]
+
+# Bezier arg
+#P0_x = paramsInstance[9].value
+#P1_x = paramsInstance[10].value
+P2_x = paramsInstance[9]
+P2_y = paramsInstance[10]
+P3_x = paramsInstance[11]
+P3_y = paramsInstance[12]
+
+'''
+#optim_10_03
 # optimize following parameters, offset and traj set before
 bh0 = paramsInstance[0]
 bh1 = paramsInstance[1]
@@ -66,19 +91,22 @@ D2_y = paramsInstance[18]
 D3_x = paramsInstance[19]
 D3_y = paramsInstance[20]
 legOffset = paramsInstance[21]
-
+'''
 
 period = period
-#offsets = [0.0,0.5,0.5,0.0]
-offsets = legOffset 
+offsets = [0.0,0.5,0.5,0.0]
+#offsets = legOffset 
 bodyHeights = 2*[bh0] + 2*[bh1]
 
 #points traj optim en cours
 # param : [[x0,y0,x1,y1,x2,y2,x3,y3],[vx0,vy0,vx1,vy1,vx2,vy2,vx3,vy3]
 #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
 #2eme points traj (remontee arriere plus rapide)
-#pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
-pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, D3_x, D3_y]]
+
+#optim_08_03
+pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+#optim_10_03
+#pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, D3_x, D3_y]]
 
 footTraj1 = footTrajectoryBezier(pointsTraj)
 footTraj2 = footTrajectoryBezier(pointsTraj)
@@ -112,7 +140,7 @@ robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, p
 
 cameraTool = cameraTool()
 # Turn boolean to True to record Video (only for no parallel sim) 
-cameraTool.recordVideo = False
+cameraTool.recordVideo = True
 # Main parameters for camera setting
 # See cameraTool class for others
 # Warning : Create the following folders
@@ -150,7 +178,7 @@ for my_t in range(int(period / dt)):
 	traj_log.append(current_point)
 
 #print(traj_log)
-np.save("test_B_1.npy", traj_log)
+np.save("marche_1.npy", traj_log)
 
 
 print(walkSim.getFinalDistance())
