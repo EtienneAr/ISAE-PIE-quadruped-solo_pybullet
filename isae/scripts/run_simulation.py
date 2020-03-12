@@ -22,16 +22,33 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 #########
 #param simu
 #########
-paramsInstance =[1.2866527797500023, 1.2467372421579606, 4.370762454580907,
-       0.6186998842399865, 0.8022298482253009, 0.24713311405592953,
-       0.6219398338748294, 0.1242332819522984, 0.256351498756459,
-       -0.3920906953116054, 0.12406428268208644, 0.445267093672449,
-       0.016381527482565994, 0.23786213997922184, 0.5043759335489052,
-       -0.21251538789048802, 0.4672688159016275, 0.05292675441179075,
-       0.10828049697389289, 0.04262635288610461, 0.08535571633756803,
-       -0.25138533453259887, 0.17969968441553308, -0.20350352021128315,
-       -0.30518533505398876,
-       [0.61221034, 0.14353923, 0.08468928, 0.57700363]]
+paramsInstance = [1.6,     #BH0
+1.6,     #BH1
+5.08694031620678,       #Kp
+0.5788533906515374,     #Kd
+2.6081482285844273,     #Period
+0.1958619493132555,     #x1
+0.9429184542166389,     #x2
+0.06549376679804163,    #y1
+0.344396283679653,      #y2
+-0.0759611239936605,    #P0_x
+-0.0677690712337296,    #P0_y
+0.2023926927886696,     #P1_x
+-0.038310260404677596,  #P1_y
+0.20968339328016433,    #P2_x
+0.41884765735935703,    #P2_y
+-0.2703824592621578,    #P3_x
+0.4515332609210945,     #P3_y
+0.2670236475934281,     #D0_x
+0.10156789210344949,    #D0_y
+0.19056252328827808,    #D1_x
+-0.06467460017152873,   #D1_y
+-0.23583765163388315,   #D2_x
+0.07705848728823056,    #D2_y
+-0.11818427346212536,   #D3_x
+-0.24484471704150423,   #D3_y
+]
+
 
 
 # Loop parameters 
@@ -88,6 +105,7 @@ D3_x = paramsInstance[19]
 D3_y = paramsInstance[20]
 legOffset = paramsInstance[21]
 '''
+
 #optim_11_03
 # optimize following parameters, offset and traj set before
 bh0 = paramsInstance[0]
@@ -120,9 +138,13 @@ D2_x = paramsInstance[21]
 D2_y = paramsInstance[22]
 D3_x = paramsInstance[23]
 D3_y = paramsInstance[24]
-legOffset = paramsInstance[25]
+# 11_03 legOffset = paramsInstance[25]
+
+
+
+
 period = period
-offsets = [0.0,0.5,0.5,0.0]
+offsets = [0.0,0.5,0.75,0.25]
 #offsets = legOffset 
 bodyHeights = 2*[bh0] + 2*[bh1]
 
@@ -170,7 +192,7 @@ robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, p
 
 cameraTool = cameraTool()
 # Turn boolean to True to record Video (only for no parallel sim) 
-cameraTool.recordVideo = True
+cameraTool.recordVideo = False
 # Main parameters for camera setting
 # See cameraTool class for others
 # Warning : Create the following folders
@@ -208,7 +230,7 @@ for my_t in range(int(period / dt)):
 	traj_log.append(current_point)
 
 #print(traj_log)
-np.save("marche_1.npy", traj_log)
+np.save("marche_3.npy", traj_log)
 
 
 print(walkSim.getFinalDistance())

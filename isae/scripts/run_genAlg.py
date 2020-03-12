@@ -13,6 +13,7 @@ from isae.control.footTrajControllerV2 import *
 from functools import partial 
 from isae.control.noiser import *
 from isae.tools.lerpCyclePhasePoly import *
+from isae.tools.footTrajectoryBezierEtienne import *
 
 BLUE = "\033[34m"
 GREEN = "\033[32m"
@@ -25,7 +26,7 @@ RED = "\033[91m"
 GA = multiprocessGeneticAlgorithm()
 
 GA.pop_size = 100
-GA.n_gen = 100
+GA.n_gen = 80
 GA.grade_index = 1
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
@@ -198,68 +199,49 @@ def paramToSim_thomas(paramsInstance):
     Kp = paramsInstance[2].value
     Kd = paramsInstance[3].value
     period = paramsInstance[4].value
-    x1 = paramsInstance[5].value
-    x2 = paramsInstance[6].value
-    y1 = paramsInstance[7].value
-    y2 = paramsInstance[8].value
+    
 
     # Bezier arg points
-    P0_x = paramsInstance[9].value
-    P0_y = paramsInstance[10].value
-    P1_x = paramsInstance[11].value
-    P1_y = paramsInstance[12].value
-    P2_x = paramsInstance[13].value
-    P2_y = paramsInstance[14].value
-    P3_x = paramsInstance[15].value
-    P3_y = paramsInstance[16].value
+    P0_x = paramsInstance[5].value
+    P0_y = paramsInstance[6].value
+    P1_x = paramsInstance[7].value
+    P1_y = paramsInstance[8].value
+    P2_x = paramsInstance[9].value
+    P2_y = paramsInstance[10].value
+    P3_x = paramsInstance[11].value
+    P3_y = paramsInstance[12].value
 
 
     # Bezier arg derivee
-    D0_x = paramsInstance[17].value
-    D0_y = paramsInstance[18].value
-    D1_x = paramsInstance[19].value
-    D1_y = paramsInstance[20].value
-    D2_x = paramsInstance[21].value
-    D2_y = paramsInstance[22].value
-    D3_x = paramsInstance[23].value
-    D3_y = paramsInstance[24].value
+    D0_x = paramsInstance[13].value
+    D0_y = paramsInstance[14].value
+    D1_x = paramsInstance[15].value
+    D1_y = paramsInstance[16].value
+    D2_x = paramsInstance[17].value
+    D2_y = paramsInstance[18].value
+    D3_x = paramsInstance[19].value
+    D3_y = paramsInstance[20].value
 
-    #legsOffsets = paramsInstance[25].value
+    legsOffsets = paramsInstance[21].value
 
     # Loop parameters 
     pyb_gui = False
     duration = 12
 
     period = period
-    offsets = [0.0,0.5,0.75,0.25]
-    #offsets = legsOffsets
+    #offsets = [0.0,0.5,0.75,0.25]
+    offsets = legsOffsets
     bodyHeights = 2*[bh0] + 2*[bh1]
 
     #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
     pointsTraj = [[P0_x, P0_y, P1_x, P1_y, P2_x, P2_y, P3_x, P3_y], [D0_x, D0_y, D1_x, D1_y, D2_x, D2_y, D3_x, D3_y]]
     #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
     
-    footTraj1 = footTrajectoryBezier(pointsTraj)
-    footTraj2 = footTrajectoryBezier(pointsTraj)
-    footTraj3 = footTrajectoryBezier(pointsTraj)
-    footTraj4 = footTrajectoryBezier(pointsTraj)
+    footTraj1 = footTrajectoryBezierEtienne(pointsTraj, phaseOffset = offsets[0])
+    footTraj2 = footTrajectoryBezierEtienne(pointsTraj, phaseOffset = offsets[1])
+    footTraj3 = footTrajectoryBezierEtienne(pointsTraj, phaseOffset = offsets[2])
+    footTraj4 = footTrajectoryBezierEtienne(pointsTraj, phaseOffset = offsets[3])
     trajs = [footTraj1, footTraj2, footTraj3, footTraj4]
-
-    def lerpCyclePhase(phase, xVal=[0.5], yVal=[0.5]):
-        phase = phase%1.
-        
-        xVal.append(1)
-        xVal.append(0)
-        yVal.append(1)
-        yVal.append(0)
-        
-        for i in range(len(xVal) - 1):
-            if phase < xVal[i]:
-                return yVal[i-1] + (yVal[i] - yVal[i-1])*(1 - (xVal[i] - phase)/(xVal[i] - xVal[i-1]))
-    
-    setXVal = [x1,x2]
-    setYVal = [y1,y2]
-
     
 
     leg = Leg(1,1)
@@ -271,7 +253,7 @@ def paramToSim_thomas(paramsInstance):
     Kp = Kp
     Kd = Kd
 
-    robotController = footTrajControllerV2(bodyHeights, leg, sols, trajs, offsets, period, partial(lerpCyclePhase,xVal=setXVal, yVal=setYVal), Kp, Kd, 3 * np.ones((8, 1)))
+    robotController = footTrajController(bodyHeights, leg, sols, trajs, period, Kp, Kd, 3 * np.ones((8, 1)))
 
     simInstance = gradedSimulation()
     simInstance.setLoopParams(pyb_gui, duration, leg)
@@ -334,16 +316,12 @@ paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
 '''    
 #paramTypes = ["scalarBinary"] * 25 + ["legsOffsets"]
-paramTypes = ["scalarBinary"] * 25
-paramArgs = [   [1.2,1.4],  #bh0
-                [1.2,1.4],  #bh1
+paramTypes = ["scalarBinary"] * 21 + ["legsOffsets"]
+paramArgs = [   [1.35,1.7],  #bh0
+                [1.35,1.7],  #bh1
                 [4,8],  #Kp
                 [0.1,1],  #Kd
-                [2,6],  #period
-                [0.05,0.5],  #x1
-                [0.5,0.95],  #x2
-                [0.05,0.25],  #y1
-                [0.25,0.5],  #y2
+                [0.7,1.5],  #period
                 [-0.5,0.2],  #P0_x
                 [-0.15,0.15],  #P0_y
                 [0.2,0.5],  #P1_x
@@ -360,8 +338,9 @@ paramArgs = [   [1.2,1.4],  #bh0
                 [0.03,0.32],  #D2_y
                 [-0.05,-0.35],  #D3_x
                 [-0.32,-0.03],  #D3_y
+                0.99
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y","legsoffsets"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
