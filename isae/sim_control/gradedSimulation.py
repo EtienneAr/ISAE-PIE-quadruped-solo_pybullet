@@ -56,7 +56,7 @@ class gradedSimulation(walkSimulation):
         self.grades[0] += d
         #print(self.grades[0])
         # RMS       
-        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.2, 0, 0, 0, 0, 0]), np.vstack([150, 20, 20, 1, 1, 1]), self.dt) + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
+        self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.1, 0, 0, 0, 0, 0]), np.vstack([300, 40, 40, 1, 1, 1]), self.dt) + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
         # Contacts penalization
         #self.grades[2] += self.updateGrade_penalizeContacts()
         # Body height stability

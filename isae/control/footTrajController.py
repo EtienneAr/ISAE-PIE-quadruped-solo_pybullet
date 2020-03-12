@@ -1,6 +1,7 @@
 from sys import path
 import numpy as np
 from isae.control.myPD import PD
+import matplotlib.pyplot as plt
 
 class footTrajController:
 
@@ -41,3 +42,14 @@ class footTrajController:
 		torques = PD(np.array(q_ref), np.zeros((8, 1)), q[7:], q_dot[6:], dt, self.Kp, self.Kd, self.sat)
 
 		return torques
+	
+	def plotFootTraj(self, nbPoints = 1000):
+		footPos = []
+		freq = int(1000/nbPoints)
+		for i in range(1000):
+			phase = i*1e-3
+			if(i%freq == 0):
+				footPos.append(self.Feet4traj[0].getPos(phase))
+		footPos = np.array(footPos)
+		#print(footPos)
+		plt.scatter(footPos[:,0,0], footPos[:,0,1], marker='o')
