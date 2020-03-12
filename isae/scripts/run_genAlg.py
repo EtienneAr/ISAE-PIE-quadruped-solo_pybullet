@@ -360,9 +360,8 @@ paramArgs = [   [1.2,1.4],  #bh0
                 [0.03,0.32],  #D2_y
                 [-0.05,-0.35],  #D3_x
                 [-0.32,-0.03],  #D3_y
-                0.95, #legoffsets
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y","legoffset"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","x1","x2","y1","y2","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)
