@@ -27,7 +27,7 @@ GA = multiprocessGeneticAlgorithm()
 
 GA.pop_size = 100
 GA.n_gen = 80
-GA.grade_index = 1
+GA.grade_index = 0
 
 def paramToSim_Bh_KpKd_T(paramsInstance):
     # COMMENT FAIRE??
@@ -222,7 +222,7 @@ def paramToSim_thomas(paramsInstance):
     D3_x = paramsInstance[19].value
     D3_y = paramsInstance[20].value
 
-    legsOffsets = paramsInstance[21].value
+    offavant = paramsInstance[21].value
 
     # Loop parameters 
     pyb_gui = False
@@ -230,7 +230,7 @@ def paramToSim_thomas(paramsInstance):
 
     period = period
     #offsets = [0.0,0.5,0.75,0.25]
-    offsets = legsOffsets
+    offsets = [offavant,offavant,0.0,0.0]
     bodyHeights = 2*[bh0] + 2*[bh1]
 
     #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
@@ -316,31 +316,31 @@ paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
 '''    
 #paramTypes = ["scalarBinary"] * 25 + ["legsOffsets"]
-paramTypes = ["scalarBinary"] * 21 + ["legsOffsets"]
-paramArgs = [   [1.35,1.7],  #bh0
-                [1.35,1.7],  #bh1
+paramTypes = ["scalarBinary"] * 22
+paramArgs = [   [1,1.5],  #bh0
+                [1,1.5],  #bh1
                 [4,8],  #Kp
                 [0.1,1],  #Kd
-                [4,6],  #period
-                [-0.7,-0.2],  #P0_x
+                [0.5,1.5],  #period
+                [-0.7,0.05],  #P0_x
                 [-0.15,0.15],  #P0_y
-                [0.2,0.7],  #P1_x
+                [0.05,0.7],  #P1_x
                 [-0.15,0.15],  #P1_y
                 [0.1,0.45],  #P2_x
-                [0.3,0.60],  #P2_y
+                [-0.6,-0.2],  #P2_y
                 [-0.45,-0.1],  #P3_x
-                [0.3,0.6],  #P3_y
+                [-0.6,-0.2],  #P3_y
                 [0.03,0.31],  #D0_x
-                [-0.15,0.15],  #D0_x
+                [-0.15,0.15],  #D0_y
                 [0.03,0.31],  #D1_x
                 [-0.15,0.15],  #D1_y
                 [-0.35,-0.05],  #D2_x
-                [0.03,0.32],  #D2_y
+                [-0.32,-0.03],  #D2_y
                 [-0.05,-0.35],  #D3_x
-                [-0.32,-0.03],  #D3_y
-                0.99
+                [0.03,0.32],  #D3_y
+                [0,1] , #offsetavant
                 ]
-paramNames = ["BH0", "BH1","Kp","Kd","Period","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y","legsoffsets"]
+paramNames = ["BH0", "BH1","Kp","Kd","Period","P0_x","P0_y","P1_x","P1_y","P2_x","P2_y","P3_x","P3_y","D0_x","D0_y","D1_x","D1_y","D2_x","D2_y","D3_x","D3_y","offsetAvant"]
 
 GA.setParamTypes(paramTypes)
 GA.setParamArgs(paramArgs)

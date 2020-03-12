@@ -53,7 +53,7 @@ class gradedSimulation(walkSimulation):
     def updateGrades(self):
         # Dist
         d = self.updateGrade_MaxFinalDist(self.grades[0])
-        self.grades[0] += d
+        self.grades[0] += d + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
         #print(self.grades[0])
         # RMS       
         self.grades[1] += self.updateGrade_RMStoQdotRef(np.vstack([.1, 0, 0, 0, 0, 0]), np.vstack([300, 40, 40, 1, 1, 1]), self.dt) + 0.1*self.updateGrade_constantOrientation(np.array([0,0,0,1]))
