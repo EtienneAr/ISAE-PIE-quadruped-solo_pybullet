@@ -228,7 +228,7 @@ def paramToSim_thomas(paramsInstance):
 
     # Loop parameters 
     pyb_gui = False
-    duration = 10
+    duration = 12
 
     period = period
     offsets = [0.0,0.5,0.75,0.25]
@@ -339,7 +339,7 @@ paramArgs = [   [1.2,1.4],  #bh0
                 [1.2,1.4],  #bh1
                 [4,8],  #Kp
                 [0.1,1],  #Kd
-                [5,10],  #period
+                [2,6],  #period
                 [0.05,0.5],  #x1
                 [0.5,0.95],  #x2
                 [0.05,0.25],  #y1
