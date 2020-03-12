@@ -224,15 +224,15 @@ def paramToSim_thomas(paramsInstance):
     D3_x = paramsInstance[23].value
     D3_y = paramsInstance[24].value
 
-    legsOffsets = paramsInstance[25].value
+    #legsOffsets = paramsInstance[25].value
 
     # Loop parameters 
     pyb_gui = False
     duration = 10
 
     period = period
-    #offsets = [0.0,0.5,0.5,0.0]
-    offsets = legsOffsets
+    offsets = [0.0,0.5,0.75,0.25]
+    #offsets = legsOffsets
     bodyHeights = 2*[bh0] + 2*[bh1]
 
     #pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, 0.2019, 0.4846, -0.2183, 0.5634], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
@@ -333,12 +333,13 @@ paramTypes = ["scalar", "scalar", "scalar", "scalar", "scalar","2dPoint","2dPoin
 paramArgs = [[1.2,1.7],[1.2,1.7],[1,15],[0.2,5],[0.7,2],[[0.01,0.99],[0.01,0.99]],[[0.01,0.99],[0.01,0.99]],0.6 ]
 paramNames = ["BH0", "BH1","Kp","Kd","Period","P1","P2","legsOffsets"]
 '''    
-paramTypes = ["scalarBinary"] * 25 + ["legsOffsets"]
+#paramTypes = ["scalarBinary"] * 25 + ["legsOffsets"]
+paramTypes = ["scalarBinary"] * 25
 paramArgs = [   [1.2,1.4],  #bh0
                 [1.2,1.4],  #bh1
                 [4,8],  #Kp
                 [0.1,1],  #Kd
-                [0.8,1.5],  #period
+                [5,10],  #period
                 [0.05,0.5],  #x1
                 [0.5,0.95],  #x2
                 [0.05,0.25],  #y1

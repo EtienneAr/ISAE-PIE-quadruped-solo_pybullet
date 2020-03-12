@@ -22,26 +22,22 @@ print("Number of cpu : ", multiprocessing.cpu_count())
 #########
 #param simu
 #########
-paramsInstance =[1.3924710316213387, 	#BH0
-1.354254895497005, 	#BH1
-6.631169231524435, 	#Kp
-0.8305574694147392, 	#Kd
-0.829491680700853, 	#Period
-0.12243875755770296, 	#x1
-0.807590954790508, 	#x2
-0.20723872800599347, 	#y1
-0.3238040358957621, 	#y2
-0.17324550855980203, 	#P2_x
-0.5656963468012588, 	#P2_y
--0.28576367612585063, 	#P3_x
-0.5853004323094276, 	#P3_y
-]
+paramsInstance =[1.2866527797500023, 1.2467372421579606, 4.370762454580907,
+       0.6186998842399865, 0.8022298482253009, 0.24713311405592953,
+       0.6219398338748294, 0.1242332819522984, 0.256351498756459,
+       -0.3920906953116054, 0.12406428268208644, 0.445267093672449,
+       0.016381527482565994, 0.23786213997922184, 0.5043759335489052,
+       -0.21251538789048802, 0.4672688159016275, 0.05292675441179075,
+       0.10828049697389289, 0.04262635288610461, 0.08535571633756803,
+       -0.25138533453259887, 0.17969968441553308, -0.20350352021128315,
+       -0.30518533505398876,
+       [0.61221034, 0.14353923, 0.08468928, 0.57700363]]
 
 
 # Loop parameters 
 pyb_gui = True
 duration = 10
-
+'''
 #optim_08_03
 bh0 = paramsInstance[0]
 bh1 = paramsInstance[1]
@@ -60,7 +56,7 @@ P2_x = paramsInstance[9]
 P2_y = paramsInstance[10]
 P3_x = paramsInstance[11]
 P3_y = paramsInstance[12]
-
+'''
 '''
 #optim_10_03
 # optimize following parameters, offset and traj set before
@@ -92,7 +88,39 @@ D3_x = paramsInstance[19]
 D3_y = paramsInstance[20]
 legOffset = paramsInstance[21]
 '''
+#optim_11_03
+# optimize following parameters, offset and traj set before
+bh0 = paramsInstance[0]
+bh1 = paramsInstance[1]
+Kp = paramsInstance[2]
+Kd = paramsInstance[3]
+period = paramsInstance[4]
+x1 = paramsInstance[5]
+x2 = paramsInstance[6]
+y1 = paramsInstance[7]
+y2 = paramsInstance[8]
 
+# Bezier arg points
+P0_x = paramsInstance[9]
+P0_y = paramsInstance[10]
+P1_x = paramsInstance[11]
+P1_y = paramsInstance[12]
+P2_x = paramsInstance[13]
+P2_y = paramsInstance[14]
+P3_x = paramsInstance[15]
+P3_y = paramsInstance[16]
+
+
+# Bezier arg derivee
+D0_x = paramsInstance[17]
+D0_y = paramsInstance[18]
+D1_x = paramsInstance[19]
+D1_y = paramsInstance[20]
+D2_x = paramsInstance[21]
+D2_y = paramsInstance[22]
+D3_x = paramsInstance[23]
+D3_y = paramsInstance[24]
+legOffset = paramsInstance[25]
 period = period
 offsets = [0.0,0.5,0.5,0.0]
 #offsets = legOffset 
@@ -104,9 +132,11 @@ bodyHeights = 2*[bh0] + 2*[bh1]
 #2eme points traj (remontee arriere plus rapide)
 
 #optim_08_03
-pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
+#pointsTraj = [[-0.3625, 0.0, 0.3680, 0.0, P2_x, P2_y, P3_x, P3_y], [0.1733, 0.0, 0.176, 0.0, -0.2018, 0.1855, -0.2008, -0.1800]]
 #optim_10_03
 #pointsTraj = [[P0_x, 0.0, P1_x, 0.0, P2_x, P2_y, P3_x, P3_y], [D0_x, 0.0, D1_x, 0.0, D2_x, D2_y, D3_x, D3_y]]
+#optim_11_03
+pointsTraj = [[P0_x, P0_y, P1_x, P1_y, P2_x, P2_y, P3_x, P3_y], [D0_x, D0_y, D1_x, D1_y, D2_x, D2_y, D3_x, D3_y]]
 
 footTraj1 = footTrajectoryBezier(pointsTraj)
 footTraj2 = footTrajectoryBezier(pointsTraj)
