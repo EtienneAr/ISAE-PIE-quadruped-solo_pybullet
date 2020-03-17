@@ -1,25 +1,12 @@
 # solo-pybullet
-**Simulation and Controller code for Solo Quadruped**
+**In short**
 
-This repository offers an environment to simulate different controllers on the Quadruped robot **Solo**.
+The content of this repository was developed in the context of an academic group project. As a team of 6 ISAE-Supaero students, we worked for the LAAS-CNRS robotics lab to extend their previous repo of simulation and control for the SOLO robot.
+The team was composed of Etienne ARLAUD, Ethan CHERKI, Thomas CORBERES, Thibault NOËL, Jean-Lou QUETIN and Marion VALETTE. 
 
-You can implement your controller on the *controller.py* file and call your control function in the main program *main.py* by replacing the `c(...)` function in the loop.
+This repo mainly serves the following purposes :
+* providing a relevant simulation environment for SOLO (ease of use, data extraction)
+* providing simulation-based controllers to easily test walking behaviors
+* providing optimization tools to automatically search for viable walking behaviors
 
-## Installation
-
-To install [Pinocchio](https://github.com/stack-of-tasks/pinocchio/), the urdf and meshes of the **Solo** Quadruped,
-the [Gepetto Viewer](https://github.com/gepetto/gepetto-viewer-corba) and their python bindings:
-
-```bash
-sudo tee /etc/apt/sources.list.d/robotpkg.list <<EOF
-deb [arch=amd64] http://robotpkg.openrobots.org/wip/packages/debian/pub $(lsb_release -cs) robotpkg
-deb [arch=amd64] http://robotpkg.openrobots.org/packages/debian/pub $(lsb_release -cs) robotpkg
-EOF
-sudo apt update -qqy && sudo apt install -qqy robotpkg-py35-{pinocchio,example-robot-data,qt4-gepetto-viewer-corba}
-```
-
-To install PyBullet:
-`pip install --user pybullet`
-
-## How to start the simulation
-launch `gepetto-gui`, then `python -m solo_pybullet`
+## Code structure
