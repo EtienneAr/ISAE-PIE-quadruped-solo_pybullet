@@ -11,8 +11,9 @@ This repo mainly serves the following purposes :
 
 ## Prerequisites
 In order to properly use this package, you need to run Python3 and have the following libraries installed :
-* numpy
 * matplotlib
+* multiprocessing
+* numpy
 * PyBullet ( [latest version here](https://github.com/bulletphysics/bullet3) )
 
 ## Quickstart
@@ -20,6 +21,9 @@ To run a demo simulation, you can simply run the following command in a terminal
 ```shell
 python3 isae/scripts/run_simulation.py 
 ```
+The `run_simulation.py` script contains hand-written parameters that are passed to a `footTrajectoryController` and a `walkSimulation` instances. The first one is customizable and basically describes the parameters of the walking behavior we want to test. The second one handles parameters like data logs, simulation duration, and also has methods for data visualization.
+
+**TODO** : include more examples in `run_simulation`.
 
 ## Code structure
 All the code can be found in the `isae` folder. Here is a quick overview of the folders it contains :
