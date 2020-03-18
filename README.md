@@ -41,6 +41,9 @@ With this objective in mind, let's see how to adapt the `run_simulation.py` (han
 ### The trajectory class
 Before defining a controller, we have to think about the way we want to define the feet trajectories. A few different approaches have been tried out, but the code has also been thought to enable you to easily add a new implementation. The existing trajectory classes can be found under `isae/tools`.
 
+**Existing trajectories**
+
+
 ### The controller class
 The existing controller classes can be found under `isae/control`. In order to be passed to the simulation handler, they need to implement the `c` method (not the best naming choice here). Its abstract definition is the following :
 ```python
