@@ -32,3 +32,20 @@ All the code can be found in the `isae` folder. Here is a quick overview of the 
 * `scripts` : contains the executable scripts that run a simulation or a whole optimization process.
 * `sim_control` : contains the Bullet-related part of the code, i.e. the feedback of data to the controller and the interpretation of the commands as robot moves in the simulated environment.
 * `tools` : various pieces of useful code (inverse kinematics model, video recorder).
+
+## Design and optimize your own walk !
+In this part, we explain how to use the existing controller and simulation classes to try and design a new walking behavior. It is not extensive and will not cover every detail of the implementation, but hopefully it will give you enough hints about how the code works to dig deeper in the possibiities by yourself.
+
+With this objective in mind, let's see how to adapt the `run_simulation.py` (hand-crafted or pre-optimized walk displayed in simulation) and `run_genAlg.py` (walk optimization) scripts.
+
+### The controller class
+The different controller classes can be found under `isae/control`. In order to be passed to the simulation handler, they need to implement the `c` method (not the best naming choice here). Its abstract definition is the following :
+```python
+def c(self, q, q_dot, time, dt): 
+    # compute a goal state q_ref
+    # compute desired joints torques
+    torques = PD(np.array(q_ref), np.zeros((8, 1)), q[7:], q_dot[6:], dt, self.Kp, self.Kd, self.sat)
+    return torques
+```
+Here, `q` and `q_dot` represent the current state of the robot, i.e. the base and joints positions and velocities. From this current state, a goal state `q_ref` is computed and the difference between `q` and `q_ref` is converted to pseudo-motor commands with a PD model. This method is called once per simulation update, which ensures that the simulated motors always receive a well-formated command.
+**Note :** It might not be clear how `q_ref` is computed, but for us, it basically consisted in reading the feet trajectories we wanted and computing the joints positions for each foot thanks to the inverse kinematic model.
