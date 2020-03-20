@@ -57,3 +57,10 @@ Here, `q` and `q_dot` represent the current state of the robot, i.e. the base an
 *Note :* It might not be clear how `q_ref` is computed, but for us, it basically consisted in reading the feet trajectories we wanted and computing the joints positions for each foot thanks to the inverse kinematic model.
 
 **Existing controllers**
+
+### The simulation class
+
+### The optimization parameter class
+**Existing parameters**
+
+### Instanciating the optimizer 
