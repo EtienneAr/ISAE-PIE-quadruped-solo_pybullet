@@ -39,10 +39,33 @@ In this part, we explain how to use the existing controller and simulation class
 With this objective in mind, let's see how to adapt the `run_simulation.py` (hand-crafted or pre-optimized walk displayed in simulation) and `run_genAlg.py` (walk optimization) scripts. We will start by presenting the different components (as classes) that come together in these scripts.
 
 ### The trajectory class
-Before defining a controller, we have to think about the way we want to define the feet trajectories. A few different approaches have been tried out, but the code has also been thought to enable you to easily add a new implementation. The existing trajectory classes can be found under `isae/tools`.
+Before defining a controller, we have to think about the way we want to define the feet trajectories. A few different approaches have been tried out, but the code has also been thought to enable you to easily add a new implementation. The existing trajectory classes can be found under `isae/tools`.  
+Our implementation requires any trajectory class to implement a `getPos` method, so that they are interchangeable and extendable fairly easily. This method is defined as follows :
+```python
+def getPos(self, phase): 
+    # compute where we are on the trajectory given the phase (frac. of control period)
+    currPos = [currX, currY]
+    # return the [x,y] pos as a np.array
+    return np.array(currPos)
+```
+The `getPos` method is basically called by the controller at each simulation update, to know the desired position of each foot; the controller has a period attribute which allows it to feed `getPos` with the current 'phase', computed using the period and elapsed simulation time.
 
 **Existing trajectories**
-
+- `footTrajectory.pointsTrajectory` : deprecated 
+- `footTrajectory.footTrajectory` : stores the foot trajectory as a list of 2D points.  
+  Arguments :
+  * `points` : python list in format `[[x0,y0],[x1,y1],...,[xn,yn],[x0,y0]]`
+- `footTrajectory.customTrajectory` : generates a trajectory from macro parameters (step length, time spent with foot on ground...)  
+  Arguments :
+  * `length`: length of a step
+  * `height`: max height of the foot above ground
+  * `top_dx`: 
+  * `end_dx`:
+  * `end_dy`:
+  * `middle_dx`:
+  * `middle_dy`:
+  * `onGroundPhase`: float in `[0,1[`, representing the duration the foot should be in contact with the ground, as a fraction of the period of the leg movement.
+  * `phaseOffset`: float in `[0,1[`, representing the delay on the leg this trajectory is attached to, again as a fraction of the control period.
 
 ### The controller class
 The existing controller classes can be found under `isae/control`. In order to be passed to the simulation handler, they need to implement the `c` method (not the best naming choice here). Its abstract definition is the following :
