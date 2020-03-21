@@ -48,15 +48,17 @@ def getPos(self, phase):
     # return the [x,y] pos as a np.array
     return np.array(currPos)
 ```
-The `getPos` method is basically called by the controller at each simulation update, to know the desired position of each foot; the controller has a period attribute which allows it to feed `getPos` with the current 'phase', computed using the period and elapsed simulation time.
+The `getPos` method is basically called by the controller at each simulation update, to know the desired position of each foot; the controller has a period attribute which allows it to feed `getPos` with the current 'phase', computed using the period and elapsed simulation time.  
+
+**_IMPORTANT NOTICE_** : all of our trajectories use the length of an actuator as unit (half the total leg length), and are referenced in the ground frame aligned vertically with the hip joint. (*Ex* : a feet position `[x,y] = [0,1]` means that the foot is above the ground at knee-height directly under the hip, while `[x,y] = [0.2,0]` means the foot is on the ground but slightly in front of the hip.)
 
 **Existing trajectories**
 - `footTrajectory.pointsTrajectory` : deprecated 
-- `footTrajectory.footTrajectory` : stores the foot trajectory as a list of 2D points.  
-  Arguments :
+- `footTrajectory.footTrajectory` : stores the foot trajectory as a list of 2D points, read in order.  
+  *Arguments* :
   * `points` : python list in format `[[x0,y0],[x1,y1],...,[xn,yn],[x0,y0]]`
 - `footTrajectory.customTrajectory` : generates a trajectory from macro parameters (step length, time spent with foot on ground...)  
-  Arguments :
+  *Arguments* :
   * `length`: length of a step
   * `height`: max height of the foot above ground
   * `top_dx`: 
@@ -66,7 +68,9 @@ The `getPos` method is basically called by the controller at each simulation upd
   * `middle_dy`:
   * `onGroundPhase`: float in `[0,1[`, representing the duration the foot should be in contact with the ground, as a fraction of the period of the leg movement.
   * `phaseOffset`: float in `[0,1[`, representing the delay on the leg this trajectory is attached to, again as a fraction of the control period.
-
+- `footTrajectoryBezier.footTrajectoryBezier` : generates a trajectory as a closed Bezier curve.  
+  *Arguments* : 
+  * `points` : python list in format `[[x1 y1 x2 y2 x3 y3 x4 y4], [delta_x1 d_y1 d_x2 d_y2 d_x3 d_y3 d_x4 d_y4]]`. The `x,y` arguments are the coordinates for 4 control points, and the `dx,dy` arguments define the 2D derivative at each of these control points. 
 ### The controller class
 The existing controller classes can be found under `isae/control`. In order to be passed to the simulation handler, they need to implement the `c` method (not the best naming choice here). Its abstract definition is the following :
 ```python
@@ -82,6 +86,8 @@ Here, `q` and `q_dot` represent the current state of the robot, i.e. the base an
 **Existing controllers**
 
 ### The simulation class
+
+### Instanciating the simulation
 
 ### The optimization parameter class
 **Existing parameters**
