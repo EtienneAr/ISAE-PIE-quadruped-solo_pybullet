@@ -52,11 +52,14 @@ The `getPos` method is basically called by the controller at each simulation upd
 
 **_IMPORTANT NOTICE_** : all of our trajectories use the length of an actuator as unit (half the total leg length), and are referenced in the ground frame aligned vertically with the hip joint. (*Ex* : a feet position `[x,y] = [0,1]` means that the foot is above the ground at knee-height directly under the hip, while `[x,y] = [0.2,0]` means the foot is on the ground but slightly in front of the hip.)
 
-**Existing trajectories**
+<details>
+<summary><b>Existing trajectories</b><i> (click to expand)</i></summary>
+<br>
+
 - `footTrajectory.pointsTrajectory` : deprecated 
 - `footTrajectory.footTrajectory` : stores the foot trajectory as a list of 2D points, read in order.  
   *Attributes* :
-  * `points` : python list in format `[[x0,y0],[x1,y1],...,[xn,yn],[x0,y0]]`
+  * `points` : python list in format `[[x0,y0],[x1,y1],...,[xn,yn],[x0,y0]]` 
 - `footTrajectory.customTrajectory` : generates a trajectory from macro parameters (step length, time spent with foot on ground...)  
   *Attributes* :
   * `length`: length of a step
@@ -71,6 +74,8 @@ The `getPos` method is basically called by the controller at each simulation upd
 - `footTrajectoryBezier.footTrajectoryBezier` : generates a trajectory as a closed Bezier curve.  
   *Attributes* : 
   * `points` : python list in format `[[x1 y1 x2 y2 x3 y3 x4 y4], [delta_x1 d_y1 d_x2 d_y2 d_x3 d_y3 d_x4 d_y4]]`. The `x,y` arguments are the coordinates for 4 control points, and the `dx,dy` arguments define the 2D derivative at each of these control points. 
+</details>
+
 ### The controller class
 The existing controller classes can be found under `isae/control`. In order to be passed to the simulation handler, they need to implement the `c` method (not the best naming choice here). Its abstract definition is the following :
 ```python
@@ -83,7 +88,10 @@ def c(self, q, q_dot, time, dt):
 Here, `q` and `q_dot` represent the current state of the robot, i.e. the base and joints positions and velocities. From this current state, a goal state `q_ref` is computed and the difference between `q` and `q_ref` is converted to pseudo-motor commands with a PD (proportionnal derivative) model, defined under `control/myPD`. This method is called once per simulation update, which ensures that the simulated motors always receive a well-formated command.\
 *Note :* It does not appear clearly here how `q_ref` is computed, but for our controllers, it basically consisted in reading the desired feet trajectories and computing the desired joints positions for each foot at each simulation update thanks to the inverse kinematic model.
 
-**Existing controllers**
+<details>
+<summary><b>Existing controllers</b><i> (click to expand)</i></summary>
+<br>
+    
 - `footTrajController` : controller used during most of the project. We identified a problem for extendability and compatibility though, because the expected feet trajectories need to have a `phaseOffset` attributes (which only the `customTrajectory` class has).   
   *Attributes* :
   * `bodyHeights`: python list of 4 floats in `[0,2[`, representing (in actuator length) the desired hip joint height for each leg when the foot is at z = 0.
@@ -109,14 +117,15 @@ Here, `q` and `q_dot` represent the current state of the robot, i.e. the base an
   * `Kp`: same
   * `Kd`: same
   * `sat`: same
-- `noiser.noiseIn_noiseOut`: developed near the end of the project, but not much used. The idea was to try to improve the robustness of our optimization by adding noise to the perfect robot state obtained in simulation and to the outputed commands.
+- `noiser.noiseIn_noiseOut`: developed near the end of the project, but not much used. The idea was to try to improve the robustness of our optimization by adding noise to the perfect robot state obtained in simulation and to the outputed commands.  
   *Attributes* :
   * `controller`: an existing controller instanciated from one of the 2 previous classes or a custom one.
   * `period`: period of variation of the noise (constant during each period).
   * `positionNoise`: amplitude of noise on the position readings.
   * `velocityNoise`: amplitude of noise on the velocity readings.
   * `torqueNoise`: amplitude of noise on the output torques.
-  
+</details> 
+
 ### The simulation class
 
 ### Instanciating the simulation
